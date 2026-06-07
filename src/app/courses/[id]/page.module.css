@@ -1,0 +1,422 @@
+/* ===== COURSE DETAIL PAGE ===== */
+
+.main {
+  min-height: 100vh;
+}
+
+/* Not Found */
+.notFound {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.notFound h2 {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  padding: 120px 0 60px;
+  overflow: hidden;
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1030 50%, #0a0a0f 100%);
+  z-index: 0;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: var(--accent-primary-light);
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 3rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Hero Left */
+.heroLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.heroBadges {
+  display: flex;
+  gap: 8px;
+}
+
+.heroTitle {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.heroDesc {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.heroMeta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.metaItem strong {
+  color: var(--text-primary);
+}
+
+/* Trainer Info */
+.trainerInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 0.5rem;
+}
+
+.trainerAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--gradient-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.trainerLabel {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.trainerName {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Enroll Card */
+.enrollCard {
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.enrollLogo {
+  font-size: 3.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.enrollPrice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.enrollCurrentPrice {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--text-primary);
+}
+
+.enrollOldPrice {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.enrollDiscount {
+  padding: 4px 10px;
+  background: rgba(0, 184, 148, 0.12);
+  color: var(--accent-success);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+.enrollFeatures {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.enrollFeatures div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.enrollFeatures svg {
+  color: var(--accent-success);
+  flex-shrink: 0;
+}
+
+/* Content Section */
+.contentSection {
+  padding: 3rem 0 4rem;
+}
+
+.contentMain {
+  max-width: 800px;
+}
+
+.contentBlock {
+  margin-bottom: 3rem;
+}
+
+.contentBlock h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.contentBlock p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+/* Tags */
+.tagsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(108, 92, 231, 0.08);
+  border: 1px solid rgba(108, 92, 231, 0.15);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: var(--accent-primary-light);
+}
+
+.tag svg {
+  color: var(--accent-success);
+}
+
+/* Syllabus */
+.syllabusList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.syllabusItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  transition: all 0.2s;
+}
+
+.syllabusItem:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(108, 92, 231, 0.15);
+}
+
+.syllabusNumber {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-primary-light);
+  min-width: 28px;
+}
+
+.syllabusContent {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.syllabusPlay {
+  color: var(--text-tertiary);
+  transition: color 0.2s;
+}
+
+.syllabusItem:hover .syllabusPlay {
+  color: var(--accent-primary-light);
+}
+
+/* Trainer Card */
+.trainerCard {
+  display: flex;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+}
+
+@media (max-width: 640px) {
+  .trainerCard {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.trainerCardAvatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--gradient-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 8px 30px rgba(108, 92, 231, 0.3);
+}
+
+.trainerCardInfo h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.trainerCardSpec {
+  font-size: 0.85rem;
+  color: var(--accent-primary-light);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.trainerCardInfo p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.trainerCardStats {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.trainerCardStats div {
+  display: flex;
+  flex-direction: column;
+}
+
+.trainerCardStats strong {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.trainerCardStats span {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+/* Success Modal */
+.successModal {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.successIcon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(108, 92, 231, 0.12);
+  color: var(--accent-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.successModal h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.successModal p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.successPrice {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.successPrice strong {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--accent-success);
+}

@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ===== Trainers =====
+model Trainer {
+  id             String   @id @default(cuid())
+  name           String
+  email          String   @unique
+  specialization String
+  bio            String   @default("")
+  avatar         String   @default("")
+  rating         Float    @default(0)
+  experience     String   @default("")
+  courses        Course[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ===== Courses =====
+model Course {
+  id               String       @id @default(cuid())
+  title            String
+  description      String       @default("")
+  shortDescription String       @default("")
+  logo             String       @default("📘")
+  price            Float
+  discountPrice    Float?
+  category         String       @default("General")
+  level            String       @default("Beginner")
+  duration         String       @default("0 hours")
+  lessonsCount     Int          @default(0)
+  studentsEnrolled Int          @default(0)
+  rating           Float        @default(0)
+  tags             String[]     @default([])
+  syllabus         String[]     @default([])
+  isPublished      Boolean      @default(false)
+  trainerId        String
+  trainer          Trainer      @relation(fields: [trainerId], references: [id])
+  enrollments      Enrollment[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+// ===== Students =====
+model Student {
+  id          String       @id @default(cuid())
+  name        String
+  email       String       @unique
+  avatar      String       @default("")
+  enrollments Enrollment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+// ===== Enrollments =====
+model Enrollment {
+  id            String   @id @default(cuid())
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id])
+  courseId       String
+  course        Course   @relation(fields: [courseId], references: [id])
+  paymentStatus String   @default("pending")
+  progress      Int      @default(0)
+  enrolledAt    DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([studentId, courseId])
+}

@@ -1,0 +1,155 @@
+/* ===== STUDENT TRAINERS PAGE ===== */
+
+.main {
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+.hero {
+  position: relative;
+  padding: 140px 0 60px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1030 50%, #0a0a0f 100%);
+  z-index: 0;
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.trainersSection {
+  padding: 3rem 0;
+}
+
+.trainersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 2rem;
+}
+
+.trainerCard {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.trainerCard:hover {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border-color: rgba(108, 92, 231, 0.2);
+}
+
+.cardAvatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--gradient-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: white;
+  margin: 0 auto 1.25rem;
+  box-shadow: 0 8px 30px rgba(108, 92, 231, 0.3);
+}
+
+.cardName {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.cardSpec {
+  font-size: 0.9rem;
+  color: var(--accent-primary-light);
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.cardBio {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.cardStats {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-tertiary);
+}
+
+.statItem div {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.statItem strong {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.statItem span {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+}
+
+.cardCourses {
+  border-top: 1px solid var(--glass-border);
+  padding-top: 1.25rem;
+  text-align: left;
+}
+
+.cardCourses h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text-secondary);
+}
+
+.courseChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(108, 92, 231, 0.06);
+  border: 1px solid rgba(108, 92, 231, 0.1);
+  border-radius: 10px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.courseChipLogo {
+  font-size: 1.2rem;
+}
