@@ -1,0 +1,338 @@
+.aboutSection {
+  padding-top: calc(var(--space-4xl) + 80px);
+  padding-bottom: var(--space-4xl);
+  background-color: var(--bg-primary);
+  min-height: calc(100vh - var(--navbar-height));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.aboutHeader {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto var(--space-3xl);
+}
+
+.aboutTitle {
+  font-size: 3rem;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
+
+.aboutSubtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.aboutGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4xl);
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .aboutGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.aboutImage {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--glass-border);
+}
+
+.aboutContent h2 {
+  font-size: 2rem;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
+
+.aboutContent p {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-lg);
+  font-size: 1.1rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+.statItem {
+  text-align: center;
+  padding: var(--space-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+}
+
+.statValue {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--accent-primary);
+  font-family: var(--font-heading);
+}
+
+.statLabel {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .aboutTitle {
+    font-size: 2.2rem;
+  }
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+  .statItem {
+    padding: var(--space-md);
+  }
+}
+
+/* Mission Image */
+.missionImageContainer {
+  width: 100%;
+  height: 400px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--glass-border);
+}
+
+.missionImagePlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(67, 56, 202, 0.1), rgba(13, 148, 136, 0.1));
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 2rem;
+}
+
+.missionImagePlaceholder h2 {
+  color: var(--accent-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+}
+
+/* Developers Section */
+.devsSection {
+  margin-top: var(--space-4xl);
+  padding-top: var(--space-4xl);
+  border-top: 1px solid var(--glass-border);
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+.sectionHeader h2 {
+  font-size: 2.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.sectionHeader p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.devsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.devCard {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 4rem 3rem;
+  text-align: center;
+  transition: all 0.3s;
+  height: 100%;
+  width: 100%;
+  max-width: 550px;
+}
+
+.devCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  border-color: rgba(67, 56, 202, 0.2);
+}
+
+.devAvatar {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  margin: 0 auto 2.5rem;
+  overflow: hidden;
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+  border: 6px solid white;
+  box-shadow: 0 10px 25px rgba(67, 56, 202, 0.15);
+}
+
+.devAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.devCard h3 {
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.devRole {
+  display: block;
+  color: var(--accent-primary);
+  font-weight: 500;
+  font-size: 1.1rem;
+  margin-bottom: 1.25rem;
+}
+
+.devCard p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.devLinks {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.devLinks a {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.devLinks a:hover {
+  background: var(--accent-primary);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.resumeContainer {
+  margin-top: 2rem;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 2rem;
+}
+
+.resumeBtn {
+  width: 100%;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  padding: 1rem 2rem;
+  box-shadow: 0 10px 25px rgba(67, 56, 202, 0.25);
+  transition: all 0.3s;
+}
+
+.resumeBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(67, 56, 202, 0.35);
+}
+
+.noDevs {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem;
+  font-style: italic;
+}
+
+/* ===== CORE VALUES ===== */
+.valuesSection {
+  margin: var(--space-3xl) 0;
+  padding-top: var(--space-2xl);
+  border-top: 1px solid var(--glass-border);
+}
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xl);
+}
+
+@media (max-width: 1024px) {
+  .valuesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .valuesGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.valueCard {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  transition: all 0.3s;
+  height: 100%;
+}
+
+.valueCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  border-color: rgba(67, 56, 202, 0.2);
+}
+
+.valueIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.valueCard h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+}
+
+.valueCard p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}

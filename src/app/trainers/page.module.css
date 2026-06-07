@@ -15,7 +15,7 @@
 .heroBg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #0a0a0f 0%, #1a1030 50%, #0a0a0f 100%);
+  background: var(--bg-tertiary);
   z-index: 0;
 }
 
@@ -52,15 +52,15 @@
 }
 
 .trainerCard:hover {
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  border-color: rgba(108, 92, 231, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  border-color: var(--accent-primary);
 }
 
 .cardAvatar {
   width: 88px;
   height: 88px;
   border-radius: 50%;
-  background: var(--gradient-accent);
+  background: var(--accent-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,7 +68,7 @@
   font-weight: 800;
   color: white;
   margin: 0 auto 1.25rem;
-  box-shadow: 0 8px 30px rgba(108, 92, 231, 0.3);
+  box-shadow: 0 8px 30px rgba(67, 56, 202, 0.2);
 }
 
 .cardName {
@@ -79,7 +79,7 @@
 
 .cardSpec {
   font-size: 0.9rem;
-  color: var(--accent-primary-light);
+  color: var(--accent-primary);
   display: block;
   margin-bottom: 1rem;
 }
@@ -142,8 +142,8 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: rgba(108, 92, 231, 0.06);
-  border: 1px solid rgba(108, 92, 231, 0.1);
+  background: rgba(67, 56, 202, 0.06);
+  border: 1px solid rgba(67, 56, 202, 0.1);
   border-radius: 10px;
   font-size: 0.82rem;
   color: var(--text-secondary);

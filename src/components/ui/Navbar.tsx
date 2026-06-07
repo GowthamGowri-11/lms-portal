@@ -22,6 +22,7 @@ export default function Navbar() {
     { href: '/', label: 'Home' },
     { href: '/courses', label: 'Courses' },
     { href: '/trainers', label: 'Trainers' },
+    { href: '/about', label: 'About Us' },
   ];
 
   return (

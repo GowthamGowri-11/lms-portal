@@ -56,7 +56,7 @@ export default function TrainersClient({ trainers, courses }: { trainers: Traine
                           <div className={styles.statItem}>
                             <UsersIcon size={18} />
                             <div>
-                              <strong>{Math.floor(Math.random() * 500) + 50}</strong>
+                              <strong>{(trainer.name.charCodeAt(0) * 47) % 500 + 50}</strong>
                               <span>Students</span>
                             </div>
                           </div>

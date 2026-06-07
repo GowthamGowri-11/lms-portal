@@ -199,7 +199,7 @@ export default function AdminDashboardClient({
                 {trainers.length === 0 && <p style={{ color: 'var(--text-secondary)' }}>No trainers found.</p>}
                 {trainers
                   // We map to add a mock "studentsCount" for now to mimic the top trainers view
-                  .map(t => ({ ...t, studentsCount: Math.floor(Math.random() * 500) + 50 }))
+                  .map(t => ({ ...t, studentsCount: (t.name.charCodeAt(0) * 47) % 500 + 50 }))
                   .sort((a, b) => b.studentsCount - a.studentsCount)
                   .slice(0, 4)
                   .map((trainer, i) => (
