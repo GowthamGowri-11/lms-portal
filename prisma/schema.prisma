@@ -75,3 +75,17 @@ model Enrollment {
 
   @@unique([studentId, courseId])
 }
+
+// ===== Developers =====
+model Developer {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  bio       String   @default("")
+  avatar    String   @default("")
+  github    String   @default("")
+  linkedin  String   @default("")
+  resume    String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

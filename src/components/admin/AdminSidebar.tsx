@@ -12,9 +12,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Settings,
-  LogOut,
   BarChart3,
   Home,
+  Code,
+  LogOut,
 } from 'lucide-react';
 import styles from './AdminSidebar.module.css';
 
@@ -22,6 +23,7 @@ const menuItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/courses', label: 'Courses', icon: BookOpen },
   { href: '/admin/trainers', label: 'Trainers', icon: Users },
+  { href: '/admin/developers', label: 'Developers', icon: Code },
   { href: '/admin/students', label: 'Students', icon: GraduationCap },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/admin/settings', label: 'Settings', icon: Settings },

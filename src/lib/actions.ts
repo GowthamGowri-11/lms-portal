@@ -122,3 +122,57 @@ export async function deleteCourse(id: string) {
   revalidatePath('/admin');
   return course;
 }
+
+// ===== DEVELOPERS =====
+
+export async function createDeveloper(data: {
+  name: string;
+  role: string;
+  bio?: string;
+  avatar?: string;
+  github?: string;
+  linkedin?: string;
+  resume?: string;
+}) {
+  const developer = await prisma.developer.create({
+    data: {
+      ...data,
+      bio: data.bio || '',
+      avatar: data.avatar || '',
+      github: data.github || '',
+      linkedin: data.linkedin || '',
+      resume: data.resume || '',
+    },
+  });
+  
+  revalidatePath('/admin/developers');
+  revalidatePath('/about');
+  return developer;
+}
+
+export async function updateDeveloper(id: string, data: {
+  name?: string;
+  role?: string;
+  bio?: string;
+  avatar?: string;
+  github?: string;
+  linkedin?: string;
+  resume?: string;
+}) {
+  const developer = await prisma.developer.update({
+    where: { id },
+    data,
+  });
+  
+  revalidatePath('/admin/developers');
+  revalidatePath('/about');
+  return developer;
+}
+
+export async function deleteDeveloper(id: string) {
+  const developer = await prisma.developer.delete({ where: { id } });
+  
+  revalidatePath('/admin/developers');
+  revalidatePath('/about');
+  return developer;
+}
