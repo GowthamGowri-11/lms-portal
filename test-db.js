@@ -1,3 +1,5 @@
+/* eslint-disable */
+const { PrismaClient } = require('@prisma/client');
 const { Pool } = require('pg');
 require('dotenv').config();
 

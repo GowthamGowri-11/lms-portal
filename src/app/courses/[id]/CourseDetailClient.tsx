@@ -207,7 +207,7 @@ export default function CourseDetailClient({
                                 <span>Experience</span>
                               </div>
                               <div>
-                                <strong>{Math.floor(Math.random() * 500) + 50}</strong>
+                                <strong>{(course.title.length * 7) + 50}</strong>
                                 <span>Students</span>
                               </div>
                               <div>

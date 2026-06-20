@@ -26,11 +26,8 @@ export default function Navbar() {
   ];
 
   return (
-    <motion.header
+    <header
       className={`${styles.navbar} ${isScrolled ? styles.scrolled : ''}`}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
       <div className={styles.container}>
         {/* Logo */}
@@ -52,13 +49,6 @@ export default function Navbar() {
               className={`${styles.navLink} ${pathname === link.href ? styles.active : ''}`}
             >
               {link.label}
-              {pathname === link.href && (
-                <motion.div
-                  className={styles.activeIndicator}
-                  layoutId="activeNav"
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                />
-              )}
             </Link>
           ))}
         </nav>
@@ -93,38 +83,26 @@ export default function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {navLinks.map((link, i) => (
-              <motion.div
-                key={link.href}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Link
-                  href={link.href}
-                  className={`${styles.mobileLink} ${pathname === link.href ? styles.active : ''}`}
-                  onClick={() => setIsMobileOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              </motion.div>
-            ))}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: navLinks.length * 0.1 }}
-            >
+            {navLinks.map((link) => (
               <Link
-                href="/admin"
-                className={styles.mobileLink}
+                key={link.href}
+                href={link.href}
+                className={`${styles.mobileLink} ${pathname === link.href ? styles.active : ''}`}
                 onClick={() => setIsMobileOpen(false)}
               >
-                Admin Panel
+                {link.label}
               </Link>
-            </motion.div>
+            ))}
+            <Link
+              href="/admin"
+              className={styles.mobileLink}
+              onClick={() => setIsMobileOpen(false)}
+            >
+              Admin Panel
+            </Link>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </header>
   );
 }

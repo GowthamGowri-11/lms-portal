@@ -1,177 +1,189 @@
-import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Target, Lightbulb, Users as UsersIcon, Shield, Code, Layout, Database } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
-import { FadeInUp, ScrollReveal, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
-import { Terminal, Briefcase, Code, Lightbulb, Award, Users, ShieldCheck } from 'lucide-react';
+import { FadeInUp, ScrollReveal } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
-import { prisma } from '@/lib/prisma';
-import ViewResumeButton from '@/components/ui/ViewResumeButton';
 
-export default async function AboutPage() {
-  const developers = await prisma.developer.findMany({
-    orderBy: { createdAt: 'asc' },
-  });
-
+export default function AboutPage() {
   return (
     <>
       <Navbar />
-      <main className={styles.aboutSection}>
-        <div className="container">
-          <FadeInUp>
-            <div className={styles.aboutHeader}>
-              <h1 className={styles.aboutTitle}>Empowering Careers Through Expert Education</h1>
-              <p className={styles.aboutSubtitle}>
-                At GM Training, we are dedicated to providing world-class learning experiences designed
-                to help you master the skills that matter most in today's tech-driven world.
+      <main className={styles.main}>
+        {/* HERO SECTION */}
+        <section className={styles.hero}>
+          <div className={styles.heroDotGrid} />
+          <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+            <FadeInUp>
+              <span className={styles.heroTag}>About Us</span>
+              <h1 className={styles.heroTitle}>
+                Empowering the Next Generation of <span className={styles.accentText}>Tech Leaders</span>
+              </h1>
+              <p className={styles.heroSubtitle}>
+                GM Training is a premium learning platform dedicated to providing 
+                world-class education in technology, design, and business.
               </p>
-            </div>
-          </FadeInUp>
-
-          <div className={styles.aboutGrid}>
-            <ScrollReveal delay={0.2}>
-              <div className={styles.aboutContent}>
-                <h2>Our Mission</h2>
-                <p>
-                  We believe that quality education should be accessible and practical. Our mission is to bridge
-                  the gap between academic learning and industry requirements by offering hands-on, project-based
-                  courses led by seasoned professionals.
-                </p>
-                <p>
-                  Whether you are starting from scratch or looking to upskill, our structured curriculum and
-                  expert guidance will ensure you achieve your career goals.
-                </p>
-
-                <div className={styles.statsGrid}>
-                  <div className={styles.statItem}>
-                    <span className={styles.statValue}>10+</span>
-                    <span className={styles.statLabel}>Years Experience</span>
-                  </div>
-                  <div className={styles.statItem}>
-                    <span className={styles.statValue}>5K+</span>
-                    <span className={styles.statLabel}>Students Placed</span>
-                  </div>
-                  <div className={styles.statItem}>
-                    <span className={styles.statValue}>98%</span>
-                    <span className={styles.statLabel}>Success Rate</span>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal delay={0.4}>
-              <div className={styles.missionImageContainer}>
-                <div className={styles.missionImagePlaceholder}>
-                  <h2>Building the Future</h2>
-                  <p>Equipping learners with real-world skills.</p>
-                </div>
-              </div>
-            </ScrollReveal>
+            </FadeInUp>
           </div>
+        </section>
 
-          {/* Core Values Section */}
-          <div className={styles.valuesSection}>
-            <ScrollReveal>
-              <div className={styles.sectionHeader}>
-                <h2>Our Core Values</h2>
-                <p>The principles that guide everything we do.</p>
-              </div>
-            </ScrollReveal>
-
-            <div className={styles.valuesGrid}>
-              {[
-                {
-                  icon: <Lightbulb size={28} />,
-                  title: 'Innovation',
-                  desc: 'We constantly evolve our curriculum to stay ahead of industry trends.',
-                  color: 'var(--accent-primary)',
-                },
-                {
-                  icon: <Award size={28} />,
-                  title: 'Excellence',
-                  desc: 'We are committed to delivering the highest quality educational experience.',
-                  color: 'var(--accent-secondary)',
-                },
-                {
-                  icon: <Users size={28} />,
-                  title: 'Community',
-                  desc: 'We foster a collaborative and supportive environment for all learners.',
-                  color: 'var(--accent-tertiary)',
-                },
-                {
-                  icon: <ShieldCheck size={28} />,
-                  title: 'Integrity',
-                  desc: 'We operate with transparency, honesty, and a focus on student success.',
-                  color: 'var(--accent-warning)',
-                },
-              ].map((value, idx) => (
-                <ScrollReveal key={idx} delay={idx * 0.1}>
-                  <div className={styles.valueCard}>
-                    <div
-                      className={styles.valueIcon}
-                      style={{ background: `${value.color}15`, color: value.color }}
-                    >
-                      {value.icon}
+        {/* MISSION & VISION */}
+        <section className={styles.aboutSection}>
+          <div className="container">
+            <div className={styles.aboutGrid}>
+              <ScrollReveal>
+                <div className={styles.aboutContent}>
+                  <h2 className={styles.sectionTitle}>Our Mission</h2>
+                  <p>
+                    We believe that quality education should be accessible to everyone. 
+                    Our mission is to bridge the gap between academic learning and industry 
+                    requirements by providing practical, project-based training.
+                  </p>
+                  <p>
+                    Since our founding, we have helped thousands of students transition 
+                    into successful careers in tech through our comprehensive curriculums 
+                    designed by industry experts.
+                  </p>
+                  
+                  <div className={styles.statsGrid}>
+                    <div className={styles.statItem}>
+                      <span className={styles.statValue}>5K+</span>
+                      <span className={styles.statLabel}>Students</span>
                     </div>
-                    <h3>{value.title}</h3>
-                    <p>{value.desc}</p>
+                    <div className={styles.statItem}>
+                      <span className={styles.statValue}>50+</span>
+                      <span className={styles.statLabel}>Courses</span>
+                    </div>
+                    <div className={styles.statItem}>
+                      <span className={styles.statValue}>20+</span>
+                      <span className={styles.statLabel}>Expert Trainers</span>
+                    </div>
+                  </div>
+                </div>
+              </ScrollReveal>
+              
+              <ScrollReveal delay={0.2}>
+                <div className={styles.missionImageContainer}>
+                  <div className={styles.missionImagePlaceholder}>
+                    <Target size={48} style={{ color: 'var(--accent-primary)', marginBottom: '1rem' }} />
+                    <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem', fontSize: '1.5rem' }}>Vision for the Future</h3>
+                    <p style={{ color: 'var(--text-secondary)' }}>Building a global community of lifelong learners.</p>
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
+
+            {/* CORE VALUES */}
+            <div className={styles.valuesSection}>
+              <ScrollReveal>
+                <div className={styles.sectionHeaderCenter}>
+                  <h2 className={styles.sectionTitle}>Our Core Values</h2>
+                  <p className={styles.sectionSubtitleCenter}>The principles that guide everything we do.</p>
+                </div>
+              </ScrollReveal>
+
+              <div className={styles.valuesGrid}>
+                {[
+                  { icon: <Target size={32} />, title: 'Excellence', desc: 'We strive for the highest quality in our curriculum and teaching.', color: 'var(--accent-primary)' },
+                  { icon: <Lightbulb size={32} />, title: 'Innovation', desc: 'We constantly update our content to match the latest industry trends.', color: 'var(--accent-secondary)' },
+                  { icon: <UsersIcon size={32} />, title: 'Community', desc: 'We foster a supportive environment where learners grow together.', color: 'var(--accent-tertiary)' },
+                  { icon: <Shield size={32} />, title: 'Integrity', desc: 'We are transparent, honest, and committed to our students\' success.', color: 'var(--accent-warning)' }
+                ].map((value, idx) => (
+                  <ScrollReveal key={idx} delay={idx * 0.1}>
+                    <div className={styles.valueCard} style={{ borderTopColor: value.color }}>
+                      <div className={styles.valueIcon} style={{ color: value.color, background: `${value.color}15` }}>
+                        {value.icon}
+                      </div>
+                      <h3>{value.title}</h3>
+                      <p>{value.desc}</p>
+                    </div>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </div>
+
+            {/* DEVELOPERS / CREATORS */}
+            <div className={styles.devsSection}>
+              <ScrollReveal>
+                <div className={styles.sectionHeaderCenter}>
+                  <span className={styles.heroTag} style={{ marginBottom: '1rem' }}>The Creators</span>
+                  <h2 className={styles.sectionTitle}>Meet the Developers</h2>
+                  <p className={styles.sectionSubtitleCenter}>The team behind GM Training platform.</p>
+                </div>
+              </ScrollReveal>
+
+              <div className={styles.devsGrid}>
+                {/* Developer 1 - Gowtham */}
+                <ScrollReveal delay={0.1}>
+                  <div className={styles.devCard}>
+                    <div className={styles.devAvatar} style={{ borderColor: 'var(--accent-primary)' }}>
+                      <div className={styles.avatarPlaceholder}>G</div>
+                    </div>
+                    <h3>Gowtham</h3>
+                    <span className={styles.devRole} style={{ color: 'var(--accent-primary)' }}>Full Stack Developer</span>
+                    <p>
+                      Specializing in Next.js, React, and Node.js. Passionate about creating seamless 
+                      user experiences and robust backend architectures.
+                    </p>
+                    <div className={styles.devSkills}>
+                      <span className={styles.skillChip}><Code size={14} /> Next.js</span>
+                      <span className={styles.skillChip}><Database size={14} /> Prisma</span>
+                    </div>
                   </div>
                 </ScrollReveal>
-              ))}
+
+                {/* Developer 2 - Gowri */}
+                <ScrollReveal delay={0.2}>
+                  <div className={styles.devCard}>
+                    <div className={styles.devAvatar} style={{ borderColor: 'var(--accent-secondary)' }}>
+                      <div className={styles.avatarPlaceholder}>G</div>
+                    </div>
+                    <h3>Gowri</h3>
+                    <span className={styles.devRole} style={{ color: 'var(--accent-secondary)' }}>UI/UX Designer & Frontend Dev</span>
+                    <p>
+                      Expert in Framer Motion, Tailwind CSS, and user-centric design principles. 
+                      Dedicated to making interfaces that are both beautiful and accessible.
+                    </p>
+                    <div className={styles.devSkills}>
+                      <span className={styles.skillChip}><Layout size={14} /> UI/UX</span>
+                      <span className={styles.skillChip}><Code size={14} /> Frontend</span>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              </div>
             </div>
           </div>
+        </section>
 
-          {/* Developers Section */}
-          <div className={styles.devsSection}>
+        {/* CTA SECTION */}
+        <section className={styles.ctaSection}>
+          <div className="container">
             <ScrollReveal>
-              <div className={styles.sectionHeader}>
-                <h2>Meet the Developers</h2>
-                <p>The engineering team that built the GM Training platform.</p>
+              <div className={styles.ctaCard}>
+                <h2>Join Our Learning Community</h2>
+                <p>Start your journey today and get access to premium courses, expert trainers, and a supportive community.</p>
+                <Link href="/courses" className="btn btn-primary btn-lg" style={{ background: 'white', color: 'var(--accent-primary)' }}>
+                  Explore Courses
+                </Link>
               </div>
             </ScrollReveal>
-
-            {developers.length > 0 ? (
-              <StaggerContainer className={styles.devsGrid}>
-                {developers.map((dev) => (
-                  <StaggerItem key={dev.id}>
-                    <div className={styles.devCard}>
-                      <div className={styles.devAvatar}>
-                        {dev.avatar ? (
-                          <img src={dev.avatar} alt={dev.name} />
-                        ) : (
-                          <Code size={32} />
-                        )}
-                      </div>
-                      <h3>{dev.name}</h3>
-                      <span className={styles.devRole}>{dev.role}</span>
-                      <p>{dev.bio}</p>
-                      
-                      <div className={styles.devLinks}>
-                        {dev.github && (
-                          <a href={dev.github} target="_blank" rel="noopener noreferrer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.02c3.14-.35 6.5-1.4 6.5-7a4.6 4.6 0 0 0-1.39-3.23 4.08 4.08 0 0 0-.13-3.19s-1.12-.36-3.66 1.25a12.8 12.8 0 0 0-6.6 0C6.12 2.1 5 2.46 5 2.46a4.08 4.08 0 0 0-.13 3.19 4.6 4.6 0 0 0-1.39 3.23c0 5.6 3.36 6.65 6.5 7a4.8 4.8 0 0 0-1 3.02V22"/><path d="M9 20c-5 1.5-5-2.5-7-3"/></svg>
-                          </a>
-                        )}
-                        {dev.linkedin && (
-                          <a href={dev.linkedin} target="_blank" rel="noopener noreferrer">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
-                          </a>
-                        )}
-                      </div>
-
-                      {/* View Resume Button */}
-                      {(dev as any).resume && (
-                        <div className={styles.resumeContainer}>
-                          <ViewResumeButton resumeUrl={(dev as any).resume} />
-                        </div>
-                      )}
-                    </div>
-                  </StaggerItem>
-                ))}
-              </StaggerContainer>
-            ) : (
-              <p className={styles.noDevs}>No developers have been added yet.</p>
-            )}
           </div>
-        </div>
+        </section>
+
+        {/* FOOTER */}
+        <footer className={styles.footer}>
+          <div className="container">
+            <div className={styles.footerContent}>
+              <div className={styles.footerBrand}>
+                <h3>GM <span className={styles.accentText}>Training</span></h3>
+                <p>Empowering learners worldwide.</p>
+              </div>
+              <div className={styles.footerCopyright}>
+                <span>© {new Date().getFullYear()} GM Training. All rights reserved.</span>
+              </div>
+            </div>
+          </div>
+        </footer>
       </main>
     </>
   );

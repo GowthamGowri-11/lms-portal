@@ -100,7 +100,7 @@ export async function createCourse(data: {
   return course;
 }
 
-export async function updateCourse(id: string, data: any) {
+export async function updateCourse(id: string, data: Record<string, unknown>) {
   const course = await prisma.course.update({
     where: { id },
     data,
