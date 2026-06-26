@@ -1,8 +1,5 @@
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
-  BookOpen,
-  ArrowRight,
   Award,
   Users,
   CheckCircle,
@@ -13,7 +10,10 @@ import {
   FadeInUp,
   ScrollReveal,
 } from '@/components/animations/MotionWrappers';
-import LottieAnimation from '@/components/animations/LottieAnimation';
+import CodeTypingAnimation from '@/components/ui/CodeTypingAnimation';
+import SuccessRoadmap from '@/components/ui/SuccessRoadmap';
+import TrendingBento from '@/components/ui/TrendingBento';
+import CallToAction from '@/components/ui/CallToAction';
 import styles from './page.module.css';
 
 export default function Home() {
@@ -23,17 +23,24 @@ export default function Home() {
       <main className={styles.main}>
         {/* ===== HERO SECTION ===== */}
         <section className={styles.hero}>
-          <div className={styles.gridLines} />
+          <div className={styles.dotGrid} />
           <div className={styles.heroContainer}>
             <div className={styles.heroContent}>
               <FadeInUp delay={0.1}>
-                <h1 className={styles.heroTitle}>
-                  Master the Skills <br />
-                  <span style={{ color: 'var(--accent-primary)' }}>That Drive Your Career</span>
-                </h1>
+                <div className={styles.heroTag}>
+                  <span className={styles.heroTagDot} />
+                  Learning Management System
+                </div>
               </FadeInUp>
 
               <FadeInUp delay={0.2}>
+                <h1 className={styles.heroTitle}>
+                  Master the Skills{' '}
+                  <span className={styles.accentText}>That Drive Your Career</span>
+                </h1>
+              </FadeInUp>
+
+              <FadeInUp delay={0.3}>
                 <p className={styles.heroDescription}>
                   Join millions of learners advancing their careers with world-class
                   courses in Tech, Design, and Business. Learn from industry experts
@@ -41,99 +48,58 @@ export default function Home() {
                 </p>
               </FadeInUp>
 
-              <FadeInUp delay={0.3}>
+              <FadeInUp delay={0.4}>
                 <div className={styles.heroActions}>
                   <Link href="/courses" className="btn btn-primary btn-lg">
                     Join for Free
                   </Link>
-                  <button className="btn btn-secondary btn-lg">
+                  <Link href="/courses" className="btn btn-secondary btn-lg">
                     Explore Programs
-                  </button>
+                  </Link>
+                </div>
+              </FadeInUp>
+
+              <FadeInUp delay={0.5}>
+                <div className={styles.heroStats}>
+                  <div className={styles.heroStat}>
+                    <strong>5K+</strong>
+                    <span>Students</span>
+                  </div>
+                  <div className={styles.heroStatDivider} />
+                  <div className={styles.heroStat}>
+                    <strong>50+</strong>
+                    <span>Courses</span>
+                  </div>
+                  <div className={styles.heroStatDivider} />
+                  <div className={styles.heroStat}>
+                    <strong>98%</strong>
+                    <span>Success Rate</span>
+                  </div>
                 </div>
               </FadeInUp>
             </div>
-          </div>
-        </section>
 
-        {/* ===== PARTNERS SECTION ===== */}
-        <section className={styles.partnersSection}>
-          <div className="container">
-            <p className={styles.partnersTitle}>We collaborate with <strong>200+ leading universities and companies</strong></p>
-            <div className={styles.partnersGrid}>
-              {['Google', 'IBM', 'Microsoft', 'Stanford', 'Meta', 'Amazon'].map((partner, idx) => (
-                <div key={idx} className={styles.partnerLogo}>
-                  {partner}
+            <div className={styles.heroVisual}>
+              <div className={styles.heroCard}>
+                <div className={styles.heroCardHeader}>
+                  <div className={styles.heroCardDot} style={{ background: '#ef4444' }} />
+                  <div className={styles.heroCardDot} style={{ background: '#eab308' }} />
+                  <div className={styles.heroCardDot} style={{ background: '#10b981' }} />
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ===== FEATURED TRAINING PATHS ===== */}
-        <section className={`section ${styles.pathsSection}`}>
-          <div className="container">
-            <ScrollReveal>
-              <div className={styles.sectionHeader}>
-                <span className={styles.sectionTag}>Learning Paths</span>
-                <h2 className={styles.sectionTitle}>
-                  Featured <span style={{ color: 'var(--accent-primary)' }}>Training Paths</span>
-                </h2>
-                <p style={{ color: 'var(--text-secondary)', marginTop: '8px' }}>
-                  Curated curriculums designed to take you from beginner to job-ready professional.
-                </p>
+                <div className={styles.heroCardBody}>
+                  <CodeTypingAnimation />
+                </div>
               </div>
-            </ScrollReveal>
-
-            <div className={styles.pathsGrid}>
-              {[
-                {
-                  title: 'Frontend Mastery',
-                  desc: 'Master React, Next.js, and modern CSS to build stunning user interfaces.',
-                  courses: 4,
-                  duration: '3 Months',
-                  icon: <Globe size={24} />,
-                  color: 'var(--accent-primary)',
-                },
-                {
-                  title: 'Backend Engineering',
-                  desc: 'Learn Node.js, databases, and API design to power complex applications.',
-                  courses: 5,
-                  duration: '4 Months',
-                  icon: <BookOpen size={24} />,
-                  color: 'var(--accent-secondary)',
-                },
-                {
-                  title: 'UI/UX Design',
-                  desc: 'Design beautiful, user-centric experiences using Figma and design principles.',
-                  courses: 3,
-                  duration: '2 Months',
-                  icon: <Award size={24} />,
-                  color: 'var(--accent-tertiary)',
-                },
-              ].map((path, idx) => (
-                <ScrollReveal key={idx} delay={idx * 0.1}>
-                  <div className={styles.pathCard}>
-                    <div className={styles.pathHeader}>
-                      <div className={styles.pathIcon} style={{ background: `${path.color}15`, color: path.color }}>
-                        {path.icon}
-                      </div>
-                      <h3>{path.title}</h3>
-                    </div>
-                    <p className={styles.pathDesc}>{path.desc}</p>
-                    <div className={styles.pathMeta}>
-                      <span>{path.courses} Courses</span>
-                      <span className={styles.pathDot}>•</span>
-                      <span>{path.duration}</span>
-                    </div>
-                    <Link href="/courses" className={styles.pathLink} style={{ color: path.color }}>
-                      View Path <ArrowRight size={16} />
-                    </Link>
-                  </div>
-                </ScrollReveal>
-              ))}
             </div>
           </div>
         </section>
+
+
+        {/* ===== TRENDING FEATURES ===== */}
+        <TrendingBento />
+
+        {/* ===== SUCCESS ROADMAP ===== */}
+        <SuccessRoadmap />
 
         {/* ===== WHY CHOOSE US ===== */}
         <section className={`section ${styles.whySection}`}>
@@ -142,7 +108,7 @@ export default function Home() {
               <div className={styles.sectionHeader}>
                 <span className={styles.sectionTag}>Why GM Training</span>
                 <h2 className={styles.sectionTitle}>
-                  Why Learners <span style={{ color: 'var(--accent-primary)' }}>Choose Us</span>
+                  Why Learners <span className={styles.accentText}>Choose Us</span>
                 </h2>
               </div>
             </ScrollReveal>
@@ -178,12 +144,14 @@ export default function Home() {
                   <div className={styles.whyCard}>
                     <div
                       className={styles.whyIcon}
-                      style={{ background: 'var(--bg-tertiary)', color: item.color }}
+                      style={{ color: item.color }}
                     >
                       {item.icon}
                     </div>
-                    <h3>{item.title}</h3>
-                    <p>{item.desc}</p>
+                    <div className={styles.whyText}>
+                      <h3>{item.title}</h3>
+                      <p>{item.desc}</p>
+                    </div>
                   </div>
                 </ScrollReveal>
               ))}
@@ -192,25 +160,7 @@ export default function Home() {
         </section>
 
         {/* ===== CTA SECTION ===== */}
-        <section className={`section ${styles.ctaSection}`}>
-          <div className="container">
-            <ScrollReveal>
-              <div className={styles.ctaCard}>
-                <h2>Ready to Start Your Learning Journey?</h2>
-                <p>
-                  Join thousands of students already learning with GM Training.
-                  Get access to premium courses taught by industry experts.
-                </p>
-                <div className={styles.ctaActions}>
-                  <Link href="/courses" className="btn btn-primary btn-lg">
-                    Get Started Now
-                    <ArrowRight size={18} />
-                  </Link>
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-        </section>
+        <CallToAction />
 
         {/* ===== FOOTER ===== */}
         <footer className={styles.footer}>
@@ -254,4 +204,3 @@ export default function Home() {
     </>
   );
 }
-

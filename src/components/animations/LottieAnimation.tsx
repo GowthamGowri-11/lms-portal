@@ -7,12 +7,7 @@ import defaultAnimationData from './lottieData.json';
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 export default function LottieAnimation() {
-  const [animationData, setAnimationData] = useState<any>(null);
-
-  useEffect(() => {
-    // Using a local simple lottie animation to avoid CORS or fetch errors
-    setAnimationData(defaultAnimationData);
-  }, []);
+  const [animationData] = useState<unknown>(defaultAnimationData);
 
   if (!animationData) {
     return (

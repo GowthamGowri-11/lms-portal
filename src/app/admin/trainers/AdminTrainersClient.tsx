@@ -119,7 +119,7 @@ export default function AdminTrainersClient({
           {filteredTrainers.map((trainer) => {
             const trainerCourses = courses.filter((c) => c.trainerId === trainer.id);
             // Mocking studentsCount since we don't have robust enrollments logic yet
-            const mockStudents = Math.floor(Math.random() * 500) + 50;
+            const mockStudents = (trainer.name.length * 12) + 50;
             return (
               <StaggerItem key={trainer.id}>
                 <motion.div

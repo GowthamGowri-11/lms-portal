@@ -10,5 +10,5 @@ export default async function TrainersPage() {
     select: { id: true, title: true, logo: true, trainerId: true, isPublished: true }
   });
 
-  return <TrainersClient trainers={trainers} courses={courses as any} />;
+  return <TrainersClient trainers={trainers} courses={courses as unknown as { id: string; title: string; logo: string; trainerId: string; isPublished: boolean }[]} />;
 }
