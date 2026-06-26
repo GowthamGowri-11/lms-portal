@@ -22,7 +22,7 @@ export default function AdminTrainersClient({
   courses 
 }: { 
   initialTrainers: Trainer[], 
-  courses: Course[] 
+  courses: { id: string; title: string; logo: string; trainerId: string }[] 
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);

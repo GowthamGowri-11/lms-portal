@@ -147,39 +147,70 @@
   grid-row: span 1;
 }
 
-/* Inner Visuals */
-.mockupVisual {
+/* IDE Mockup */
+.ideMockup {
   margin-top: 1.5rem;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #1e1e2e; /* Deep dark background */
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   flex-grow: 1;
   position: relative;
   z-index: 1;
   overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.codeLines {
-  display: flex;
   flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.ideHeader {
+  background: #11111b;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ideDots {
+  display: flex;
   gap: 8px;
-  width: 80%;
+  margin-right: 1.5rem;
 }
 
-.line {
-  height: 6px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.1);
+.ideDots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
-.line:nth-child(1) { width: 100%; }
-.line:nth-child(2) { width: 80%; }
-.line:nth-child(3) { width: 60%; }
-.line:nth-child(4) { width: 90%; }
-.line:nth-child(5) { width: 40%; }
+.dotClose { background: #f38ba8; }
+.dotMinimize { background: #f9e2af; }
+.dotMaximize { background: #a6e3a1; }
+
+.ideTab {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  color: #a6adc8;
+  background: #1e1e2e;
+  padding: 6px 16px;
+  border-radius: 6px 6px 0 0;
+  border-bottom: 2px solid var(--accent-primary);
+}
+
+.ideBody {
+  padding: 1.5rem;
+  font-family: 'Fira Code', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #cdd6f4;
+  overflow-x: auto;
+}
+
+.codeKeyword { color: #cba6f7; }
+.codeFunc { color: #89b4fa; }
+.codeString { color: #a6e3a1; }
+.codeTag { color: #f38ba8; }
+.codeComment { color: #6c7086; font-style: italic; }
 
 /* Responsive */
 @media (max-width: 1024px) {

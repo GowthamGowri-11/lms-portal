@@ -34,13 +34,25 @@ export default function TrendingBento() {
             <p>
               Stop watching and start building. Our browser-based IDE lets you write, run, and debug code in real-time, right next to the lesson materials.
             </p>
-            <div className={styles.mockupVisual}>
-              <div className={styles.codeLines}>
-                <div className={styles.line} style={{ background: 'var(--accent-primary)' }} />
-                <div className={styles.line} />
-                <div className={styles.line} />
-                <div className={styles.line} style={{ background: 'var(--accent-secondary)' }} />
-                <div className={styles.line} />
+            <div className={styles.ideMockup}>
+              <div className={styles.ideHeader}>
+                <div className={styles.ideDots}>
+                  <span className={styles.dotClose}></span>
+                  <span className={styles.dotMinimize}></span>
+                  <span className={styles.dotMaximize}></span>
+                </div>
+                <div className={styles.ideTab}>main.tsx</div>
+              </div>
+              <div className={styles.ideBody}>
+                <div>
+                  <span className={styles.codeKeyword}>function</span> <span className={styles.codeFunc}>LearnToCode</span>() {'{'}
+                  <br />
+                  &nbsp;&nbsp;<span className={styles.codeKeyword}>const</span> skills = <span className={styles.codeString}>&apos;limitless&apos;</span>;
+                  <br />
+                  &nbsp;&nbsp;<span className={styles.codeKeyword}>return</span> <span className={styles.codeTag}>&lt;Future /&gt;</span>;
+                  <br />
+                  {'}'}
+                </div>
               </div>
             </div>
           </motion.div>

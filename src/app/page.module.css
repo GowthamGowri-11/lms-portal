@@ -143,7 +143,7 @@
 
 .heroCard {
   width: 100%;
-  max-width: 420px;
+  max-width: 520px; /* Increased from 420px */
   background: #1e1b4b;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -152,22 +152,22 @@
 
 .heroCardHeader {
   display: flex;
-  gap: 6px;
-  padding: 14px 18px;
+  gap: 8px; /* Increased gap */
+  padding: 16px 20px; /* Increased padding */
   background: rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .heroCardDot {
-  width: 12px;
-  height: 12px;
+  width: 14px; /* Increased dot size */
+  height: 14px;
   border-radius: 50%;
 }
 
 .heroCardBody {
-  padding: 1.5rem 1.5rem 2rem;
+  padding: 2rem 2rem 2.5rem; /* Increased padding */
   font-family: 'Courier New', monospace;
-  font-size: 0.95rem;
+  font-size: 1.25rem; /* Increased font size from 0.95rem */
   line-height: 2;
   color: rgba(255, 255, 255, 0.7);
 }

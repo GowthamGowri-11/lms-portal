@@ -7,7 +7,7 @@ import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations
 import styles from './page.module.css';
 import { Trainer, Course } from '@/generated/prisma/client';
 
-export default function TrainersClient({ trainers, courses }: { trainers: Trainer[], courses: Course[] }) {
+export default function TrainersClient({ trainers, courses }: { trainers: Trainer[], courses: { id: string; title: string; logo: string; trainerId: string; isPublished: boolean }[] }) {
   return (
     <>
       <Navbar />
