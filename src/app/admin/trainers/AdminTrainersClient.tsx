@@ -15,6 +15,7 @@ const emptyForm = {
   bio: '',
   avatar: '',
   experience: '',
+  rating: 0,
 };
 
 export default function AdminTrainersClient({ 
@@ -52,6 +53,7 @@ export default function AdminTrainersClient({
       bio: trainer.bio,
       avatar: trainer.avatar,
       experience: trainer.experience,
+      rating: trainer.rating || 0,
     });
     setShowModal(true);
   };
@@ -118,8 +120,6 @@ export default function AdminTrainersClient({
         <StaggerContainer className={styles.trainersGrid}>
           {filteredTrainers.map((trainer) => {
             const trainerCourses = courses.filter((c) => c.trainerId === trainer.id);
-            // Mocking studentsCount since we don't have robust enrollments logic yet
-            const mockStudents = (trainer.name.length * 12) + 50;
             return (
               <StaggerItem key={trainer.id}>
                 <motion.div
@@ -150,13 +150,6 @@ export default function AdminTrainersClient({
                       </div>
                     </div>
                     <div className={styles.statItem}>
-                      <UsersIcon size={16} />
-                      <div>
-                        <strong>{mockStudents}</strong>
-                        <span>Students</span>
-                      </div>
-                    </div>
-                    <div className={styles.statItem}>
                       <Star size={16} />
                       <div>
                         <strong>{trainer.rating || 'N/A'}</strong>
@@ -165,18 +158,20 @@ export default function AdminTrainersClient({
                     </div>
                   </div>
 
-                  {trainerCourses.length > 0 && (
-                    <div className={styles.assignedCourses}>
-                      <span className={styles.assignedLabel}>Assigned Courses:</span>
-                      <div className={styles.assignedList}>
-                        {trainerCourses.map((c) => (
+                  <div className={styles.assignedCourses}>
+                    <span className={styles.assignedLabel}>Assigned Courses:</span>
+                    <div className={styles.assignedList}>
+                      {trainerCourses.length > 0 ? (
+                        trainerCourses.map((c) => (
                           <span key={c.id} className={styles.assignedChip}>
                             {c.logo} {c.title}
                           </span>
-                        ))}
-                      </div>
+                        ))
+                      ) : (
+                        <span className={styles.assignedChip} style={{ opacity: 0.5, border: 'none', background: 'transparent', padding: 0 }}>None</span>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </motion.div>
               </StaggerItem>
             );
@@ -232,6 +227,10 @@ export default function AdminTrainersClient({
                     <div className="input-group">
                       <label>Experience</label>
                       <input type="text" className="input-field" value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} disabled={isLoading} />
+                    </div>
+                    <div className="input-group">
+                      <label>Rating (0-5)</label>
+                      <input type="number" min="0" max="5" step="0.1" className="input-field" value={form.rating} onChange={(e) => setForm({ ...form, rating: parseFloat(e.target.value) || 0 })} disabled={isLoading} />
                     </div>
                   </div>
 

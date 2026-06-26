@@ -14,9 +14,14 @@ import CodeTypingAnimation from '@/components/ui/CodeTypingAnimation';
 import SuccessRoadmap from '@/components/ui/SuccessRoadmap';
 import TrendingBento from '@/components/ui/TrendingBento';
 import CallToAction from '@/components/ui/CallToAction';
+import { prisma } from '@/lib/prisma';
 import styles from './page.module.css';
 
-export default function Home() {
+export default async function Home() {
+  const studentsCount = await prisma.student.count();
+  const coursesCount = await prisma.course.count();
+  const trainersCount = await prisma.trainer.count();
+
   return (
     <>
       <Navbar />
@@ -60,22 +65,22 @@ export default function Home() {
               </FadeInUp>
 
               <FadeInUp delay={0.5}>
-                <div className={styles.heroStats}>
-                  <div className={styles.heroStat}>
-                    <strong>5K+</strong>
-                    <span>Students</span>
+                  <div className={styles.heroStats}>
+                    <div className={styles.heroStat}>
+                      <strong>{studentsCount}</strong>
+                      <span>Students</span>
+                    </div>
+                    <div className={styles.heroStatDivider} />
+                    <div className={styles.heroStat}>
+                      <strong>{coursesCount}</strong>
+                      <span>Courses</span>
+                    </div>
+                    <div className={styles.heroStatDivider} />
+                    <div className={styles.heroStat}>
+                      <strong>{trainersCount}</strong>
+                      <span>Expert Trainers</span>
+                    </div>
                   </div>
-                  <div className={styles.heroStatDivider} />
-                  <div className={styles.heroStat}>
-                    <strong>50+</strong>
-                    <span>Courses</span>
-                  </div>
-                  <div className={styles.heroStatDivider} />
-                  <div className={styles.heroStat}>
-                    <strong>98%</strong>
-                    <span>Success Rate</span>
-                  </div>
-                </div>
               </FadeInUp>
             </div>
 

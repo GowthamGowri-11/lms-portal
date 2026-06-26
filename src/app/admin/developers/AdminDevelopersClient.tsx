@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Search, Edit3, Trash2, X, Code } from 'lucide-react';
 import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import { createDeveloper, updateDeveloper, deleteDeveloper } from '@/lib/actions';
+import ViewResumeButton from '@/components/ui/ViewResumeButton';
 import styles from './page.module.css';
 import { Developer } from '@/generated/prisma/client';
 
@@ -156,6 +157,11 @@ export default function AdminDevelopersClient({
                     </a>
                   )}
                 </div>
+                {dev.resume && (
+                  <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+                    <ViewResumeButton resumeUrl={dev.resume} />
+                  </div>
+                )}
               </motion.div>
             </StaggerItem>
           ))}

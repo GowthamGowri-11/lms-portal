@@ -78,14 +78,16 @@
 }
 
 .cardLogo {
-  font-size: 2.5rem;
-  width: 56px;
+  font-size: 2rem;
+  min-width: 56px;
   height: 56px;
+  padding: 0 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(108, 92, 231, 0.08);
   border-radius: 14px;
+  white-space: nowrap;
 }
 
 .cardActions {

@@ -61,6 +61,9 @@
   text-align: center;
   position: relative;
   transition: box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .trainerCard:hover {
@@ -130,6 +133,7 @@
   color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 1rem;
+  flex-grow: 1;
 }
 
 .trainerStats {
