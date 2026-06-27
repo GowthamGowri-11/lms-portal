@@ -69,6 +69,11 @@
   gap: 2rem;
 }
 
+.staggerItemWrapper {
+  height: 100%;
+  display: block;
+}
+
 @media (max-width: 1024px) {
   .trainersGrid {
     grid-template-columns: 1fr;
@@ -77,161 +82,165 @@
 
 .trainerCard {
   display: flex;
+  flex-direction: column;
   background: var(--bg-card);
   border: 1px solid var(--glass-border);
-  border-left: 4px solid var(--accent-primary);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: all 0.25s;
-}
-
-@media (max-width: 640px) {
-  .trainerCard {
-    flex-direction: column;
-  }
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  height: 100%;
 }
 
 .trainerCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
-  border-color: var(--glass-border);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+  border-color: rgba(67, 56, 202, 0.2);
 }
 
-.cardLeft {
-  padding: 2rem;
-  background: var(--bg-tertiary);
-  border-right: 1px solid var(--glass-border);
+/* CARD HEADER */
+.cardHeader {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  min-width: 200px;
-}
-
-@media (max-width: 640px) {
-  .cardLeft {
-    border-right: none;
-    border-bottom: 1px solid var(--glass-border);
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 1.5rem;
-  }
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--glass-border);
 }
 
 .cardAvatar {
-  width: 90px;
-  height: 90px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  background: var(--accent-primary);
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 800;
   color: white;
-  margin-bottom: 1.5rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(67, 56, 202, 0.2);
 }
 
-@media (max-width: 640px) {
-  .cardAvatar {
-    margin-bottom: 0;
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
-  }
-}
-
-.cardStats {
+.cardHeaderInfo {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: 100%;
-}
-
-@media (max-width: 640px) {
-  .cardStats {
-    width: auto;
-    flex-direction: row;
-    gap: 1.5rem;
-  }
-}
-
-.statItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.statItem svg {
-  color: var(--text-tertiary);
-}
-
-.cardRight {
-  padding: 2rem;
-  flex-grow: 1;
-}
-
-.cardHeader {
-  margin-bottom: 1rem;
 }
 
 .cardName {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 800;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .cardSpec {
-  font-size: 0.95rem;
-  color: var(--accent-secondary);
+  font-size: 0.9rem;
+  color: var(--accent-primary);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+/* CARD BODY */
+.cardBody {
+  padding: 1.5rem;
+  flex-grow: 1;
 }
 
 .cardBio {
   font-size: 1rem;
   color: var(--text-secondary);
   line-height: 1.6;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
+/* COURSES LIST */
 .cardCourses {
-  border-top: 1px solid var(--glass-border);
-  padding-top: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .cardCourses h4 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .coursesList {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .courseChip {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  background: var(--bg-card);
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--bg-tertiary);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   font-size: 0.85rem;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   font-weight: 500;
+  transition: all 0.2s;
+}
+
+.courseChip:hover {
+  background: var(--bg-card);
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
 }
 
 .courseChipLogo {
-  font-size: 1.2rem;
+  font-size: 1rem;
+}
+
+/* CARD FOOTER */
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--glass-border);
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.statInfo strong {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.statInfo span {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 640px) {
+  .cardFooter {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }

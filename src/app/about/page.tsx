@@ -7,7 +7,15 @@ import ViewResumeButton from '@/components/ui/ViewResumeButton';
 import styles from './page.module.css';
 
 export default async function AboutPage() {
-  const developers = await prisma.developer.findMany();
+  let developers = await prisma.developer.findMany();
+  
+  // Sort developers so Gowtham appears first
+  developers.sort((a, b) => {
+    if (a.name.toLowerCase().includes('gowtham')) return -1;
+    if (b.name.toLowerCase().includes('gowtham')) return 1;
+    return 0;
+  });
+
   const studentsCount = await prisma.student.count();
   const coursesCount = await prisma.course.count();
   const trainersCount = await prisma.trainer.count();
@@ -122,7 +130,7 @@ export default async function AboutPage() {
                 {developers.map((dev, idx) => {
                   const color = idx % 2 === 0 ? 'var(--accent-primary)' : 'var(--accent-secondary)';
                   return (
-                    <ScrollReveal key={dev.id} delay={idx * 0.1}>
+                    <ScrollReveal key={dev.id} delay={idx * 0.1} className={styles.devCardWrapper}>
                       <div className={styles.devCard}>
                         <div className={styles.devAvatar} style={{ borderColor: color }}>
                           {dev.avatar ? (

@@ -1,11 +1,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Star, Users as UsersIcon, Award } from 'lucide-react';
+import { Star, Users as UsersIcon, Award, BookOpen } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
-import { Trainer, Course } from '@/generated/prisma/client';
+import { Trainer } from '@/generated/prisma/client';
 
 export default function TrainersClient({ trainers, courses }: { trainers: Trainer[], courses: { id: string; title: string; logo: string; trainerId: string; isPublished: boolean }[] }) {
   return (
@@ -34,41 +34,29 @@ export default function TrainersClient({ trainers, courses }: { trainers: Traine
               {trainers.map((trainer) => {
                 const trainerCourses = courses.filter((c) => c.trainerId === trainer.id && c.isPublished);
                 return (
-                  <StaggerItem key={trainer.id}>
+                  <StaggerItem key={trainer.id} className={styles.staggerItemWrapper}>
                     <div className={styles.trainerCard}>
-                      <div className={styles.cardLeft}>
-                        <div className={styles.cardAvatar}>{trainer.name.charAt(0)}</div>
-                        <div className={styles.cardStats}>
-                          <div className={styles.statItem}>
-                            <Award size={16} />
-                            <span>{trainer.experience} Exp</span>
-                          </div>
-                          <div className={styles.statItem}>
-                            <Star size={16} />
-                            <span>{trainer.rating} Rating</span>
-                          </div>
-                          <div className={styles.statItem}>
-                            <UsersIcon size={16} />
-                            <span>{(trainer.name.charCodeAt(0) * 47) % 500 + 50} Students</span>
-                          </div>
-                        </div>
-                      </div>
                       
-                      <div className={styles.cardRight}>
-                        <div className={styles.cardHeader}>
+                      <div className={styles.cardHeader}>
+                        <div className={styles.cardAvatar}>{trainer.name.charAt(0)}</div>
+                        <div className={styles.cardHeaderInfo}>
                           <h3 className={styles.cardName}>{trainer.name}</h3>
                           <span className={styles.cardSpec}>{trainer.specialization}</span>
                         </div>
-                        
+                      </div>
+                      
+                      <div className={styles.cardBody}>
                         <p className={styles.cardBio}>{trainer.bio}</p>
 
                         {trainerCourses.length > 0 && (
                           <div className={styles.cardCourses}>
-                            <h4>Courses by {trainer.name.split(' ')[0]}</h4>
+                            <h4><BookOpen size={14} /> Courses</h4>
                             <div className={styles.coursesList}>
                               {trainerCourses.map((c) => (
                                 <div key={c.id} className={styles.courseChip}>
-                                  <span className={styles.courseChipLogo}>{c.logo}</span>
+                                  <span className={styles.courseChipLogo}>
+                                    <img src={c.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain' }} />
+                                  </span>
                                   <span>{c.title}</span>
                                 </div>
                               ))}
@@ -76,6 +64,31 @@ export default function TrainersClient({ trainers, courses }: { trainers: Traine
                           </div>
                         )}
                       </div>
+
+                      <div className={styles.cardFooter}>
+                        <div className={styles.statItem}>
+                          <Award size={18} color="var(--accent-primary)" />
+                          <div className={styles.statInfo}>
+                            <strong>{trainer.experience}</strong>
+                            <span>Experience</span>
+                          </div>
+                        </div>
+                        <div className={styles.statItem}>
+                          <Star size={18} color="var(--accent-warning)" />
+                          <div className={styles.statInfo}>
+                            <strong>{trainer.rating}</strong>
+                            <span>Rating</span>
+                          </div>
+                        </div>
+                        <div className={styles.statItem}>
+                          <UsersIcon size={18} color="var(--accent-secondary)" />
+                          <div className={styles.statInfo}>
+                            <strong>{(trainer.name.charCodeAt(0) * 47) % 500 + 50}</strong>
+                            <span>Students</span>
+                          </div>
+                        </div>
+                      </div>
+
                     </div>
                   </StaggerItem>
                 );

@@ -62,7 +62,9 @@ export default function AdminStudentsClient({
                       const course = courses.find((c) => c.id === enrollment.courseId);
                       return (
                         <div key={enrollment.id} className={styles.enrolledItem}>
-                          <span>{course?.logo} {course?.title}</span>
+                          <span>
+                            <img src={course?.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain', verticalAlign: 'middle', marginRight: '4px' }} /> {course?.title}
+                          </span>
                           <div className={styles.progressBar}>
                             <motion.div
                               className={styles.progressFill}

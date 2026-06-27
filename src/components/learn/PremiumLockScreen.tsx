@@ -46,7 +46,9 @@ export default function PremiumLockScreen({
           <div className={styles.lockIconContainer}>
             <Lock size={40} className={styles.lockIcon} />
           </div>
-          <span className={styles.courseLogo}>{course.logo}</span>
+          <span className={styles.courseLogo}>
+            <img src={course.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain' }} />
+          </span>
           <h1 className={styles.title}>{course.title}</h1>
           <p className={styles.subtitle}>This course is locked.</p>
           <p className={styles.desc}>Purchase this course to continue and unlock all lessons, coding practice, and quizzes.</p>

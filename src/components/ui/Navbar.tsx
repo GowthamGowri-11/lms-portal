@@ -23,7 +23,6 @@ export default function Navbar() {
     { href: '/courses', label: 'Courses' },
     { href: '/trainers', label: 'Trainers' },
     { href: '/about', label: 'About Us' },
-    { href: '/dashboard', label: 'My Learning' },
   ];
 
   return (

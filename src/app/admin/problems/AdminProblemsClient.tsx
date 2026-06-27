@@ -234,7 +234,7 @@ export default function AdminProblemsClient({
                       <select className="input-field" value={form.lessonId} onChange={(e) => setForm({ ...form, lessonId: e.target.value })}>
                         <option value="">No lesson</option>
                         {lessons.map((l) => (
-                          <option key={l.id} value={l.id}>{l.module.course.logo} {l.title}</option>
+                          <option key={l.id} value={l.id}>{l.title}</option>
                         ))}
                       </select>
                     </div>

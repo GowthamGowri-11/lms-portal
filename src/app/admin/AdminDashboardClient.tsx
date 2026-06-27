@@ -188,7 +188,9 @@ export default function AdminDashboardClient({
                         <span className={styles.quickTitle}>{course.title}</span>
                         <span className={styles.quickMeta}>{course.studentsEnrolled} students</span>
                       </div>
-                      <div className={styles.quickLogo}>{course.logo}</div>
+                      <div className={styles.quickLogo}>
+                        <img src={course.logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                      </div>
                     </div>
                   ))}
               </div>
