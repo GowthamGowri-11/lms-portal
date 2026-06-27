@@ -7,12 +7,13 @@ import { Search, Star, ArrowRight, Filter, BookOpen, SlidersHorizontal } from 'l
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
-import { Course, Trainer } from '@/generated/prisma/client';
+import { CourseWithArrays } from '@/lib/utils';
+import { Trainer } from '@/generated/prisma/client';
 
 const categories = ['All', 'Web Development', 'Design', 'Data Science', 'Mobile Development', 'Cloud Computing', 'DevOps', 'Cybersecurity', 'Other'];
 const levels = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 
-export default function CoursesClient({ courses, trainers }: { courses: Course[], trainers: Trainer[] }) {
+export default function CoursesClient({ courses, trainers }: { courses: CourseWithArrays[], trainers: Trainer[] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedLevel, setSelectedLevel] = useState('All');

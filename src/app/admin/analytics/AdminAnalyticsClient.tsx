@@ -3,13 +3,14 @@
 import { motion } from 'framer-motion';
 import { BarChart3, TrendingUp, DollarSign, BookOpen } from 'lucide-react';
 import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
-import { Course, Enrollment } from '@/generated/prisma/client';
+import { CourseWithArrays } from '@/lib/utils';
+import { Enrollment } from '@/generated/prisma/client';
 
 export default function AdminAnalyticsClient({
   courses,
   enrollments
 }: {
-  courses: Course[],
+  courses: CourseWithArrays[],
   enrollments: Enrollment[]
 }) {
   const totalRevenue = enrollments

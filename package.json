@@ -9,24 +9,30 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@prisma/adapter-better-sqlite3": "^7.8.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "@types/pg": "^8.20.0",
+    "better-sqlite3": "^12.11.1",
     "dotenv": "^17.4.2",
     "framer-motion": "^12.40.0",
     "lottie-react": "^2.4.1",
     "lucide-react": "^1.17.0",
     "next": "16.2.7",
-    "pg": "^8.21.0",
+    "pg": "^8.22.0",
     "prisma": "^7.8.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.7",
+    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }

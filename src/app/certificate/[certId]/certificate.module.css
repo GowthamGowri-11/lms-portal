@@ -1,0 +1,161 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 2rem;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  color: var(--accent-purple);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.cert {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  border: 2px solid var(--border);
+  background: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.border {
+  position: absolute;
+  inset: 0;
+  border: 5px solid var(--accent-purple);
+  pointer-events: none;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo {
+  margin-bottom: 0.5rem;
+}
+
+.gmName {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.tagline {
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.divider {
+  height: 2px;
+  background: var(--border);
+  margin: 1rem 0;
+}
+
+.certLabel {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 1rem;
+}
+
+.body {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.presented {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.studentName {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+}
+
+.courseName {
+  font-size: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.courseDetails {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.badge {
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.signatureBlock {
+  text-align: center;
+}
+
+.signatureLine {
+  border-top: 1px solid var(--border);
+  width: 150px;
+  margin: 0 auto 0.2rem;
+}
+
+.signerName {
+  font-weight: 600;
+}
+
+.signerTitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.sealBlock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seal {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+}
+
+.certMeta {
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 1rem;
+  color: var(--text-muted);
+}
+
+.certId {
+  font-weight: 600;
+}

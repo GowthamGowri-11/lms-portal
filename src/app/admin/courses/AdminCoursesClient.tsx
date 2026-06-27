@@ -6,7 +6,8 @@ import { Plus, Search, Edit3, Trash2, X, Eye, EyeOff, Star, Users as UsersIcon }
 import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import { createCourse, updateCourse, deleteCourse } from '@/lib/actions';
 import styles from './page.module.css';
-import { Course, Trainer } from '@/generated/prisma/client';
+import { CourseWithArrays } from '@/lib/utils';
+import { Trainer } from '@/generated/prisma/client';
 
 const emptyForm = {
   title: '',
@@ -29,12 +30,12 @@ export default function AdminCoursesClient({
   initialCourses, 
   trainers 
 }: { 
-  initialCourses: Course[], 
+  initialCourses: CourseWithArrays[], 
   trainers: Trainer[] 
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [editingCourse, setEditingCourse] = useState<CourseWithArrays | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [tagsInput, setTagsInput] = useState('');
   const [syllabusInput, setSyllabusInput] = useState('');
@@ -55,7 +56,7 @@ export default function AdminCoursesClient({
     setShowModal(true);
   };
 
-  const openEditModal = (course: Course) => {
+  const openEditModal = (course: CourseWithArrays) => {
     setEditingCourse(course);
     setForm({
       title: course.title,
@@ -112,7 +113,7 @@ export default function AdminCoursesClient({
     }
   };
 
-  const togglePublish = async (course: Course) => {
+  const togglePublish = async (course: CourseWithArrays) => {
     try {
       await updateCourse(course.id, { isPublished: !course.isPublished });
     } catch (error) {

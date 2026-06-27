@@ -1,13 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 // ===== Trainers =====
@@ -40,25 +37,66 @@ model Course {
   lessonsCount     Int          @default(0)
   studentsEnrolled Int          @default(0)
   rating           Float        @default(0)
-  tags             String[]     @default([])
-  syllabus         String[]     @default([])
+  tags             String       @default("[]")
+  syllabus         String       @default("[]")
   isPublished      Boolean      @default(false)
   trainerId        String
   trainer          Trainer      @relation(fields: [trainerId], references: [id])
   enrollments      Enrollment[]
+  modules          Module[]
+  quizzes          Quiz[]
+  certificates     Certificate[]
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
 }
 
+// ===== Modules =====
+model Module {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @default("")
+  order       Int      @default(0)
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons     Lesson[]
+  quizzes     Quiz[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ===== Lessons =====
+model Lesson {
+  id          String           @id @default(cuid())
+  title       String
+  description String           @default("")
+  videoUrl    String           @default("")
+  notes       String           @default("")
+  resources   String           @default("[]")
+  order       Int              @default(0)
+  duration    String           @default("")
+  isFree      Boolean          @default(false)
+  moduleId    String
+  module      Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progresses  LessonProgress[]
+  problems    CodingProblem[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
 // ===== Students =====
 model Student {
-  id          String       @id @default(cuid())
-  name        String
-  email       String       @unique
-  avatar      String       @default("")
-  enrollments Enrollment[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id              String           @id @default(cuid())
+  name            String
+  email           String           @unique
+  avatar          String           @default("")
+  enrollments     Enrollment[]
+  lessonProgresses LessonProgress[]
+  courseProgresses CourseProgress[]
+  codingSubmissions CodingSubmission[]
+  quizAttempts    QuizAttempt[]
+  certificates    Certificate[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 }
 
 // ===== Enrollments =====
@@ -66,7 +104,7 @@ model Enrollment {
   id            String   @id @default(cuid())
   studentId     String
   student       Student  @relation(fields: [studentId], references: [id])
-  courseId       String
+  courseId      String
   course        Course   @relation(fields: [courseId], references: [id])
   paymentStatus String   @default("pending")
   progress      Int      @default(0)
@@ -74,6 +112,139 @@ model Enrollment {
   updatedAt     DateTime @updatedAt
 
   @@unique([studentId, courseId])
+}
+
+// ===== Lesson Progress =====
+model LessonProgress {
+  id          String   @id @default(cuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id])
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([studentId, lessonId])
+}
+
+// ===== Course Progress =====
+model CourseProgress {
+  id                String   @id @default(cuid())
+  studentId         String
+  student           Student  @relation(fields: [studentId], references: [id])
+  courseId          String
+  completedLessons  Int      @default(0)
+  totalLessons      Int      @default(0)
+  percentage        Float    @default(0)
+  lastLessonId      String   @default("")
+  isCompleted       Boolean  @default(false)
+  completedAt       DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([studentId, courseId])
+}
+
+// ===== Coding Problems =====
+model CodingProblem {
+  id            String             @id @default(cuid())
+  title         String
+  difficulty    String             @default("Easy")
+  description   String             @default("")
+  inputFormat   String             @default("")
+  outputFormat  String             @default("")
+  constraints   String             @default("")
+  examples      String             @default("[]")
+  hiddenTests   String             @default("[]")
+  visibleTests  String             @default("[]")
+  starterCode   String             @default("{}")
+  languages     String             @default("[]")
+  timeLimit     Int                @default(2)
+  memoryLimit   Int                @default(256)
+  points        Int                @default(10)
+  lessonId      String?
+  lesson        Lesson?            @relation(fields: [lessonId], references: [id])
+  submissions   CodingSubmission[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
+
+// ===== Coding Submissions =====
+model CodingSubmission {
+  id           String        @id @default(cuid())
+  studentId    String
+  student      Student       @relation(fields: [studentId], references: [id])
+  problemId    String
+  problem      CodingProblem @relation(fields: [problemId], references: [id])
+  language     String        @default("python")
+  code         String        @default("")
+  status       String        @default("pending")
+  output       String        @default("")
+  timeTaken    Float         @default(0)
+  memoryUsed   Float         @default(0)
+  passedTests  Int           @default(0)
+  totalTests   Int           @default(0)
+  submittedAt  DateTime      @default(now())
+}
+
+// ===== Quizzes =====
+model Quiz {
+  id          String        @id @default(cuid())
+  title       String
+  description String        @default("")
+  courseId    String?
+  course      Course?       @relation(fields: [courseId], references: [id])
+  moduleId    String?
+  module      Module?       @relation(fields: [moduleId], references: [id])
+  timeLimit   Int           @default(0)
+  passMark    Int           @default(70)
+  questions   QuizQuestion[]
+  attempts    QuizAttempt[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+// ===== Quiz Questions =====
+model QuizQuestion {
+  id            String   @id @default(cuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question      String
+  type          String   @default("mcq")
+  options       String   @default("[]")
+  correctAnswer String   @default("")
+  explanation   String   @default("")
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+}
+
+// ===== Quiz Attempts =====
+model QuizAttempt {
+  id          String   @id @default(cuid())
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id])
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id])
+  answers     String   @default("{}")
+  score       Int      @default(0)
+  totalMarks  Int      @default(0)
+  percentage  Float    @default(0)
+  passed      Boolean  @default(false)
+  timeTaken   Int      @default(0)
+  completedAt DateTime @default(now())
+}
+
+// ===== Certificates =====
+model Certificate {
+  id            String   @id @default(cuid())
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id])
+  courseId      String
+  course        Course   @relation(fields: [courseId], references: [id])
+  certificateId String   @unique @default(cuid())
+  issuedAt      DateTime @default(now())
 }
 
 // ===== Developers =====

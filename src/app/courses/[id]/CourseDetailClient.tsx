@@ -4,28 +4,41 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
-  ArrowLeft,
-  Star,
-  Clock,
-  BookOpen,
-  CheckCircle,
-  Play,
-  ShieldCheck,
-  X,
+  ArrowLeft, Star, Clock, BookOpen, CheckCircle,
+  Play, ShieldCheck, X, Lock, ChevronDown, ChevronRight,
+  Users, Award, Target,
 } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, ScrollReveal, PageTransition } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
-import { Course, Trainer } from '@/generated/prisma/client';
+import { CourseWithArrays } from '@/lib/utils';
+import { Trainer, Module, Lesson } from '@/generated/prisma/client';
 
-export default function CourseDetailClient({ 
-  course, 
-  trainer 
-}: { 
-  course: Course, 
-  trainer: Trainer | null 
+type ModuleWithLessons = Module & { lessons: Lesson[] };
+
+export default function CourseDetailClient({
+  course,
+  trainer,
+  modules = [],
+}: {
+  course: CourseWithArrays;
+  trainer: Trainer | null;
+  modules?: ModuleWithLessons[];
 }) {
   const [showEnrollModal, setShowEnrollModal] = useState(false);
+  const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set([modules[0]?.id ?? '']));
+
+  const totalLessons = modules.reduce((t, m) => t + m.lessons.length, 0);
+
+  const toggleModule = (id: string) => {
+    setExpandedModules((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const firstLesson = modules[0]?.lessons[0];
 
   return (
     <>
@@ -51,15 +64,12 @@ export default function CourseDetailClient({
                       <span className="badge badge-success">{course.category}</span>
                     </div>
                   </FadeInUp>
-
                   <FadeInUp delay={0.15}>
                     <h1 className={styles.heroTitle}>{course.title}</h1>
                   </FadeInUp>
-
                   <FadeInUp delay={0.2}>
                     <p className={styles.heroDesc}>{course.shortDescription}</p>
                   </FadeInUp>
-
                   <FadeInUp delay={0.25}>
                     <div className={styles.heroMeta}>
                       <div className={styles.metaItem}>
@@ -73,11 +83,10 @@ export default function CourseDetailClient({
                       </div>
                       <div className={styles.metaItem}>
                         <BookOpen size={16} />
-                        <span>{course.lessonsCount} lessons</span>
+                        <span>{totalLessons} lessons</span>
                       </div>
                     </div>
                   </FadeInUp>
-
                   {trainer && (
                     <FadeInUp delay={0.3}>
                       <div className={styles.trainerInfo}>
@@ -108,18 +117,28 @@ export default function CourseDetailClient({
                           <span className={styles.enrollCurrentPrice}>₹{course.price}</span>
                         )}
                       </div>
+                      {firstLesson && (
+                        <Link
+                          href={`/learn/${course.id}/lesson/${firstLesson.id}`}
+                          className="btn btn-primary btn-lg"
+                          style={{ width: '100%', justifyContent: 'center', marginBottom: '0.75rem' }}
+                        >
+                          <Play size={18} /> Start Learning
+                        </Link>
+                      )}
                       <button
-                        className="btn btn-primary btn-lg"
+                        className="btn btn-secondary btn-lg"
                         style={{ width: '100%' }}
                         onClick={() => setShowEnrollModal(true)}
                       >
                         Enroll Now
                       </button>
                       <div className={styles.enrollFeatures}>
+                        <div><CheckCircle size={14} /> {totalLessons} Lessons</div>
                         <div><CheckCircle size={14} /> Lifetime Access</div>
                         <div><CheckCircle size={14} /> Certificate of Completion</div>
-                        <div><CheckCircle size={14} /> Project-Based Learning</div>
-                        <div><CheckCircle size={14} /> 24/7 Support</div>
+                        <div><CheckCircle size={14} /> Coding Practice</div>
+                        <div><CheckCircle size={14} /> Quizzes & Assessments</div>
                       </div>
                     </div>
                   </FadeInUp>
@@ -128,12 +147,40 @@ export default function CourseDetailClient({
             </div>
           </section>
 
+          {/* Progress Overview */}
+          {modules.length > 0 && (
+            <section className={styles.progressSection}>
+              <div className="container">
+                <ScrollReveal>
+                  <div className={styles.progressGrid}>
+                    {[
+                      { icon: <BookOpen size={22} />, value: modules.length, label: 'Modules', color: 'var(--accent-primary)' },
+                      { icon: <Play size={22} />, value: totalLessons, label: 'Total Lessons', color: 'var(--accent-secondary)' },
+                      { icon: <Clock size={22} />, value: course.duration, label: 'Course Duration', color: 'var(--accent-tertiary)' },
+                      { icon: <Award size={22} />, value: '1 Certificate', label: 'On Completion', color: 'var(--accent-warning)' },
+                    ].map((stat, i) => (
+                      <motion.div key={i} className={styles.progressStat} whileHover={{ y: -3 }}>
+                        <div className={styles.progressStatIcon} style={{ color: stat.color, background: `${stat.color}18` }}>
+                          {stat.icon}
+                        </div>
+                        <div>
+                          <div className={styles.progressStatValue}>{stat.value}</div>
+                          <div className={styles.progressStatLabel}>{stat.label}</div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </ScrollReveal>
+              </div>
+            </section>
+          )}
+
           {/* Content */}
           <section className={styles.contentSection}>
             <div className="container">
               <div className={styles.contentGrid}>
-                {/* Description */}
                 <div className={styles.contentMain}>
+                  {/* About */}
                   <ScrollReveal>
                     <div className={styles.contentBlock}>
                       <h2>About This Course</h2>
@@ -157,29 +204,65 @@ export default function CourseDetailClient({
                     </ScrollReveal>
                   )}
 
-                  {/* Syllabus */}
-                  {course.syllabus.length > 0 && (
+                  {/* Course Content / Modules */}
+                  {modules.length > 0 && (
                     <ScrollReveal>
                       <div className={styles.contentBlock}>
-                        <h2>Course Syllabus</h2>
-                        <div className={styles.syllabusList}>
-                          {course.syllabus.map((item: string, i: number) => (
-                            <motion.div
-                              key={i}
-                              className={styles.syllabusItem}
-                              initial={{ opacity: 0, x: -20 }}
-                              whileInView={{ opacity: 1, x: 0 }}
-                              viewport={{ once: true }}
-                              transition={{ delay: i * 0.08 }}
-                            >
-                              <div className={styles.syllabusNumber}>
-                                {String(i + 1).padStart(2, '0')}
-                              </div>
-                              <div className={styles.syllabusContent}>
-                                <span>{item}</span>
-                              </div>
-                              <Play size={16} className={styles.syllabusPlay} />
-                            </motion.div>
+                        <div className={styles.modulesSectionHeader}>
+                          <h2>Course Content</h2>
+                          <span className={styles.modulesCount}>
+                            {modules.length} sections • {totalLessons} lessons • {course.duration}
+                          </span>
+                        </div>
+
+                        <div className={styles.modulesList}>
+                          {modules.map((mod, mIdx) => (
+                            <div key={mod.id} className={styles.moduleItem}>
+                              <button
+                                className={styles.moduleHeader}
+                                onClick={() => toggleModule(mod.id)}
+                              >
+                                <div className={styles.moduleHeaderLeft}>
+                                  {expandedModules.has(mod.id)
+                                    ? <ChevronDown size={18} />
+                                    : <ChevronRight size={18} />
+                                  }
+                                  <span className={styles.moduleNum}>Section {mIdx + 1}</span>
+                                  <span className={styles.moduleTitle}>{mod.title}</span>
+                                </div>
+                                <span className={styles.moduleCount}>{mod.lessons.length} lessons</span>
+                              </button>
+
+                              <AnimatePresence>
+                                {expandedModules.has(mod.id) && (
+                                  <motion.div
+                                    className={styles.lessonsContainer}
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                  >
+                                    {mod.lessons.map((lesson) => (
+                                      <Link
+                                        key={lesson.id}
+                                        href={`/learn/${course.id}/lesson/${lesson.id}`}
+                                        className={styles.lessonRow}
+                                      >
+                                        <Play size={14} className={styles.lessonPlay} />
+                                        <span className={styles.lessonTitle}>{lesson.title}</span>
+                                        <div className={styles.lessonMeta}>
+                                          {lesson.duration && <span className={styles.lessonDuration}>{lesson.duration}</span>}
+                                          {lesson.isFree
+                                            ? <span className={styles.freeBadge}>Free</span>
+                                            : <Lock size={12} className={styles.lockIcon} />
+                                          }
+                                        </div>
+                                      </Link>
+                                    ))}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -192,14 +275,10 @@ export default function CourseDetailClient({
                       <div className={styles.contentBlock}>
                         <h2>Meet Your Instructor</h2>
                         <div className={styles.trainerCard}>
-                          <div className={styles.trainerCardAvatar}>
-                            {trainer.name.charAt(0)}
-                          </div>
+                          <div className={styles.trainerCardAvatar}>{trainer.name.charAt(0)}</div>
                           <div className={styles.trainerCardInfo}>
                             <h3>{trainer.name}</h3>
-                            <span className={styles.trainerCardSpec}>
-                              {trainer.specialization}
-                            </span>
+                            <span className={styles.trainerCardSpec}>{trainer.specialization}</span>
                             <p>{trainer.bio}</p>
                             <div className={styles.trainerCardStats}>
                               <div>
@@ -207,7 +286,7 @@ export default function CourseDetailClient({
                                 <span>Experience</span>
                               </div>
                               <div>
-                                <strong>{(course.title.length * 7) + 50}</strong>
+                                <strong>{course.studentsEnrolled}</strong>
                                 <span>Students</span>
                               </div>
                               <div>
@@ -265,10 +344,7 @@ export default function CourseDetailClient({
                   <span>Amount: </span>
                   <strong>₹{course.discountPrice || course.price}</strong>
                 </div>
-                <button
-                  className="btn btn-primary btn-lg"
-                  onClick={() => setShowEnrollModal(false)}
-                >
+                <button className="btn btn-primary btn-lg" onClick={() => setShowEnrollModal(false)}>
                   Got it!
                 </button>
               </div>

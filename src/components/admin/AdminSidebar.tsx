@@ -16,15 +16,21 @@ import {
   Home,
   Code,
   LogOut,
+  PlayCircle,
+  HelpCircle,
+  UserCircle,
 } from 'lucide-react';
 import styles from './AdminSidebar.module.css';
 
 const menuItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/courses', label: 'Courses', icon: BookOpen },
+  { href: '/admin/lessons', label: 'Lessons', icon: PlayCircle },
+  { href: '/admin/quizzes', label: 'Quizzes', icon: HelpCircle },
+  { href: '/admin/problems', label: 'Coding Problems', icon: Code },
   { href: '/admin/trainers', label: 'Trainers', icon: Users },
-  { href: '/admin/developers', label: 'Developers', icon: Code },
   { href: '/admin/students', label: 'Students', icon: GraduationCap },
+  { href: '/admin/developers', label: 'Developers', icon: UserCircle },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];

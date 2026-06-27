@@ -1,6 +1,5 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import { Target, Lightbulb, Users as UsersIcon, Shield, Code, Layout, Database } from 'lucide-react';
+import { Target, Lightbulb, Users as UsersIcon, Shield } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, ScrollReveal } from '@/components/animations/MotionWrappers';
 import { prisma } from '@/lib/prisma';

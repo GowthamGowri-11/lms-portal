@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { GraduationCap, Mail, BookOpen, Award } from 'lucide-react';
 import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
-import { Student, Course, Enrollment } from '@/generated/prisma/client';
+import { CourseWithArrays } from '@/lib/utils';
+import { Student, Enrollment } from '@/generated/prisma/client';
 
 export default function AdminStudentsClient({
   students,
@@ -12,7 +13,7 @@ export default function AdminStudentsClient({
   enrollments
 }: {
   students: Student[],
-  courses: Course[],
+  courses: CourseWithArrays[],
   enrollments: Enrollment[]
 }) {
   return (
