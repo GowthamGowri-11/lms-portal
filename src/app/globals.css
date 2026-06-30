@@ -121,22 +121,22 @@ ul, ol {
 }
 
 /* ---------- Scrollbar ---------- */
-::-webkit-scrollbar {
-  width: 6px;
-}
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
+  ::-webkit-scrollbar-track {
+    background: #111827; /* Dark track */
+  }
 
-::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
-  border-radius: var(--radius-full);
-}
+  ::-webkit-scrollbar-thumb {
+    background: #3B82F6; /* Blue thumb */
+    border-radius: var(--radius-full);
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-primary);
-}
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2563EB; /* Slightly brighter on hover */
+  }
 
 /* ---------- Utility Classes ---------- */
 
