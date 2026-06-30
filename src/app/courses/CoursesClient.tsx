@@ -107,11 +107,7 @@ export default function CoursesClient({ courses, trainers }: { courses: CourseWi
                       <StaggerItem key={course.id} style={{ height: '100%' }}>
                         <Link href={`/courses/${course.id}`} style={{ display: 'block', height: '100%' }}>
                           <div className={styles.courseCard}>
-                            <div className={styles.cardLeft}>
-                              <div className={styles.cardLogo}>
-                                <img src={course.logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                              </div>
-                            </div>
+                            {/* Image removed */}
                             <div className={styles.cardRight}>
                               <div className={styles.cardTopRow}>
                                 <span className={styles.cardCategory}>{course.category}</span>
