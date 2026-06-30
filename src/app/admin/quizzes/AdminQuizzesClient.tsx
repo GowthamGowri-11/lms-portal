@@ -169,7 +169,7 @@ export default function AdminQuizzesClient({
                     <div>
                       <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{quiz.title}</div>
                       <div style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)' }}>
-                        {quiz.course?.logo} {quiz.course?.title ?? 'No course'} {quiz.module ? `• ${quiz.module.title}` : ''} • {quiz.questions.length} questions
+                        <img src={quiz.course?.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain', verticalAlign: 'middle', marginRight: '4px' }} /> {quiz.course?.title ?? 'No course'} {quiz.module ? `• ${quiz.module.title}` : ''} • {quiz.questions.length} questions
                       </div>
                     </div>
                   </div>
@@ -252,7 +252,7 @@ export default function AdminQuizzesClient({
                       <label>Assign to Course</label>
                       <select className="input-field" value={quizForm.courseId} onChange={(e) => setQuizForm({ ...quizForm, courseId: e.target.value, moduleId: '' })}>
                         <option value="">No course</option>
-                        {courses.map((c) => <option key={c.id} value={c.id}>{c.logo} {c.title}</option>)}
+                        {courses.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
                       </select>
                     </div>
                     <div className="input-group">

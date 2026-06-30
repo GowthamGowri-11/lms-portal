@@ -2,22 +2,20 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Search, Star, ArrowRight, Filter, BookOpen, SlidersHorizontal } from 'lucide-react';
+import { Search, Star, BookOpen } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
 import { CourseWithArrays } from '@/lib/utils';
 import { Trainer } from '@/generated/prisma/client';
 
-const categories = ['All', 'Web Development', 'Design', 'Data Science', 'Mobile Development', 'Cloud Computing', 'DevOps', 'Cybersecurity', 'Other'];
+const categories = ['All', 'Web Development', 'Python', 'Java', 'C++', 'Data Science', 'Cloud Computing', 'DevOps', 'Cybersecurity', 'Other'];
 const levels = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 
 export default function CoursesClient({ courses, trainers }: { courses: CourseWithArrays[], trainers: Trainer[] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedLevel, setSelectedLevel] = useState('All');
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const filteredCourses = courses.filter((c) => {
     const matchesSearch =
@@ -27,49 +25,6 @@ export default function CoursesClient({ courses, trainers }: { courses: CourseWi
     const matchesLevel = selectedLevel === 'All' || c.level === selectedLevel;
     return matchesSearch && matchesCategory && matchesLevel;
   });
-
-  const filterSidebar = (
-    <div className={styles.sidebar}>
-      <div className={styles.sidebarSection}>
-        <h4 className={styles.sidebarTitle}>
-          <SlidersHorizontal size={16} />
-          Filters
-        </h4>
-      </div>
-
-      <div className={styles.sidebarSection}>
-        <h5 className={styles.filterLabel}>Category</h5>
-        <div className={styles.filterList}>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              className={`${styles.filterItem} ${selectedCategory === cat ? styles.filterItemActive : ''}`}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              <span className={styles.filterDot} />
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className={styles.sidebarSection}>
-        <h5 className={styles.filterLabel}>Level</h5>
-        <div className={styles.filterList}>
-          {levels.map((lvl) => (
-            <button
-              key={lvl}
-              className={`${styles.filterItem} ${selectedLevel === lvl ? styles.filterItemActive : ''}`}
-              onClick={() => setSelectedLevel(lvl)}
-            >
-              <span className={styles.filterDot} />
-              {lvl}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <>
@@ -92,81 +47,70 @@ export default function CoursesClient({ courses, trainers }: { courses: CourseWi
         </section>
 
         <section className={styles.contentSection}>
-          <div className="container">
-            <div className={styles.contentLayout}>
-              {/* Desktop Sidebar */}
-              {filterSidebar}
-
-              {/* Main Content */}
-              <div className={styles.mainContent}>
-                <FadeInUp delay={0.1}>
-                  <div className={styles.topBar}>
-                    <div className={styles.searchBar}>
-                      <Search size={18} className={styles.searchIcon} />
-                      <input
-                        type="text"
-                        placeholder="Search courses..."
-                        className={styles.searchInput}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                      />
-                    </div>
-                    <button
-                      className={styles.mobileFilterBtn}
-                      onClick={() => setShowMobileFilters(!showMobileFilters)}
+          <div className="container" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            
+            {/* Horizontal Filter Bar */}
+            <FadeInUp delay={0.1}>
+              <div className={styles.topBar}>
+                <div className={styles.searchBar}>
+                  <Search size={18} className={styles.searchIcon} />
+                  <input
+                    type="text"
+                    placeholder="Search courses..."
+                    className={styles.searchInput}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                
+                <div className={styles.filterControls}>
+                  <div className={styles.filterGroup}>
+                    <label>Category</label>
+                    <select 
+                      className={styles.filterSelect}
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
                     >
-                      <Filter size={18} />
-                      Filters
-                    </button>
-                    <p className={styles.resultCount}>
-                      <strong>{filteredCourses.length}</strong> courses
-                    </p>
+                      {categories.map((cat) => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
                   </div>
-                </FadeInUp>
-
-                {/* Mobile filters */}
-                {showMobileFilters && (
-                  <div className={styles.mobileFilters}>
-                    <div className={styles.mobileFilterGroup}>
-                      <h5>Category</h5>
-                      <div className={styles.chips}>
-                        {categories.map((cat) => (
-                          <button
-                            key={cat}
-                            className={`${styles.chip} ${selectedCategory === cat ? styles.chipActive : ''}`}
-                            onClick={() => setSelectedCategory(cat)}
-                          >
-                            {cat}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div className={styles.mobileFilterGroup}>
-                      <h5>Level</h5>
-                      <div className={styles.chips}>
-                        {levels.map((lvl) => (
-                          <button
-                            key={lvl}
-                            className={`${styles.chip} ${selectedLevel === lvl ? styles.chipActive : ''}`}
-                            onClick={() => setSelectedLevel(lvl)}
-                          >
-                            {lvl}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                  
+                  <div className={styles.filterGroup}>
+                    <label>Level</label>
+                    <select 
+                      className={styles.filterSelect}
+                      value={selectedLevel}
+                      onChange={(e) => setSelectedLevel(e.target.value)}
+                    >
+                      {levels.map((lvl) => (
+                        <option key={lvl} value={lvl}>{lvl}</option>
+                      ))}
+                    </select>
                   </div>
-                )}
+                  
+                  <p className={styles.resultCount}>
+                    <strong>{filteredCourses.length}</strong> courses
+                  </p>
+                </div>
+              </div>
+            </FadeInUp>
 
+            {/* Scrollable Grid Container */}
+            <div className={styles.scrollableGrid}>
+              {filteredCourses.length > 0 ? (
                 <StaggerContainer className={styles.coursesGrid}>
                   {filteredCourses.map((course) => {
                     const trainer = trainers.find((t) => t.id === course.trainerId);
                     return (
-                      <StaggerItem key={course.id}>
-                        <Link href={`/courses/${course.id}`}>
+                      <StaggerItem key={course.id} style={{ height: '100%' }}>
+                        <Link href={`/courses/${course.id}`} style={{ display: 'block', height: '100%' }}>
                           <div className={styles.courseCard}>
                             <div className={styles.cardLeft}>
-                              <div className={styles.cardLogo}>{course.logo}</div>
+                              <div className={styles.cardLogo}>
+                                <img src={course.logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                              </div>
                             </div>
                             <div className={styles.cardRight}>
                               <div className={styles.cardTopRow}>
@@ -210,15 +154,13 @@ export default function CoursesClient({ courses, trainers }: { courses: CourseWi
                     );
                   })}
                 </StaggerContainer>
-
-                {filteredCourses.length === 0 && (
-                  <div className={styles.emptyState}>
-                    <BookOpen size={48} />
-                    <h3>No courses found</h3>
-                    <p>Try adjusting your filters or search query.</p>
-                  </div>
-                )}
-              </div>
+              ) : (
+                <div className={styles.emptyState}>
+                  <BookOpen size={48} />
+                  <h3>No courses found</h3>
+                  <p>Try adjusting your filters or search query.</p>
+                </div>
+              )}
             </div>
           </div>
         </section>

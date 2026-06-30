@@ -127,7 +127,9 @@ export default function AdminLessonsClient({ modules }: { modules: ModuleWithDat
                 <div className={styles.moduleHeader} onClick={() => toggle(mod.id)}>
                   <div className={styles.moduleLeft}>
                     {expanded.has(mod.id) ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-                    <span className={styles.courseLogo}>{mod.course.logo}</span>
+                    <span className={styles.courseLogo}>
+                      <img src={mod.course.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain' }} />
+                    </span>
                     <div>
                       <div className={styles.courseTitle}>{mod.course.title}</div>
                       <div className={styles.moduleTitle}>{mod.title}</div>

@@ -160,7 +160,9 @@ export default function AdminCoursesClient({
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 >
                   <div className={styles.cardHeader}>
-                    <div className={styles.cardLogo}>{course.logo}</div>
+                    <div className={styles.cardLogo}>
+                      <img src={course.logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    </div>
                     <div className={styles.cardActions}>
                       <button
                         className={styles.actionBtn}
@@ -266,9 +268,10 @@ export default function AdminCoursesClient({
                       <label>Category</label>
                       <select className="input-field" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} disabled={isLoading}>
                         <option>Web Development</option>
-                        <option>Design</option>
+                        <option>Python</option>
+                        <option>Java</option>
+                        <option>C++</option>
                         <option>Data Science</option>
-                        <option>Mobile Development</option>
                         <option>Cloud Computing</option>
                         <option>DevOps</option>
                         <option>Cybersecurity</option>
@@ -277,8 +280,8 @@ export default function AdminCoursesClient({
                     </div>
 
                     <div className="input-group">
-                      <label>Logo Emoji</label>
-                      <input type="text" className="input-field" value={form.logo} onChange={(e) => setForm({ ...form, logo: e.target.value })} disabled={isLoading} />
+                      <label>Course Image URL (PNG, SVG, etc.) *</label>
+                      <input type="text" className="input-field" value={form.logo} onChange={(e) => setForm({ ...form, logo: e.target.value })} required disabled={isLoading} />
                     </div>
 
                     <div className="input-group">

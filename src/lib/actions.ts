@@ -45,7 +45,17 @@ export async function updateTrainer(id: string, data: {
 }
 
 export async function deleteTrainer(id: string) {
-  await prisma.course.deleteMany({ where: { trainerId: id } });
+  // Find all courses taught by this trainer
+  const courses = await prisma.course.findMany({
+    where: { trainerId: id },
+    select: { id: true }
+  });
+
+  // Call deleteCourse for each to properly cascade all nested dependencies
+  for (const c of courses) {
+    await deleteCourse(c.id);
+  }
+
   const trainer = await prisma.trainer.delete({ where: { id } });
 
   revalidatePath('/admin/trainers');
@@ -117,7 +127,44 @@ export async function updateCourse(id: string, data: Record<string, unknown>) {
 }
 
 export async function deleteCourse(id: string) {
+  // 1. Get modules and lessons
+  const modules = await prisma.module.findMany({ where: { courseId: id }, select: { id: true } });
+  const moduleIds = modules.map((m) => m.id);
+  
+  let lessonIds: string[] = [];
+  if (moduleIds.length > 0) {
+    const lessons = await prisma.lesson.findMany({ where: { moduleId: { in: moduleIds } }, select: { id: true } });
+    lessonIds = lessons.map((l) => l.id);
+  }
+
+  // 2. Delete Coding problems & submissions
+  if (lessonIds.length > 0) {
+    const problems = await prisma.codingProblem.findMany({ where: { lessonId: { in: lessonIds } }, select: { id: true } });
+    const problemIds = problems.map((p) => p.id);
+    if (problemIds.length > 0) {
+      await prisma.codingSubmission.deleteMany({ where: { problemId: { in: problemIds } } });
+    }
+    await prisma.codingProblem.deleteMany({ where: { lessonId: { in: lessonIds } } });
+  }
+
+  // 3. Delete Quizzes and Attempts
+  const quizzes = await prisma.quiz.findMany({ 
+    where: { OR: [ { courseId: id }, { moduleId: { in: moduleIds.length > 0 ? moduleIds : [''] } } ] }, 
+    select: { id: true } 
+  });
+  const quizIds = quizzes.map((q) => q.id);
+  
+  if (quizIds.length > 0) {
+    await prisma.quizAttempt.deleteMany({ where: { quizId: { in: quizIds } } });
+    await prisma.quiz.deleteMany({ where: { id: { in: quizIds } } });
+  }
+
+  // 4. Delete top-level attachments
   await prisma.enrollment.deleteMany({ where: { courseId: id } });
+  await prisma.certificate.deleteMany({ where: { courseId: id } });
+  await prisma.courseProgress.deleteMany({ where: { courseId: id } });
+
+  // 5. Delete course (Cascades will handle Modules -> Lessons -> LessonProgress)
   const course = await prisma.course.delete({ where: { id } });
 
   revalidatePath('/admin/courses');

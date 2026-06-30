@@ -164,7 +164,9 @@ export default function AdminTrainersClient({
                       {trainerCourses.length > 0 ? (
                         trainerCourses.map((c) => (
                           <span key={c.id} className={styles.assignedChip}>
-                            {c.logo} {c.title}
+                            <span>
+                              <img src={c.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain', verticalAlign: 'middle', marginRight: '4px' }} /> {c.title}
+                            </span>
                           </span>
                         ))
                       ) : (

@@ -39,7 +39,7 @@ export default function CertificateClient({ cert }: { cert: FullCert }) {
         {/* Header */}
         <div className={styles.header}>
           <div className={styles.logo}>
-            <Award size={40} />
+            <img src={cert.course.logo || ''} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <div className={styles.gmName}>GM Training</div>
           <div className={styles.tagline}>Premium Learning Management System</div>
