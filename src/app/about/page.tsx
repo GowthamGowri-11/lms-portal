@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Target, Lightbulb, Users as UsersIcon, Shield } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, ScrollReveal } from '@/components/animations/MotionWrappers';
+import TiltCard from '@/components/animations/TiltCard';
 import { prisma } from '@/lib/prisma';
 import ViewResumeButton from '@/components/ui/ViewResumeButton';
 import styles from './page.module.css';
@@ -77,12 +78,12 @@ export default async function AboutPage() {
               </ScrollReveal>
               
               <ScrollReveal delay={0.2}>
-                <div className={styles.missionImageContainer}>
-                  <div className={styles.missionImagePlaceholder}>
-                    <Target size={48} style={{ color: 'var(--accent-primary)', marginBottom: '1rem' }} />
-                    <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem', fontSize: '1.5rem' }}>Vision for the Future</h3>
-                    <p style={{ color: 'var(--text-secondary)' }}>Building a global community of lifelong learners.</p>
-                  </div>
+                <div className={styles.missionImageContainer} style={{ perspective: '1200px' }}>
+                  <TiltCard className={styles.missionImagePlaceholder}>
+                    <Target size={48} style={{ color: 'var(--accent-primary)', marginBottom: '1rem', transform: 'translateZ(30px)' }} />
+                    <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem', fontSize: '1.5rem', transform: 'translateZ(20px)' }}>Vision for the Future</h3>
+                    <p style={{ color: 'var(--text-secondary)', transform: 'translateZ(10px)' }}>Building a global community of lifelong learners.</p>
+                  </TiltCard>
                 </div>
               </ScrollReveal>
             </div>
@@ -96,7 +97,7 @@ export default async function AboutPage() {
                 </div>
               </ScrollReveal>
 
-              <div className={styles.valuesGrid}>
+              <div className={styles.valuesGrid} style={{ perspective: '1500px' }}>
                 {[
                   { icon: <Target size={32} />, title: 'Excellence', desc: 'We strive for the highest quality in our curriculum and teaching.', color: 'var(--accent-primary)' },
                   { icon: <Lightbulb size={32} />, title: 'Innovation', desc: 'We constantly update our content to match the latest industry trends.', color: 'var(--accent-secondary)' },
@@ -104,13 +105,13 @@ export default async function AboutPage() {
                   { icon: <Shield size={32} />, title: 'Integrity', desc: 'We are transparent, honest, and committed to our students\' success.', color: 'var(--accent-warning)' }
                 ].map((value, idx) => (
                   <ScrollReveal key={idx} delay={idx * 0.1}>
-                    <div className={styles.valueCard} style={{ borderTopColor: value.color }}>
-                      <div className={styles.valueIcon} style={{ color: value.color, background: `${value.color}15` }}>
+                    <TiltCard className={styles.valueCard} style={{ borderTopColor: value.color }}>
+                      <div className={styles.valueIcon} style={{ color: value.color, background: `${value.color}15`, transform: 'translateZ(30px)' }}>
                         {value.icon}
                       </div>
-                      <h3>{value.title}</h3>
-                      <p>{value.desc}</p>
-                    </div>
+                      <h3 style={{ transform: 'translateZ(20px)' }}>{value.title}</h3>
+                      <p style={{ transform: 'translateZ(10px)' }}>{value.desc}</p>
+                    </TiltCard>
                   </ScrollReveal>
                 ))}
               </div>
@@ -126,23 +127,23 @@ export default async function AboutPage() {
                 </div>
               </ScrollReveal>
 
-              <div className={styles.devsGrid}>
+              <div className={styles.devsGrid} style={{ perspective: '1500px' }}>
                 {developers.map((dev, idx) => {
                   const color = idx % 2 === 0 ? 'var(--accent-primary)' : 'var(--accent-secondary)';
                   return (
                     <ScrollReveal key={dev.id} delay={idx * 0.1} className={styles.devCardWrapper}>
-                      <div className={styles.devCard}>
-                        <div className={styles.devAvatar} style={{ borderColor: color }}>
+                      <TiltCard className={styles.devCard}>
+                        <div className={styles.devAvatar} style={{ borderColor: color, transform: 'translateZ(30px)' }}>
                           {dev.avatar ? (
                             <img src={dev.avatar} alt={dev.name} className={styles.avatarImage} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                           ) : (
                             <div className={styles.avatarPlaceholder}>{dev.name.charAt(0)}</div>
                           )}
                         </div>
-                        <h3>{dev.name}</h3>
-                        <span className={styles.devRole} style={{ color }}>{dev.role}</span>
-                        <p>{dev.bio}</p>
-                        <div className={styles.devSkills} style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem' }}>
+                        <h3 style={{ transform: 'translateZ(20px)' }}>{dev.name}</h3>
+                        <span className={styles.devRole} style={{ color, transform: 'translateZ(20px)' }}>{dev.role}</span>
+                        <p style={{ transform: 'translateZ(10px)' }}>{dev.bio}</p>
+                        <div className={styles.devSkills} style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem', transform: 'translateZ(15px)' }}>
                           {dev.github && (
                             <Link href={dev.github} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)' }}>
                               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.02c3.14-.35 6.5-1.4 6.5-7a4.6 4.6 0 0 0-1.39-3.23 4.08 4.08 0 0 0-.13-3.19s-1.12-.36-3.66 1.25a12.8 12.8 0 0 0-6.6 0C6.12 2.1 5 2.46 5 2.46a4.08 4.08 0 0 0-.13 3.19 4.6 4.6 0 0 0-1.39 3.23c0 5.6 3.36 6.65 6.5 7a4.8 4.8 0 0 0-1 3.02V22"/><path d="M9 20c-5 1.5-5-2.5-7-3"/></svg>
@@ -155,11 +156,11 @@ export default async function AboutPage() {
                           )}
                         </div>
                         {dev.resume && (
-                          <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+                          <div style={{ marginTop: '1.5rem', textAlign: 'center', transform: 'translateZ(25px)' }}>
                             <ViewResumeButton resumeUrl={dev.resume} />
                           </div>
                         )}
-                      </div>
+                      </TiltCard>
                     </ScrollReveal>
                   );
                 })}

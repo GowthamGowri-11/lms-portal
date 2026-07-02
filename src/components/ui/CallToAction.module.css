@@ -2,7 +2,6 @@
   position: relative;
   padding: 8rem 0;
   overflow: hidden;
-  background: var(--bg-primary);
 }
 
 /* Dynamic Animated Background */
@@ -126,7 +125,7 @@
   gap: 0.75rem;
   padding: 1rem 2.5rem;
   background: var(--text-primary);
-  color: var(--bg-primary);
+  color: #0f172a;
   font-size: 1.1rem;
   font-weight: 700;
   border-radius: 100px;

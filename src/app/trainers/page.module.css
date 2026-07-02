@@ -3,7 +3,6 @@
 .main {
   min-height: 100vh;
   padding-bottom: 4rem;
-  background: var(--bg-primary);
 }
 
 .accentText {
@@ -13,9 +12,7 @@
 /* ===== HERO ===== */
 .hero {
   position: relative;
-  background: var(--bg-secondary);
   padding: 140px 0 60px 0;
-  border-bottom: 1px solid var(--glass-border);
   overflow: hidden;
 }
 
@@ -67,11 +64,13 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
+  perspective: 1500px;
 }
 
 .staggerItemWrapper {
   height: 100%;
   display: block;
+  perspective: 1500px;
 }
 
 @media (max-width: 1024px) {
@@ -86,14 +85,12 @@
   background: var(--bg-card);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
-  transition: all 0.25s ease-in-out;
+  transition: box-shadow 0.25s, border-color 0.25s, background 0.25s;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   height: 100%;
 }
 
 .trainerCard:hover {
-  transform: translateY(-4px);
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
   border-color: rgba(67, 56, 202, 0.2);
 }

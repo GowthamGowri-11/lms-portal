@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Lock, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/components/ui/Navbar';
+import TiltCard from '@/components/animations/TiltCard';
 import styles from './PremiumLockScreen.module.css';
 
 export default function PremiumLockScreen({
@@ -41,19 +42,19 @@ export default function PremiumLockScreen({
   return (
     <>
       <Navbar />
-      <div className={styles.container}>
-        <div className={styles.card}>
-          <div className={styles.lockIconContainer}>
+      <div className={styles.container} style={{ perspective: '1500px' }}>
+        <TiltCard className={styles.card}>
+          <div className={styles.lockIconContainer} style={{ transform: 'translateZ(40px)' }}>
             <Lock size={40} className={styles.lockIcon} />
           </div>
-          <span className={styles.courseLogo}>
+          <span className={styles.courseLogo} style={{ transform: 'translateZ(30px)' }}>
             <img src={course.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain' }} />
           </span>
-          <h1 className={styles.title}>{course.title}</h1>
-          <p className={styles.subtitle}>This course is locked.</p>
-          <p className={styles.desc}>Purchase this course to continue and unlock all lessons, coding practice, and quizzes.</p>
+          <h1 className={styles.title} style={{ transform: 'translateZ(25px)' }}>{course.title}</h1>
+          <p className={styles.subtitle} style={{ transform: 'translateZ(20px)' }}>This course is locked.</p>
+          <p className={styles.desc} style={{ transform: 'translateZ(15px)' }}>Purchase this course to continue and unlock all lessons, coding practice, and quizzes.</p>
           
-          <div className={styles.priceContainer}>
+          <div className={styles.priceContainer} style={{ transform: 'translateZ(25px)' }}>
             {course.discountPrice ? (
               <>
                 <span className={styles.oldPrice}>₹{course.price}</span>
@@ -64,14 +65,14 @@ export default function PremiumLockScreen({
             )}
           </div>
 
-          <button className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }} onClick={handleEnroll} disabled={loading}>
+          <button className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center', transform: 'translateZ(35px)' }} onClick={handleEnroll} disabled={loading}>
             {loading ? 'Unlocking...' : 'Unlock Course (Free Demo)'}
           </button>
 
-          <Link href="/courses" className={styles.backLink}>
+          <Link href="/courses" className={styles.backLink} style={{ transform: 'translateZ(10px)' }}>
             <ArrowLeft size={16} /> Back to Courses
           </Link>
-        </div>
+        </TiltCard>
       </div>
     </>
   );

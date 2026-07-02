@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Star, Users as UsersIcon, Award, BookOpen } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
+import TiltCard from '@/components/animations/TiltCard';
 import styles from './page.module.css';
 import { Trainer } from '@/generated/prisma/client';
 
@@ -35,17 +36,17 @@ export default function TrainersClient({ trainers, courses }: { trainers: Traine
                 const trainerCourses = courses.filter((c) => c.trainerId === trainer.id && c.isPublished);
                 return (
                   <StaggerItem key={trainer.id} className={styles.staggerItemWrapper}>
-                    <div className={styles.trainerCard}>
+                    <TiltCard className={styles.trainerCard}>
                       
-                      <div className={styles.cardHeader}>
-                        <div className={styles.cardAvatar}>{trainer.name.charAt(0)}</div>
-                        <div className={styles.cardHeaderInfo}>
+                      <div className={styles.cardHeader} style={{ transformStyle: 'preserve-3d' }}>
+                        <div className={styles.cardAvatar} style={{ transform: 'translateZ(30px)' }}>{trainer.name.charAt(0)}</div>
+                        <div className={styles.cardHeaderInfo} style={{ transform: 'translateZ(20px)' }}>
                           <h3 className={styles.cardName}>{trainer.name}</h3>
                           <span className={styles.cardSpec}>{trainer.specialization}</span>
                         </div>
                       </div>
                       
-                      <div className={styles.cardBody}>
+                      <div className={styles.cardBody} style={{ transform: 'translateZ(10px)', transformStyle: 'preserve-3d' }}>
                         <p className={styles.cardBio}>{trainer.bio}</p>
 
                         {trainerCourses.length > 0 && (
@@ -65,7 +66,7 @@ export default function TrainersClient({ trainers, courses }: { trainers: Traine
                         )}
                       </div>
 
-                      <div className={styles.cardFooter}>
+                      <div className={styles.cardFooter} style={{ transform: 'translateZ(20px)', transformStyle: 'preserve-3d' }}>
                         <div className={styles.statItem}>
                           <Award size={18} color="var(--accent-primary)" />
                           <div className={styles.statInfo}>
@@ -89,7 +90,7 @@ export default function TrainersClient({ trainers, courses }: { trainers: Traine
                         </div>
                       </div>
 
-                    </div>
+                    </TiltCard>
                   </StaggerItem>
                 );
               })}

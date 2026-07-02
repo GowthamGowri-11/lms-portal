@@ -11,19 +11,12 @@
 /* ===== HERO ===== */
 .hero {
   position: relative;
-  background: var(--bg-secondary);
   padding: 160px 0 80px 0;
-  border-bottom: 2px solid var(--glass-border);
   overflow: hidden;
 }
 
 .dotGrid {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(67, 56, 202, 0.06) 1px, transparent 1px);
-  background-size: 28px 28px;
-  pointer-events: none;
-  z-index: 0;
+  display: none;
 }
 
 .heroContainer {
@@ -144,10 +137,13 @@
 .heroCard {
   width: 100%;
   max-width: 520px; /* Increased from 420px */
-  background: #1e1b4b;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(30, 27, 75, 0.25);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
 
 .heroCardHeader {
@@ -184,9 +180,7 @@
 
 /* ===== TECHNOLOGIES SECTION ===== */
 .techSection {
-  background: var(--bg-primary);
   padding: 4rem 0;
-  border-bottom: 1px solid var(--glass-border);
   text-align: center;
 }
 
@@ -208,6 +202,30 @@
   flex-wrap: wrap;
   max-width: 900px;
   margin: 0 auto;
+}
+
+.whyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-xl);
+  perspective: 1500px;
+}
+
+.whyCard {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+
+.whyCard:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-card-hover);
 }
 
 .techItem {
@@ -262,7 +280,7 @@
 
 /* ===== FEATURED COURSES SECTION ===== */
 .featuredCoursesSection {
-  background: var(--bg-primary);
+  /* Transparent */
 }
 
 .coursesGrid {
@@ -444,7 +462,7 @@
 
 /* ===== TRAINING PATHS ===== */
 .pathsSection {
-  background: var(--bg-primary);
+  /* Transparent */
 }
 
 .pathsGrid {
@@ -541,9 +559,7 @@
 
 /* ===== WHY SECTION ===== */
 .whySection {
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--glass-border);
-  border-bottom: 1px solid var(--glass-border);
+  /* Transparent */
 }
 
 .whyGrid {
@@ -599,7 +615,7 @@
 
 /* ===== CTA SECTION ===== */
 .ctaSection {
-  background: var(--bg-primary);
+  /* Transparent */
 }
 
 .ctaCard {
@@ -642,8 +658,6 @@
 
 /* ===== FOOTER ===== */
 .footer {
-  background: var(--bg-secondary);
-  border-top: 2px solid var(--glass-border);
   padding: 4rem 0 2rem;
 }
 
@@ -697,7 +711,6 @@
 }
 
 .footerBottom {
-  border-top: 1px solid var(--glass-border);
   padding-top: 2rem;
   text-align: center;
   font-size: 0.85rem;

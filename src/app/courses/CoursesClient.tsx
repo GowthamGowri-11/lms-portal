@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Search, Star, BookOpen } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
+import TiltCard from '@/components/animations/TiltCard';
 import styles from './page.module.css';
 import { CourseWithArrays } from '@/lib/utils';
 import { Trainer } from '@/generated/prisma/client';
@@ -104,17 +105,17 @@ export default function CoursesClient({ courses, trainers }: { courses: CourseWi
                   {filteredCourses.map((course) => {
                     const trainer = trainers.find((t) => t.id === course.trainerId);
                     return (
-                      <StaggerItem key={course.id} style={{ height: '100%' }}>
+                      <StaggerItem key={course.id} style={{ height: '100%', perspective: '1500px' }}>
                         <Link href={`/courses/${course.id}`} style={{ display: 'block', height: '100%' }}>
-                          <div className={styles.courseCard}>
+                          <TiltCard className={styles.courseCard}>
                             {/* Image removed */}
-                            <div className={styles.cardRight}>
+                            <div className={styles.cardRight} style={{ transformStyle: 'preserve-3d' }}>
                               <div className={styles.cardTopRow}>
                                 <span className={styles.cardCategory}>{course.category}</span>
                                 <span className={`badge badge-primary`}>{course.level}</span>
                               </div>
-                              <h3 className={styles.cardTitle}>{course.title}</h3>
-                              <p className={styles.cardDesc}>{course.shortDescription}</p>
+                              <h3 className={styles.cardTitle} style={{ transform: 'translateZ(20px)' }}>{course.title}</h3>
+                              <p className={styles.cardDesc} style={{ transform: 'translateZ(10px)' }}>{course.shortDescription}</p>
                               <div className={styles.cardMeta}>
                                 <div className={styles.rating}>
                                   <Star size={14} fill="#eab308" stroke="#eab308" />
@@ -125,14 +126,14 @@ export default function CoursesClient({ courses, trainers }: { courses: CourseWi
                                 <span>•</span>
                                 <span>{course.lessonsCount} lessons</span>
                               </div>
-                              <div className={styles.cardBottom}>
+                              <div className={styles.cardBottom} style={{ transformStyle: 'preserve-3d' }}>
                                 {trainer && (
                                   <div className={styles.cardTrainer}>
                                     <div className={styles.trainerDot}>{trainer.name.charAt(0)}</div>
                                     <span>{trainer.name}</span>
                                   </div>
                                 )}
-                                <div className={styles.price}>
+                                <div className={styles.price} style={{ transform: 'translateZ(25px)' }}>
                                   {course.discountPrice ? (
                                     <>
                                       <span className={styles.oldPrice}>₹{course.price}</span>
@@ -144,7 +145,7 @@ export default function CoursesClient({ courses, trainers }: { courses: CourseWi
                                 </div>
                               </div>
                             </div>
-                          </div>
+                          </TiltCard>
                         </Link>
                       </StaggerItem>
                     );
