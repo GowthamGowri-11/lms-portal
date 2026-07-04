@@ -1,0 +1,362 @@
+/* ===== PREMIUM TRAINER CARD ===== */
+
+.card {
+  position: relative;
+  background: #13131f;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 24px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  height: 100%;
+}
+
+/* Top color stripe */
+.topGlow {
+  height: 3px;
+  width: 100%;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+/* ── ADMIN ACTIONS ── */
+.adminActions {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+.adminBtn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.2s;
+}
+
+.adminBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.adminBtnDanger:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+/* ── HEADER ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem 1.5rem 1rem;
+}
+
+/* Avatar */
+.avatarWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatarImg,
+.avatarInitials {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: white;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s;
+}
+
+.avatarImg {
+  object-fit: cover;
+}
+
+.card:hover .avatarImg,
+.card:hover .avatarInitials {
+  transform: scale(1.06);
+}
+
+/* Glowing ring around avatar */
+.avatarRing {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  opacity: 0.4;
+  z-index: 0;
+  filter: blur(6px);
+  transition: opacity 0.3s;
+}
+
+.card:hover .avatarRing {
+  opacity: 0.7;
+}
+
+/* Name block */
+.nameBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.verifiedBadge {
+  color: #6c5ce7;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.designation {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── STATS ROW ── */
+.statsRow {
+  display: flex;
+  align-items: center;
+  margin: 0 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 0.75rem 0;
+}
+
+.statBox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.statIcon {
+  margin-bottom: 2px;
+  flex-shrink: 0;
+}
+
+.statVal {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.statLbl {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.statDivider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+}
+
+/* ── GRADIENT DIVIDER ── */
+.gradDivider {
+  height: 1px;
+  margin: 1rem 1.25rem 0;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(108, 92, 231, 0.4),
+    rgba(162, 155, 254, 0.3),
+    transparent
+  );
+}
+
+/* ── ABOUT ── */
+.about {
+  padding: 0.875rem 1.5rem 0;
+}
+
+.sectionLabel {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 0.4rem;
+}
+
+.bio {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── SKILLS ── */
+.skills {
+  padding: 0.875rem 1.5rem 0;
+}
+
+.skillChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 0.4rem;
+}
+
+.skillChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: rgba(108, 92, 231, 0.1);
+  border: 1px solid rgba(108, 92, 231, 0.2);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(162, 155, 254, 0.9);
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+}
+
+.skillChip:hover {
+  background: rgba(108, 92, 231, 0.2);
+  border-color: rgba(108, 92, 231, 0.4);
+  box-shadow: 0 0 10px rgba(108, 92, 231, 0.2);
+}
+
+/* ── COURSES ── */
+.coursesBlock {
+  padding: 0.875rem 1.5rem 0;
+  flex-grow: 1;
+}
+
+.courseChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 0.4rem;
+}
+
+.courseChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moreChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: rgba(108, 92, 231, 0.12);
+  border: 1px solid rgba(108, 92, 231, 0.2);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #a29bfe;
+}
+
+.noCourses {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.25);
+  margin-top: 0.4rem;
+}
+
+/* ── CTA ── */
+.cta {
+  padding: 1rem 1.5rem 1.5rem;
+  margin-top: auto;
+}
+
+.ctaBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 20px;
+  background: rgba(108, 92, 231, 0.12);
+  border: 1px solid rgba(108, 92, 231, 0.25);
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #a29bfe;
+  transition: all 0.25s;
+}
+
+.ctaBtn:hover {
+  background: rgba(108, 92, 231, 0.22);
+  border-color: rgba(108, 92, 231, 0.45);
+  color: #c7c2ff;
+  box-shadow: 0 0 20px rgba(108, 92, 231, 0.15);
+}
+
+.ctaArrow {
+  transition: transform 0.25s;
+}
+
+.ctaBtn:hover .ctaArrow {
+  transform: translateX(4px);
+}

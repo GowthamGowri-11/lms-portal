@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, Edit3, Trash2, X, Star, BookOpen, Users as UsersIcon } from 'lucide-react';
+import { Plus, Search, Trash2, X } from 'lucide-react';
 import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import { createTrainer, updateTrainer, deleteTrainer } from '@/lib/actions';
+import TrainerCard from '@/components/ui/TrainerCard';
 import styles from './page.module.css';
-import { Trainer, Course } from '@/generated/prisma/client';
+import { Trainer } from '@/generated/prisma/client';
 
 const emptyForm = {
   name: '',
@@ -18,12 +19,12 @@ const emptyForm = {
   rating: 0,
 };
 
-export default function AdminTrainersClient({ 
-  initialTrainers, 
-  courses 
-}: { 
-  initialTrainers: Trainer[], 
-  courses: { id: string; title: string; logo: string; trainerId: string }[] 
+export default function AdminTrainersClient({
+  initialTrainers,
+  courses,
+}: {
+  initialTrainers: Trainer[];
+  courses: { id: string; title: string; logo: string; trainerId: string }[];
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -35,7 +36,7 @@ export default function AdminTrainersClient({
   const filteredTrainers = initialTrainers.filter(
     (t) =>
       t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.specialization.toLowerCase().includes(searchQuery.toLowerCase())
+      t.specialization.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const openAddModal = () => {
@@ -68,8 +69,8 @@ export default function AdminTrainersClient({
         await createTrainer(form);
       }
       setShowModal(false);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       alert('Error saving trainer. Ensure email is unique.');
     } finally {
       setIsLoading(false);
@@ -81,8 +82,8 @@ export default function AdminTrainersClient({
     try {
       await deleteTrainer(id);
       setDeleteConfirm(null);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       alert('Error deleting trainer.');
     } finally {
       setIsLoading(false);
@@ -92,6 +93,7 @@ export default function AdminTrainersClient({
   return (
     <PageTransition>
       <div className={styles.page}>
+        {/* Header */}
         <FadeInUp>
           <div className={styles.header}>
             <div>
@@ -104,6 +106,7 @@ export default function AdminTrainersClient({
           </div>
         </FadeInUp>
 
+        {/* Search */}
         <FadeInUp delay={0.1}>
           <div className={styles.searchBar}>
             <Search size={18} className={styles.searchIcon} />
@@ -117,67 +120,19 @@ export default function AdminTrainersClient({
           </div>
         </FadeInUp>
 
+        {/* Trainer Cards */}
         <StaggerContainer className={styles.trainersGrid}>
-          {filteredTrainers.map((trainer) => {
-            const trainerCourses = courses.filter((c) => c.trainerId === trainer.id);
-            return (
-              <StaggerItem key={trainer.id}>
-                <motion.div
-                  className={styles.trainerCard}
-                  whileHover={{ y: -6 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                >
-                  <div className={styles.cardActions}>
-                    <button className={styles.actionBtn} onClick={() => openEditModal(trainer)} title="Edit">
-                      <Edit3 size={16} />
-                    </button>
-                    <button className={`${styles.actionBtn} ${styles.actionDanger}`} onClick={() => setDeleteConfirm(trainer.id)} title="Delete">
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-
-                  <div className={styles.trainerAvatar}>{trainer.name.charAt(0)}</div>
-                  <h3 className={styles.trainerName}>{trainer.name}</h3>
-                  <span className={styles.trainerSpec}>{trainer.specialization}</span>
-                  <p className={styles.trainerBio}>{trainer.bio.slice(0, 100)}{trainer.bio.length > 100 ? '...' : ''}</p>
-
-                  <div className={styles.trainerStats}>
-                    <div className={styles.statItem}>
-                      <BookOpen size={16} />
-                      <div>
-                        <strong>{trainerCourses.length}</strong>
-                        <span>Courses</span>
-                      </div>
-                    </div>
-                    <div className={styles.statItem}>
-                      <Star size={16} />
-                      <div>
-                        <strong>{trainer.rating || 'N/A'}</strong>
-                        <span>Rating</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.assignedCourses}>
-                    <span className={styles.assignedLabel}>Assigned Courses:</span>
-                    <div className={styles.assignedList}>
-                      {trainerCourses.length > 0 ? (
-                        trainerCourses.map((c) => (
-                          <span key={c.id} className={styles.assignedChip}>
-                            <span>
-                              <img src={c.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain', verticalAlign: 'middle', marginRight: '4px' }} /> {c.title}
-                            </span>
-                          </span>
-                        ))
-                      ) : (
-                        <span className={styles.assignedChip} style={{ opacity: 0.5, border: 'none', background: 'transparent', padding: 0 }}>None</span>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              </StaggerItem>
-            );
-          })}
+          {filteredTrainers.map((trainer) => (
+            <StaggerItem key={trainer.id}>
+              <TrainerCard
+                trainer={trainer}
+                courses={courses}
+                isAdmin
+                onEdit={openEditModal}
+                onDelete={(id) => setDeleteConfirm(id)}
+              />
+            </StaggerItem>
+          ))}
         </StaggerContainer>
 
         {filteredTrainers.length === 0 && (
@@ -188,6 +143,7 @@ export default function AdminTrainersClient({
           </FadeInUp>
         )}
 
+        {/* ── ADD / EDIT MODAL ── */}
         <AnimatePresence>
           {showModal && (
             <motion.div
@@ -216,35 +172,58 @@ export default function AdminTrainersClient({
                   <div className={styles.formGrid}>
                     <div className="input-group">
                       <label>Full Name *</label>
-                      <input type="text" className="input-field" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required disabled={isLoading} />
+                      <input type="text" className="input-field" value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        required disabled={isLoading} />
                     </div>
                     <div className="input-group">
                       <label>Email *</label>
-                      <input type="email" className="input-field" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required disabled={isLoading} />
+                      <input type="email" className="input-field" value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        required disabled={isLoading} />
                     </div>
                     <div className="input-group">
                       <label>Specialization *</label>
-                      <input type="text" className="input-field" value={form.specialization} onChange={(e) => setForm({ ...form, specialization: e.target.value })} required disabled={isLoading} />
+                      <input type="text" className="input-field" value={form.specialization}
+                        onChange={(e) => setForm({ ...form, specialization: e.target.value })}
+                        required disabled={isLoading} />
                     </div>
                     <div className="input-group">
-                      <label>Experience</label>
-                      <input type="text" className="input-field" value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} disabled={isLoading} />
+                      <label>Experience (e.g. 5 years)</label>
+                      <input type="text" className="input-field" value={form.experience}
+                        onChange={(e) => setForm({ ...form, experience: e.target.value })}
+                        disabled={isLoading} />
                     </div>
                     <div className="input-group">
-                      <label>Rating (0-5)</label>
-                      <input type="number" min="0" max="5" step="0.1" className="input-field" value={form.rating} onChange={(e) => setForm({ ...form, rating: parseFloat(e.target.value) || 0 })} disabled={isLoading} />
+                      <label>Rating (0–5)</label>
+                      <input type="number" min="0" max="5" step="0.1" className="input-field"
+                        value={form.rating}
+                        onChange={(e) => setForm({ ...form, rating: parseFloat(e.target.value) || 0 })}
+                        disabled={isLoading} />
+                    </div>
+                    <div className="input-group">
+                      <label>Avatar URL (optional)</label>
+                      <input type="text" className="input-field" value={form.avatar}
+                        placeholder="https://..."
+                        onChange={(e) => setForm({ ...form, avatar: e.target.value })}
+                        disabled={isLoading} />
                     </div>
                   </div>
 
                   <div className="input-group">
                     <label>Bio</label>
-                    <textarea className="input-field textarea-field" value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} disabled={isLoading} />
+                    <textarea className="input-field textarea-field" value={form.bio}
+                      onChange={(e) => setForm({ ...form, bio: e.target.value })}
+                      disabled={isLoading} />
                   </div>
 
                   <div className={styles.formActions}>
-                    <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} disabled={isLoading}>Cancel</button>
+                    <button type="button" className="btn btn-secondary"
+                      onClick={() => setShowModal(false)} disabled={isLoading}>
+                      Cancel
+                    </button>
                     <button type="submit" className="btn btn-primary" disabled={isLoading}>
-                      {isLoading ? 'Saving...' : (editingTrainer ? 'Update Trainer' : 'Add Trainer')}
+                      {isLoading ? 'Saving...' : editingTrainer ? 'Update Trainer' : 'Add Trainer'}
                     </button>
                   </div>
                 </form>
@@ -253,6 +232,7 @@ export default function AdminTrainersClient({
           )}
         </AnimatePresence>
 
+        {/* ── DELETE CONFIRM ── */}
         <AnimatePresence>
           {deleteConfirm && (
             <motion.div
@@ -274,8 +254,12 @@ export default function AdminTrainersClient({
                   <h3>Delete Trainer?</h3>
                   <p>This will permanently remove the trainer and all associated courses.</p>
                   <div className={styles.deleteActions}>
-                    <button className="btn btn-secondary" onClick={() => setDeleteConfirm(null)} disabled={isLoading}>Cancel</button>
-                    <button className="btn btn-danger" onClick={() => handleDelete(deleteConfirm)} disabled={isLoading}>
+                    <button className="btn btn-secondary"
+                      onClick={() => setDeleteConfirm(null)} disabled={isLoading}>
+                      Cancel
+                    </button>
+                    <button className="btn btn-danger"
+                      onClick={() => handleDelete(deleteConfirm)} disabled={isLoading}>
                       {isLoading ? 'Deleting...' : 'Delete Trainer'}
                     </button>
                   </div>

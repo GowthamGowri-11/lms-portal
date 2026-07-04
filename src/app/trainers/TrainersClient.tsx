@@ -1,18 +1,26 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Star, Users as UsersIcon, Award, BookOpen } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
-import TiltCard from '@/components/animations/TiltCard';
+import TrainerCard from '@/components/ui/TrainerCard';
 import styles from './page.module.css';
 import { Trainer } from '@/generated/prisma/client';
 
-export default function TrainersClient({ trainers, courses }: { trainers: Trainer[], courses: { id: string; title: string; logo: string; trainerId: string; isPublished: boolean }[] }) {
+export default function TrainersClient({
+  trainers,
+  courses,
+}: {
+  trainers: Trainer[];
+  courses: { id: string; title: string; logo: string; trainerId: string; isPublished: boolean }[];
+}) {
+  // Only show published courses on public page
+  const publishedCourses = courses.filter((c) => c.isPublished);
+
   return (
     <>
       <Navbar />
       <main className={styles.main}>
+        {/* ── HERO — untouched ── */}
         <section className={styles.hero}>
           <div className={styles.heroDotGrid} />
           <div className="container" style={{ position: 'relative', zIndex: 1 }}>
@@ -29,72 +37,30 @@ export default function TrainersClient({ trainers, courses }: { trainers: Traine
           </div>
         </section>
 
+        {/* ── TRAINER CARDS ── */}
         <section className={styles.trainersSection}>
           <div className="container">
             <StaggerContainer className={styles.trainersGrid}>
-              {trainers.map((trainer) => {
-                const trainerCourses = courses.filter((c) => c.trainerId === trainer.id && c.isPublished);
-                return (
-                  <StaggerItem key={trainer.id} className={styles.staggerItemWrapper}>
-                    <TiltCard className={styles.trainerCard}>
-                      
-                      <div className={styles.cardHeader} style={{ transformStyle: 'preserve-3d' }}>
-                        <div className={styles.cardAvatar} style={{ transform: 'translateZ(30px)' }}>{trainer.name.charAt(0)}</div>
-                        <div className={styles.cardHeaderInfo} style={{ transform: 'translateZ(20px)' }}>
-                          <h3 className={styles.cardName}>{trainer.name}</h3>
-                          <span className={styles.cardSpec}>{trainer.specialization}</span>
-                        </div>
-                      </div>
-                      
-                      <div className={styles.cardBody} style={{ transform: 'translateZ(10px)', transformStyle: 'preserve-3d' }}>
-                        <p className={styles.cardBio}>{trainer.bio}</p>
-
-                        {trainerCourses.length > 0 && (
-                          <div className={styles.cardCourses}>
-                            <h4><BookOpen size={14} /> Courses</h4>
-                            <div className={styles.coursesList}>
-                              {trainerCourses.map((c) => (
-                                <div key={c.id} className={styles.courseChip}>
-                                  <span className={styles.courseChipLogo}>
-                                    <img src={c.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain' }} />
-                                  </span>
-                                  <span>{c.title}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className={styles.cardFooter} style={{ transform: 'translateZ(20px)', transformStyle: 'preserve-3d' }}>
-                        <div className={styles.statItem}>
-                          <Award size={18} color="var(--accent-primary)" />
-                          <div className={styles.statInfo}>
-                            <strong>{trainer.experience}</strong>
-                            <span>Experience</span>
-                          </div>
-                        </div>
-                        <div className={styles.statItem}>
-                          <Star size={18} color="var(--accent-warning)" />
-                          <div className={styles.statInfo}>
-                            <strong>{trainer.rating}</strong>
-                            <span>Rating</span>
-                          </div>
-                        </div>
-                        <div className={styles.statItem}>
-                          <UsersIcon size={18} color="var(--accent-secondary)" />
-                          <div className={styles.statInfo}>
-                            <strong>{(trainer.name.charCodeAt(0) * 47) % 500 + 50}</strong>
-                            <span>Students</span>
-                          </div>
-                        </div>
-                      </div>
-
-                    </TiltCard>
-                  </StaggerItem>
-                );
-              })}
+              {trainers.map((trainer) => (
+                <StaggerItem key={trainer.id}>
+                  <TrainerCard
+                    trainer={trainer}
+                    courses={publishedCourses}
+                  />
+                </StaggerItem>
+              ))}
             </StaggerContainer>
+
+            {trainers.length === 0 && (
+              <FadeInUp>
+                <div style={{
+                  textAlign: 'center', padding: '4rem 2rem',
+                  color: 'rgba(255,255,255,0.3)', fontSize: '0.95rem',
+                }}>
+                  No trainers available yet.
+                </div>
+              </FadeInUp>
+            )}
           </div>
         </section>
       </main>
