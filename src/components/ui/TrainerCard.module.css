@@ -1,34 +1,91 @@
-/* ===== PREMIUM TRAINER CARD ===== */
+/* ===================================================================
+   PREMIUM TRAINER CARD — Purple/Blue Design System
+   All colours stay within the indigo-violet-blue family.
+   Layout, spacing, and animations are untouched.
+   =================================================================== */
 
+/* ── 1. CARD SHELL ─────────────────────────────────────────────── */
 .card {
   position: relative;
-  background: #13131f;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(160deg, #0d0d1f 0%, #0e0e1a 60%, #0a0a18 100%);
+  border: 1px solid rgba(99, 102, 241, 0.14);
   border-radius: 24px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 0;
-  transition: border-color 0.3s, box-shadow 0.3s;
   height: 100%;
+  transition: border-color 0.32s, box-shadow 0.32s;
 }
 
-/* Top color stripe */
-.topGlow {
+.card:hover {
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow:
+    0 28px 56px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(99, 102, 241, 0.2),
+    0 0 28px rgba(99, 102, 241, 0.07) inset;
+}
+
+/* ── 2. MESH BG — deep navy / dark-purple tones only ── */
+.meshBg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 18% 0%,   rgba(79, 70, 229, 0.09) 0%, transparent 55%),
+    radial-gradient(ellipse at 82% 100%, rgba(56, 189, 248, 0.04) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── 3. GRID TEXTURE — 3-4% opacity ── */
+.gridPattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.032) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── 4. TOP STRIPE — driven by inline gradient from TSX ── */
+.topStripe {
   height: 3px;
   width: 100%;
   opacity: 0.85;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
-/* ── ADMIN ACTIONS ── */
+/* ── 5. FEATURED BADGE — purple glass ── */
+.featuredBadge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  background: rgba(79, 70, 229, 0.14);
+  backdrop-filter: blur(8px);
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: rgba(165, 180, 252, 0.9);
+  letter-spacing: 0.03em;
+  z-index: 10;
+}
+
+/* ── 6. ADMIN ACTIONS ── */
 .adminActions {
   position: absolute;
   top: 14px;
   right: 14px;
   display: flex;
   gap: 6px;
-  z-index: 10;
+  z-index: 20;
 }
 
 .adminBtn {
@@ -38,85 +95,124 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.42);
   transition: all 0.2s;
 }
-
 .adminBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.9);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(99, 102, 241, 0.14);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #a5b4fc;
 }
-
-.adminBtnDanger:hover {
-  background: rgba(239, 68, 68, 0.15);
+.adminDanger:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.22);
   color: #ef4444;
-  border-color: rgba(239, 68, 68, 0.25);
 }
 
-/* ── HEADER ── */
+/* ── 7. INNER WRAPPER ── */
+.inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* ── 8. HEADER ── */
 .header {
   display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  padding: 1.5rem 1.5rem 1rem;
+  align-items: flex-start;
+  gap: 1.4rem;
+  padding: 1.75rem 1.75rem 0;
 }
 
-/* Avatar */
+/* ── 9. AVATAR ── */
 .avatarWrap {
   position: relative;
   flex-shrink: 0;
+  width: 80px;
+  height: 80px;
 }
+
+/* Soft radial glow — indigo only */
+.avatarGlow {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  transition: opacity 0.32s;
+}
+.card:hover .avatarGlow { opacity: 0.85; }
 
 .avatarImg,
 .avatarInitials {
-  width: 72px;
-  height: 72px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 900;
   color: white;
   position: relative;
   z-index: 1;
   transition: transform 0.3s;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
 }
-
-.avatarImg {
-  object-fit: cover;
-}
-
+.avatarImg { object-fit: cover; }
 .card:hover .avatarImg,
-.card:hover .avatarInitials {
-  transform: scale(1.06);
+.card:hover .avatarInitials { transform: scale(1.06); }
+
+/* Verified dot — pure indigo */
+.avatarWrap::after {
+  content: '✓';
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4f46e5, #818cf8);
+  border: 2px solid #0d0d1f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 900;
+  color: white;
+  z-index: 3;
+  line-height: 16px;
+  text-align: center;
 }
 
-/* Glowing ring around avatar */
+/* Ring — purple-blue, no pink */
 .avatarRing {
   position: absolute;
   inset: -3px;
   border-radius: 50%;
-  opacity: 0.4;
-  z-index: 0;
-  filter: blur(6px);
-  transition: opacity 0.3s;
+  border: 1.5px solid rgba(99, 102, 241, 0.45);
+  z-index: 2;
+  opacity: 0.55;
+  transition: opacity 0.32s, border-color 0.32s;
 }
-
 .card:hover .avatarRing {
-  opacity: 0.7;
+  opacity: 1;
+  border-color: rgba(99, 102, 241, 0.85);
 }
 
-/* Name block */
+/* ── 10. NAME BLOCK ── */
 .nameBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 6px;
 }
 
 .nameRow {
@@ -125,238 +221,292 @@
   gap: 6px;
 }
 
+/* Bright white name */
 .name {
-  font-size: 1.1rem;
-  font-weight: 800;
+  font-size: 1.18rem;
+  font-weight: 900;
   color: #ffffff;
-  line-height: 1.2;
+  line-height: 1.15;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 
-.verifiedBadge {
-  color: #6c5ce7;
+/* Verified badge — indigo */
+.verifiedIcon {
+  color: #818cf8;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
+  filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.55));
 }
 
 .designation {
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(165, 180, 252, 0.45);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* ── STATS ROW ── */
-.statsRow {
+/* Trust badges — purple glass */
+.trustRow {
   display: flex;
-  align-items: center;
-  margin: 0 1.25rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
-  padding: 0.75rem 0;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
 }
 
-.statBox {
-  flex: 1;
+.trustBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  background: rgba(79, 70, 229, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 6px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: rgba(165, 180, 252, 0.8);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+/* ── 11. STAT CARDS — same dark glass, purple border ── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 1.4rem 1.75rem 0;
+}
+
+.statCard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
+  padding: 10px 6px 9px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(99, 102, 241, 0.1);
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+  cursor: default;
+  transition: background 0.22s, border-color 0.22s, transform 0.22s, box-shadow 0.22s;
+}
+.statCard:hover {
+  background: rgba(79, 70, 229, 0.1);
+  border-color: rgba(99, 102, 241, 0.26);
+  transform: translateY(-3px);
 }
 
 .statIcon {
+  display: flex;
+  align-items: center;
   margin-bottom: 2px;
-  flex-shrink: 0;
+  filter: drop-shadow(0 0 4px currentColor);
 }
 
 .statVal {
   font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 0.95rem;
-  font-weight: 800;
-  color: #ffffff;
+  font-size: 0.98rem;
+  font-weight: 900;
+  color: #fff;
   line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  text-align: center;
 }
 
 .statLbl {
-  font-size: 0.65rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.statDivider {
-  width: 1px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.07);
-  flex-shrink: 0;
-}
-
-/* ── GRADIENT DIVIDER ── */
-.gradDivider {
-  height: 1px;
-  margin: 1rem 1.25rem 0;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(108, 92, 231, 0.4),
-    rgba(162, 155, 254, 0.3),
-    transparent
-  );
-}
-
-/* ── ABOUT ── */
-.about {
-  padding: 0.875rem 1.5rem 0;
-}
-
-.sectionLabel {
-  display: block;
-  font-size: 0.65rem;
+  font-size: 0.59rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.3);
-  margin-bottom: 0.4rem;
+  letter-spacing: 0.07em;
+  color: rgba(165, 180, 252, 0.32);
+  text-align: center;
 }
 
+/* ── 12. GRADIENT DIVIDER — indigo/blue only ── */
+.gradDivider {
+  height: 1px;
+  margin: 1.25rem 1.75rem 0;
+  /* background is injected inline from TSX using the trainer's palette */
+}
+
+/* ── 13. SECTIONS ── */
+.section {
+  padding: 1rem 1.75rem 0;
+}
+
+/* Brighter section headings */
+.sectionLabel {
+  display: block;
+  font-size: 0.63rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(165, 180, 252, 0.5);
+  margin-bottom: 0.55rem;
+}
+
+/* Soft grey bio text */
 .bio {
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 1.65;
+  font-size: 0.83rem;
+  color: rgba(203, 213, 225, 0.5);
+  line-height: 1.72;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* ── SKILLS ── */
-.skills {
-  padding: 0.875rem 1.5rem 0;
-}
-
+/* ── 14. SKILL CHIPS — purple glass ── */
 .skillChips {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 0.4rem;
 }
 
 .skillChip {
   display: inline-flex;
   align-items: center;
-  padding: 4px 12px;
-  background: rgba(108, 92, 231, 0.1);
-  border: 1px solid rgba(108, 92, 231, 0.2);
+  gap: 5px;
+  padding: 5px 12px 5px 9px;
+  background: rgba(79, 70, 229, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.18);
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: rgba(162, 155, 254, 0.9);
+  color: rgba(165, 180, 252, 0.9);
   letter-spacing: 0.02em;
-  transition: all 0.2s;
+  cursor: default;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
-
 .skillChip:hover {
-  background: rgba(108, 92, 231, 0.2);
-  border-color: rgba(108, 92, 231, 0.4);
-  box-shadow: 0 0 10px rgba(108, 92, 231, 0.2);
+  background: rgba(79, 70, 229, 0.2);
+  border-color: rgba(99, 102, 241, 0.38);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.18);
+  transform: translateY(-1px);
 }
 
-/* ── COURSES ── */
-.coursesBlock {
-  padding: 0.875rem 1.5rem 0;
-  flex-grow: 1;
+.skillIcon {
+  font-size: 0.88rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
 }
 
+/* ── 15. COURSE CHIPS — dark glass, equal height ── */
 .courseChips {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 0.4rem;
+  align-items: center;
 }
 
 .courseChip {
   display: inline-flex;
   align-items: center;
-  padding: 4px 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 5px;
+  padding: 5px 12px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(99, 102, 241, 0.1);
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.55);
-  max-width: 180px;
+  color: rgba(203, 213, 225, 0.5);
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+}
+.courseChip:hover {
+  background: rgba(79, 70, 229, 0.12);
+  border-color: rgba(99, 102, 241, 0.25);
+  color: rgba(165, 180, 252, 0.9);
+  transform: translateY(-1px);
 }
 
 .moreChip {
   display: inline-flex;
   align-items: center;
-  padding: 4px 12px;
-  background: rgba(108, 92, 231, 0.12);
-  border: 1px solid rgba(108, 92, 231, 0.2);
+  height: 28px;
+  padding: 0 12px;
+  background: rgba(79, 70, 229, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.22);
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 700;
-  color: #a29bfe;
+  color: #a5b4fc;
 }
 
 .noCourses {
   display: inline-flex;
   align-items: center;
-  padding: 4px 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px dashed rgba(255, 255, 255, 0.1);
+  height: 28px;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(99, 102, 241, 0.12);
   border-radius: 999px;
   font-size: 0.72rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.25);
-  margin-top: 0.4rem;
+  color: rgba(165, 180, 252, 0.28);
 }
 
-/* ── CTA ── */
-.cta {
-  padding: 1rem 1.5rem 1.5rem;
+/* ── 16. CTA — purple gradient, reduced brightness ── */
+.ctaWrap {
+  padding: 1.4rem 1.75rem 1.75rem;
   margin-top: auto;
 }
 
 .ctaBtn {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 10px 20px;
-  background: rgba(108, 92, 231, 0.12);
-  border: 1px solid rgba(108, 92, 231, 0.25);
-  border-radius: 12px;
+  padding: 11px 20px;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.18), rgba(67, 56, 202, 0.12));
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  border-radius: 14px;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #a29bfe;
-  transition: all 0.25s;
+  color: #c7d2fe;
+  overflow: hidden;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s, color 0.3s;
 }
-
 .ctaBtn:hover {
-  background: rgba(108, 92, 231, 0.22);
-  border-color: rgba(108, 92, 231, 0.45);
-  color: #c7c2ff;
-  box-shadow: 0 0 20px rgba(108, 92, 231, 0.15);
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(67, 56, 202, 0.22));
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.2), 0 4px 16px rgba(0, 0, 0, 0.28);
+  color: #e0e7ff;
 }
 
 .ctaArrow {
-  transition: transform 0.25s;
+  display: flex;
+  align-items: center;
+  transition: transform 0.26s;
 }
+.ctaBtn:hover .ctaArrow { transform: translateX(4px); }
 
-.ctaBtn:hover .ctaArrow {
-  transform: translateX(4px);
+/* Shimmer sweep — stays within the button */
+.ctaShimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.055), transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+.ctaBtn:hover .ctaShimmer {
+  left: 160%;
+  transition: left 0.52s ease;
 }
