@@ -9,8 +9,8 @@
 /* Hero Section */
 .hero {
   position: relative;
-  padding: 110px 0 60px;
-  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);
+  padding: 190px 0 90px; /* Increased top padding to prevent navbar overlap */
+  background: linear-gradient(180deg, rgba(8, 10, 20, 0.8) 0%, rgba(3, 4, 8, 0.5) 100%);
   border-bottom: 1px solid var(--glass-border);
   overflow: hidden;
 }
@@ -19,9 +19,20 @@
   position: absolute;
   inset: 0;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(67, 56, 202, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(13, 148, 136, 0.05) 0%, transparent 40%);
+    radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.06) 0%, transparent 60%),
+    radial-gradient(circle at 80% 50%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 10% 80%, rgba(45, 212, 191, 0.03) 0%, transparent 50%);
   z-index: 0;
+  pointer-events: none;
+}
+
+.heroBg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(99, 102, 241, 0.02) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.5;
 }
 
 .heroContent {
@@ -36,7 +47,7 @@
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   transition: color var(--transition-fast);
 }
 
@@ -44,45 +55,22 @@
   color: var(--accent-primary);
 }
 
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 3.5rem;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}
+
 .heroMain {
   max-width: 800px;
-}
-
-.heroTitle {
-  font-size: clamp(2rem, 4vw, 3.25rem);
-  font-weight: 900;
-  line-height: 1.15;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
-  letter-spacing: -0.02em;
-}
-
-.heroDesc {
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 700px;
-  margin-bottom: 1.5rem;
-}
-
-.heroMeta {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.metaItem {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.metaItem strong {
-  color: var(--text-primary);
 }
 
 .heroBadges {
@@ -91,12 +79,224 @@
   margin-bottom: 1.5rem;
 }
 
+.heroTitle {
+  font-size: clamp(2rem, 3.5vw, 3rem); /* Reduced title size */
+  font-weight: 900;
+  line-height: 1.25; /* Increased line spacing */
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.02em;
+  max-width: 680px; /* Reduced width so it does not dominate */
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.premiumMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.premiumMetaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 4px 12px;
+  border-radius: 99px;
+}
+
+.premiumMetaDivider {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* Tiny Premium Details Pills */
+.premiumDetailPills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.detailPill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  background: rgba(10, 15, 25, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 5px 11px;
+  border-radius: 99px;
+  letter-spacing: 0.01em;
+}
+
+.heroDesc {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  max-width: 600px;
+  margin-bottom: 2rem;
+  opacity: 0.85;
+}
+
+.heroTrainerPreview {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Spacing increased */
+  background: rgba(10, 15, 25, 0.4); /* Stronger glass effect */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.85rem 1.35rem;
+  border-radius: 20px; /* Increased border radius */
+  max-width: 480px;
+  margin-bottom: 2rem;
+}
+
+.heroTrainerDot {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-primary-light));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); /* Stronger avatar glow */
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.heroTrainerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.heroTrainerNameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heroTrainerName {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.verifiedBadge {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--accent-secondary);
+  background: rgba(45, 212, 191, 0.1);
+  border: 1px solid rgba(45, 212, 191, 0.2);
+  padding: 3px 8px;
+  border-radius: 99px; /* Pill verified badge */
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.heroTrainerStats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.bullet {
+  opacity: 0.5;
+}
+
+.trustBadgesRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.trustBadge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 6px 14px;
+  border-radius: 99px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px; /* Consistent heights & padding */
+}
+
+.heroIllustrationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+@media (max-width: 1024px) {
+  .heroIllustrationContainer {
+    display: none;
+  }
+}
+
+.hologramWrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 380px;
+  height: 380px; /* Wrapper sized for 20-30% larger illustration */
+}
+
+.hologramCircleFrame {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(99, 102, 241, 0.25);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.03) 0%, transparent 70%);
+  box-shadow: 0 0 35px rgba(99, 102, 241, 0.05);
+  animation: frameSpin 40s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes frameSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.hologramGlow {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
+  z-index: 0;
+  pointer-events: none;
+}
+
 /* Two Column Layout */
 .layoutGrid {
   display: grid;
   grid-template-columns: 1fr 380px;
   gap: 3rem;
-  margin-top: -30px; /* Overlap hero slightly */
+  margin-top: 1rem;
   align-items: start;
 }
 
@@ -105,6 +305,13 @@
     grid-template-columns: 1fr;
     margin-top: 2rem;
   }
+}
+
+.heroSeparator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), rgba(45, 212, 191, 0.15), transparent);
+  margin-bottom: 4rem;
+  width: 100%;
 }
 
 /* Content Left Column */
@@ -119,50 +326,76 @@
 /* Progress Grid */
 .progressGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(4, 1fr); /* Equal width on desktop */
+  gap: 1.25rem;
+}
+
+@media (max-width: 1024px) {
+  .progressGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .progressGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .progressStat {
-  background: var(--bg-card);
-  border: 1px solid var(--glass-border);
+  background: rgba(10, 15, 25, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: var(--radius-lg);
-  padding: 1.25rem;
+  padding: 1.5rem;
   display: flex;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 95px;
 }
 
 .progressStat:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  transform: translateY(-6px); /* Slight hover lift */
+  border-color: rgba(99, 102, 241, 0.4); /* Purple border glow */
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.4),
+    0 0 25px rgba(99, 102, 241, 0.15);
 }
 
 .progressStatIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
+.progressStatContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .progressStatValue {
   font-family: var(--font-heading);
-  font-size: 1.25rem;
+  font-size: 1.5rem; /* Bigger numbers */
   font-weight: 800;
   line-height: 1.1;
   color: var(--text-primary);
 }
 
 .progressStatLabel {
-  font-size: 0.8rem;
+  font-size: 0.7rem; /* Smaller labels */
   color: var(--text-tertiary);
-  margin-top: 4px;
-  font-weight: 500;
+  margin-top: 2px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 /* Content Blocks */
@@ -436,16 +669,35 @@
 
 /* Enroll Card */
 .enrollCard {
-  background: var(--bg-card);
-  border: 1px solid var(--glass-border);
+  background: rgba(10, 15, 25, 0.85); /* Stronger glass effect */
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(99, 102, 241, 0.25); /* Stronger gradient border */
   border-radius: var(--radius-xl);
-  padding: 2rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 2.25rem;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.65), /* Premium shadow */
+    0 0 40px rgba(99, 102, 241, 0.08);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.75rem;
   position: relative;
   overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: sideFloat 6s ease-in-out infinite; /* Slight floating animation */
+}
+
+@keyframes sideFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.enrollCard:hover {
+  animation-play-state: paused;
+  transform: translateY(-8px);
+  box-shadow: 
+    0 35px 60px rgba(0, 0, 0, 0.75),
+    0 0 50px rgba(99, 102, 241, 0.15);
 }
 
 .enrollCard::before {
@@ -454,24 +706,55 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 6px;
+  height: 4px;
   background: linear-gradient(90deg, var(--accent-primary-light), var(--accent-primary));
+}
+
+.premiumBadge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); /* Accent palette */
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 5px 12px;
+  border-radius: 99px;
+  letter-spacing: 0.08em;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 2;
 }
 
 .enrollLogo {
   width: 100%;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  padding: 1.75rem; /* Better image spacing */
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  position: relative;
+}
+
+.priceContainer {
+  padding: 0.5rem 0;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 0.25rem;
 }
 
 .enrollPrice {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: baseline;
   gap: 12px;
 }
 
 .enrollOldPrice {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: var(--text-muted);
   text-decoration: line-through;
   font-weight: 500;
@@ -479,19 +762,83 @@
 
 .enrollCurrentPrice {
   font-family: var(--font-heading);
-  font-size: 2.25rem;
+  font-size: 2.85rem; /* Larger price */
   font-weight: 900;
   color: var(--text-primary);
   line-height: 1;
 }
 
 .enrollDiscount {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(52, 211, 153, 0.15);
   color: var(--accent-success);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 800;
+}
+
+.ctaContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* CTA "Start Learning" Button improvements */
+.startLearningBtn {
+  position: relative;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-primary-light)) !important;
+  border: none !important;
+  font-weight: 700 !important;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.startLearningBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 30px rgba(99, 102, 241, 0.6),
+    0 0 15px rgba(99, 102, 241, 0.3);
+}
+
+.startLearningBtn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transition: none;
+}
+
+.startLearningBtn:hover::after {
+  animation: ctaShimmer 1.2s infinite;
+}
+
+@keyframes ctaShimmer {
+  100% {
+    left: 100%;
+  }
+}
+
+.btnArrow {
+  margin-left: 6px;
+  transition: transform 0.2s ease;
+}
+
+.startLearningBtn:hover .btnArrow {
+  transform: translateX(4px);
+}
+
+.enrollDivider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
 }
 
 .enrollFeatures {
@@ -571,4 +918,10 @@
 .notFound h2 {
   font-size: 1.5rem;
   color: var(--text-secondary);
+}
+
+.aboutBlock {
+  margin-top: 4rem; /* Spacing between stats and about section */
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 3.5rem !important; /* Divider transition */
 }

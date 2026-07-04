@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
-  ArrowLeft, Star, Clock, BookOpen, CheckCircle,
+  ArrowLeft, ArrowRight, Star, Clock, BookOpen, CheckCircle,
   Play, ShieldCheck, X, Lock, ChevronDown, ChevronRight,
   Users, Award, Target, Layout
 } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, ScrollReveal, PageTransition } from '@/components/animations/MotionWrappers';
+import TechIllustration from '@/components/ui/TechIllustration';
 import styles from './page.module.css';
 import { CourseWithArrays } from '@/lib/utils';
 import { Trainer, Module, Lesson } from '@/generated/prisma/client';
@@ -45,7 +46,7 @@ export default function CourseDetailClient({
       <Navbar />
       <PageTransition>
         <main className={styles.main}>
-          {/* Minimal Hero */}
+          {/* Hero Section */}
           <section className={styles.hero}>
             <div className={styles.heroBg} />
             <div className={`container ${styles.heroContent}`}>
@@ -56,39 +57,95 @@ export default function CourseDetailClient({
                 </Link>
               </FadeInUp>
 
-              <div className={styles.heroMain}>
-                <FadeInUp delay={0.1}>
-                  <div className={styles.heroBadges}>
-                    <span className="badge badge-primary" style={{ background: 'var(--accent-primary)', color: 'white' }}>{course.level}</span>
-                    <span className="badge badge-success" style={{ background: 'var(--accent-success)', color: 'white' }}>{course.category}</span>
-                  </div>
-                </FadeInUp>
-                <FadeInUp delay={0.15}>
-                  <h1 className={styles.heroTitle}>{course.title}</h1>
-                </FadeInUp>
-                <FadeInUp delay={0.2}>
-                  <p className={styles.heroDesc}>{course.shortDescription}</p>
-                </FadeInUp>
-                <FadeInUp delay={0.25}>
-                  <div className={styles.heroMeta}>
-                    <div className={styles.metaItem}>
-                      <Star size={18} fill="var(--accent-warning)" stroke="var(--accent-warning)" />
-                      <strong>{course.rating}</strong>
-                      <span>({course.studentsEnrolled.toLocaleString()} students)</span>
+              <div className={styles.heroGrid}>
+                {/* Left Content column */}
+                <div className={styles.heroMain}>
+                  <FadeInUp delay={0.1}>
+                    <div className={styles.heroBadges}>
+                      <span className="badge badge-primary" style={{ background: 'rgba(99,102,241,0.15)', color: 'var(--accent-primary-light)', border: '1px solid rgba(99,102,241,0.3)' }}>{course.level}</span>
+                      <span className="badge badge-success" style={{ background: 'rgba(45,212,191,0.15)', color: 'var(--accent-secondary)', border: '1px solid rgba(45,212,191,0.3)' }}>{course.category}</span>
                     </div>
-                    <div className={styles.metaItem}>
-                      <Clock size={18} />
-                      <span>{course.duration}</span>
+                  </FadeInUp>
+                  
+                  <FadeInUp delay={0.15}>
+                    <h1 className={styles.heroTitle}>{course.title}</h1>
+                  </FadeInUp>
+
+                  {/* Subtle Metadata near title */}
+                  <FadeInUp delay={0.18}>
+                    <div className={styles.premiumMetaRow}>
+                      <span className={styles.premiumMetaItem}>
+                        <Star size={13} fill="var(--accent-warning)" stroke="var(--accent-warning)" /> {course.rating} Rating
+                      </span>
+                      <span className={styles.premiumMetaDivider}>•</span>
+                      <span className={styles.premiumMetaItem}>
+                        👨‍🎓 {course.studentsEnrolled.toLocaleString()} Students
+                      </span>
                     </div>
-                    <div className={styles.metaItem}>
-                      <BookOpen size={18} />
-                      <span>{totalLessons} lessons</span>
+                  </FadeInUp>
+
+                  {/* Tiny Premium Details Pills */}
+                  <FadeInUp delay={0.19}>
+                    <div className={styles.premiumDetailPills}>
+                      <span className={styles.detailPill}>📅 Completion: ~4 Weeks</span>
+                      <span className={styles.detailPill}>⏱ Last updated: July 2026</span>
+                      <span className={styles.detailPill}>🌐 Language: English</span>
+                      <span className={styles.detailPill}>💬 Subtitles: English [CC]</span>
+                      <span className={styles.detailPill}>♾ Lifetime Updates</span>
+                      <span className={styles.detailPill}>📁 Downloadable Resources</span>
+                      <span className={styles.detailPill}>💻 Mobile & Desktop Support</span>
                     </div>
+                  </FadeInUp>
+                  
+                  <FadeInUp delay={0.20}>
+                    <p className={styles.heroDesc}>{course.shortDescription}</p>
+                  </FadeInUp>
+
+                  {/* Instructor Preview */}
+                  {trainer && (
+                    <FadeInUp delay={0.22}>
+                      <div className={styles.heroTrainerPreview}>
+                        <div className={styles.heroTrainerDot}>{trainer.name.charAt(0)}</div>
+                        <div className={styles.heroTrainerInfo}>
+                          <div className={styles.heroTrainerNameRow}>
+                            <span className={styles.heroTrainerName}>{trainer.name}</span>
+                            <span className={styles.verifiedBadge}>✓ Verified Instructor</span>
+                          </div>
+                          <div className={styles.heroTrainerStats}>
+                            <span>{trainer.experience} Experience</span>
+                            <span className={styles.bullet}>•</span>
+                            <span>⭐ {trainer.rating} Trainer Rating</span>
+                          </div>
+                        </div>
+                      </div>
+                    </FadeInUp>
+                  )}
+
+                  {/* Trust Badges */}
+                  <FadeInUp delay={0.25}>
+                    <div className={styles.trustBadgesRow}>
+                      <span className={styles.trustBadge}>✓ Lifetime Access</span>
+                      <span className={styles.trustBadge}>🏆 Certificate Included</span>
+                      <span className={styles.trustBadge}>🚀 {course.level} Friendly</span>
+                      <span className={styles.trustBadge}>💬 Community Support</span>
+                    </div>
+                  </FadeInUp>
+                </div>
+
+                {/* Right Illustration column */}
+                <FadeInUp delay={0.2} className={styles.heroIllustrationContainer}>
+                  <div className={styles.hologramWrapper}>
+                    <div className={styles.hologramCircleFrame} />
+                    <div className={styles.hologramGlow} />
+                    <TechIllustration title={course.title} category={course.category} size={340} />
                   </div>
                 </FadeInUp>
               </div>
+
             </div>
           </section>
+          
+          <div className={styles.heroSeparator} />
 
           {/* Main Layout: Two Columns */}
           <section className="container">
@@ -102,16 +159,16 @@ export default function CourseDetailClient({
                   <ScrollReveal>
                     <div className={styles.progressGrid}>
                       {[
-                        { icon: <Layout size={22} />, value: modules.length, label: 'Modules', color: 'var(--accent-primary)' },
-                        { icon: <Play size={22} />, value: totalLessons, label: 'Lessons', color: 'var(--accent-secondary)' },
-                        { icon: <Clock size={22} />, value: course.duration, label: 'Duration', color: 'var(--accent-tertiary)' },
-                        { icon: <Award size={22} />, value: '1', label: 'Certificate', color: 'var(--accent-warning)' },
+                        { icon: <Layout size={22} />, value: modules.length, label: 'MODULES', color: 'var(--accent-primary)' },
+                        { icon: <Play size={22} />, value: totalLessons, label: 'LESSONS', color: 'var(--accent-secondary)' },
+                        { icon: <Clock size={22} />, value: course.duration, label: 'DURATION', color: 'var(--accent-tertiary)' },
+                        { icon: <Award size={22} />, value: '1', label: 'CERTIFICATE', color: 'var(--accent-warning)' },
                       ].map((stat, i) => (
-                        <motion.div key={i} className={styles.progressStat} whileHover={{ y: -4 }}>
-                          <div className={styles.progressStatIcon} style={{ color: stat.color, background: `${stat.color}15` }}>
+                        <motion.div key={i} className={styles.progressStat} whileHover={{ y: -5 }}>
+                          <div className={styles.progressStatIcon} style={{ color: stat.color, background: `${stat.color}12` }}>
                             {stat.icon}
                           </div>
-                          <div>
+                          <div className={styles.progressStatContent}>
                             <div className={styles.progressStatValue}>{stat.value}</div>
                             <div className={styles.progressStatLabel}>{stat.label}</div>
                           </div>
@@ -123,7 +180,7 @@ export default function CourseDetailClient({
 
                 {/* About Section */}
                 <ScrollReveal>
-                  <div className={styles.contentBlock}>
+                  <div className={`${styles.contentBlock} ${styles.aboutBlock}`}>
                     <h2><Target size={24} color="var(--accent-primary)" /> About This Course</h2>
                     <p>{course.description}</p>
                   </div>
@@ -246,38 +303,46 @@ export default function CourseDetailClient({
               <div className={styles.sidebarColumn}>
                 <FadeInUp delay={0.3}>
                   <div className={styles.enrollCard}>
+                    <div className={styles.premiumBadge}>
+                      <span>BEST VALUE</span>
+                    </div>
                     <div className={styles.enrollLogo}>
-                      <img src={course.logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                      <TechIllustration title={course.title} category={course.category} size={80} />
                     </div>
-                    <div className={styles.enrollPrice}>
-                      {course.discountPrice ? (
-                        <>
-                          <span className={styles.enrollOldPrice}>₹{course.price}</span>
-                          <span className={styles.enrollCurrentPrice}>₹{course.discountPrice}</span>
-                          <span className={styles.enrollDiscount}>
-                            {Math.round(((course.price - course.discountPrice) / course.price) * 100)}% OFF
-                          </span>
-                        </>
-                      ) : (
-                        <span className={styles.enrollCurrentPrice}>₹{course.price}</span>
+                    <div className={styles.priceContainer}>
+                      <div className={styles.enrollPrice}>
+                        {course.discountPrice ? (
+                          <>
+                            <span className={styles.enrollOldPrice}>₹{course.price}</span>
+                            <span className={styles.enrollCurrentPrice}>₹{course.discountPrice}</span>
+                            <span className={styles.enrollDiscount}>
+                              {Math.round(((course.price - course.discountPrice) / course.price) * 100)}% OFF
+                            </span>
+                          </>
+                        ) : (
+                          <span className={styles.enrollCurrentPrice}>₹{course.price}</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className={styles.ctaContainer}>
+                      {firstLesson && (
+                        <Link
+                          href={`/learn/${course.id}/lesson/${firstLesson.id}`}
+                          className={`btn btn-primary btn-lg ${styles.startLearningBtn}`}
+                          style={{ width: '100%', justifyContent: 'center' }}
+                        >
+                          <Play size={18} /> Start Learning <ArrowRight size={16} className={styles.btnArrow} />
+                        </Link>
                       )}
-                    </div>
-                    {firstLesson && (
-                      <Link
-                        href={`/learn/${course.id}/lesson/${firstLesson.id}`}
-                        className="btn btn-primary btn-lg"
-                        style={{ width: '100%', justifyContent: 'center', marginBottom: '0.75rem' }}
+                      <button
+                        className="btn btn-secondary btn-lg"
+                        style={{ width: '100%' }}
+                        onClick={() => setShowEnrollModal(true)}
                       >
-                        <Play size={18} /> Start Learning
-                      </Link>
-                    )}
-                    <button
-                      className="btn btn-secondary btn-lg"
-                      style={{ width: '100%' }}
-                      onClick={() => setShowEnrollModal(true)}
-                    >
-                      Enroll Now
-                    </button>
+                        Enroll Now
+                      </button>
+                    </div>
+                    <div className={styles.enrollDivider} />
                     <div className={styles.enrollFeatures}>
                       <div><CheckCircle size={16} /> {totalLessons} Lessons</div>
                       <div><CheckCircle size={16} /> Lifetime Access</div>

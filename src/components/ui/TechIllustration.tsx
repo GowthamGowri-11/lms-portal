@@ -255,7 +255,10 @@ interface TechIllustrationProps {
 
 export default function TechIllustration({ title, category, size = 100 }: TechIllustrationProps) {
   const theme = getTechTheme(title, category);
-  const id = `tech-${theme.type}-${Math.random().toString(36).slice(2, 7)}`;
+  // Deterministic ID based on title and category to avoid hydration mismatches
+  const sanitizedTitle = title.replace(/\s+/g, '-').toLowerCase();
+  const sanitizedCategory = category.replace(/\s+/g, '-').toLowerCase();
+  const id = `tech-${theme.type}-${sanitizedTitle}-${sanitizedCategory}`;
 
   return (
     <svg
