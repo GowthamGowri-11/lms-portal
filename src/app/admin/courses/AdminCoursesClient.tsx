@@ -2,12 +2,31 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, Edit3, Trash2, X, Eye, EyeOff, Star, Users as UsersIcon } from 'lucide-react';
+import {
+  Plus, Search, Edit3, Trash2, X,
+  Eye, EyeOff, Star, Clock, BookOpen, ArrowRight,
+} from 'lucide-react';
 import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import { createCourse, updateCourse, deleteCourse } from '@/lib/actions';
 import styles from './page.module.css';
+import courseStyles from '../../courses/page.module.css';
+import TechIllustration from '@/components/ui/TechIllustration';
 import { CourseWithArrays } from '@/lib/utils';
 import { Trainer } from '@/generated/prisma/client';
+
+function getAccentColor(title: string, category: string) {
+  const t = (title + ' ' + category).toLowerCase();
+  if (t.includes('python')) return '#3b82f6';
+  if (t.includes('java') && !t.includes('javascript')) return '#22c55e';
+  if (t.includes('react')) return '#f97316';
+  if (t.includes('node') || t.includes('express')) return '#a855f7';
+  if (t.includes('angular')) return '#ef4444';
+  if (t.includes('vue')) return '#10b981';
+  if (t.includes('frontend') || t.includes('html')) return '#f97316';
+  if (t.includes('data')) return '#06b6d4';
+  if (t.includes('cloud') || t.includes('devops')) return '#f59e0b';
+  return '#6366f1';
+}
 
 const emptyForm = {
   title: '',
@@ -26,12 +45,12 @@ const emptyForm = {
   isPublished: true,
 };
 
-export default function AdminCoursesClient({ 
-  initialCourses, 
-  trainers 
-}: { 
-  initialCourses: CourseWithArrays[], 
-  trainers: Trainer[] 
+export default function AdminCoursesClient({
+  initialCourses,
+  trainers,
+}: {
+  initialCourses: CourseWithArrays[];
+  trainers: Trainer[];
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -45,7 +64,7 @@ export default function AdminCoursesClient({
   const filteredCourses = initialCourses.filter(
     (c) =>
       c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.category.toLowerCase().includes(searchQuery.toLowerCase())
+      c.category.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const openAddModal = () => {
@@ -84,7 +103,6 @@ export default function AdminCoursesClient({
     setIsLoading(true);
     const tags = tagsInput.split(',').map((t) => t.trim()).filter(Boolean);
     const syllabus = syllabusInput.split('\n').map((s) => s.trim()).filter(Boolean);
-
     try {
       if (editingCourse) {
         await updateCourse(editingCourse.id, { ...form, tags, syllabus });
@@ -92,8 +110,8 @@ export default function AdminCoursesClient({
         await createCourse({ ...form, tags, syllabus });
       }
       setShowModal(false);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       alert('Error saving course');
     } finally {
       setIsLoading(false);
@@ -105,8 +123,8 @@ export default function AdminCoursesClient({
     try {
       await deleteCourse(id);
       setDeleteConfirm(null);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       alert('Error deleting course');
     } finally {
       setIsLoading(false);
@@ -116,14 +134,15 @@ export default function AdminCoursesClient({
   const togglePublish = async (course: CourseWithArrays) => {
     try {
       await updateCourse(course.id, { isPublished: !course.isPublished });
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   return (
     <PageTransition>
       <div className={styles.page}>
+        {/* Header */}
         <FadeInUp>
           <div className={styles.header}>
             <div>
@@ -136,6 +155,7 @@ export default function AdminCoursesClient({
           </div>
         </FadeInUp>
 
+        {/* Search */}
         <FadeInUp delay={0.1}>
           <div className={styles.searchBar}>
             <Search size={18} className={styles.searchIcon} />
@@ -149,75 +169,115 @@ export default function AdminCoursesClient({
           </div>
         </FadeInUp>
 
+        {/* Course Cards Grid */}
         <StaggerContainer className={styles.coursesGrid}>
           {filteredCourses.map((course) => {
             const trainer = trainers.find((t) => t.id === course.trainerId);
+            const accent = getAccentColor(course.title, course.category);
+
             return (
               <StaggerItem key={course.id}>
                 <motion.div
-                  className={styles.courseCard}
+                  className={courseStyles.courseCard}
                   whileHover={{ y: -4 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 >
-                  <div className={styles.cardHeader}>
-                    <div className={styles.cardLogo}>
-                      <img src={course.logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                    </div>
-                    <div className={styles.cardActions}>
+                  {/* ── ADMIN ACTION STRIP ── */}
+                  <div className={styles.cardActionsOverlay}>
+                    <span
+                      className={`badge ${course.isPublished ? 'badge-success' : 'badge-warning'}`}
+                      style={{ fontSize: '0.65rem' }}
+                    >
+                      {course.isPublished ? 'Published' : 'Draft'}
+                    </span>
+                    <div style={{ display: 'flex', gap: 4 }}>
                       <button
                         className={styles.actionBtn}
                         onClick={() => togglePublish(course)}
                         title={course.isPublished ? 'Unpublish' : 'Publish'}
                       >
-                        {course.isPublished ? <Eye size={16} /> : <EyeOff size={16} />}
+                        {course.isPublished ? <Eye size={15} /> : <EyeOff size={15} />}
                       </button>
                       <button className={styles.actionBtn} onClick={() => openEditModal(course)} title="Edit">
-                        <Edit3 size={16} />
+                        <Edit3 size={15} />
                       </button>
-                      <button className={`${styles.actionBtn} ${styles.actionDanger}`} onClick={() => setDeleteConfirm(course.id)} title="Delete">
-                        <Trash2 size={16} />
+                      <button
+                        className={`${styles.actionBtn} ${styles.actionDanger}`}
+                        onClick={() => setDeleteConfirm(course.id)}
+                        title="Delete"
+                      >
+                        <Trash2 size={15} />
                       </button>
                     </div>
                   </div>
 
-                  <div className={styles.cardBody}>
-                    <span className={`badge ${course.isPublished ? 'badge-success' : 'badge-warning'}`}>
-                      {course.isPublished ? 'Published' : 'Draft'}
-                    </span>
-                    <h3 className={styles.cardTitle}>{course.title}</h3>
-                    <p className={styles.cardDesc}>{course.shortDescription}</p>
-                    <div className={styles.cardMeta}>
-                      <div className={styles.metaItem}>
-                        <Star size={14} fill="#fdcb6e" stroke="#fdcb6e" />
-                        <span>{course.rating || 'N/A'}</span>
+                  {/* ── CARD BODY (same as user side) ── */}
+                  <div className={courseStyles.cardInner}>
+                    {/* LEFT TEXT */}
+                    <div className={courseStyles.cardLeft}>
+                      <div className={courseStyles.cardTopRow}>
+                        <span className={courseStyles.cardCategory}>{course.category}</span>
+                        <span style={{
+                          fontSize: '0.68rem', fontWeight: 700,
+                          color: accent, textTransform: 'uppercase', letterSpacing: '0.06em',
+                        }}>
+                          {course.level}
+                        </span>
                       </div>
-                      <div className={styles.metaItem}>
-                        <UsersIcon size={14} />
-                        <span>{course.studentsEnrolled}</span>
+
+                      <h3 className={courseStyles.cardTitle}>{course.title}</h3>
+                      <p className={courseStyles.cardDesc}>{course.shortDescription}</p>
+
+                      <div className={courseStyles.cardMeta}>
+                        <div className={courseStyles.rating}>
+                          <Star size={13} fill="#eab308" stroke="#eab308" />
+                          <span>{course.rating || '0'}</span>
+                        </div>
+                        <span>•</span>
+                        <Clock size={12} style={{ opacity: 0.5 }} />
+                        <span>{course.duration}</span>
+                        <span>•</span>
+                        <BookOpen size={12} style={{ opacity: 0.5 }} />
+                        <span>{course.lessonsCount} lessons</span>
                       </div>
-                      <span className={`badge badge-primary`}>{course.level}</span>
+
+                      <div className={courseStyles.cardBottom}>
+                        {trainer ? (
+                          <div className={courseStyles.cardTrainer}>
+                            <div className={courseStyles.trainerDot} style={{ background: accent }}>
+                              {trainer.name.charAt(0)}
+                            </div>
+                            <div className={courseStyles.trainerInfo}>
+                              <span className={courseStyles.trainerName}>{trainer.name}</span>
+                              <span className={courseStyles.trainerLabel}>Instructor</span>
+                            </div>
+                          </div>
+                        ) : <div />}
+
+                        <div className={courseStyles.priceBlock}>
+                          <div className={courseStyles.price}>
+                            {course.discountPrice && (
+                              <span className={courseStyles.oldPrice}>₹{course.price}</span>
+                            )}
+                            <span className={courseStyles.currentPrice}>
+                              ₹{course.discountPrice ?? course.price}
+                            </span>
+                          </div>
+                          <div className={courseStyles.arrowBtn} style={{ background: accent }}>
+                            <ArrowRight size={15} color="white" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
-                    {trainer && (
-                      <div className={styles.cardTrainer}>
-                        <div className={styles.trainerDot}>{trainer.name.charAt(0)}</div>
-                        <span>{trainer.name}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className={styles.cardFooter}>
-                    <div className={styles.cardPrice}>
-                      {course.discountPrice ? (
-                        <>
-                          <span className={styles.oldPrice}>₹{course.price}</span>
-                          <span className={styles.currentPrice}>₹{course.discountPrice}</span>
-                        </>
-                      ) : (
-                        <span className={styles.currentPrice}>₹{course.price}</span>
-                      )}
+                    {/* RIGHT ILLUSTRATION */}
+                    <div className={courseStyles.cardIllustration}>
+                      <TechIllustration
+                        title={course.title}
+                        category={course.category}
+                        size={110}
+                      />
                     </div>
-                    <span className={styles.cardDuration}>{course.duration}</span>
                   </div>
                 </motion.div>
               </StaggerItem>
@@ -233,6 +293,7 @@ export default function AdminCoursesClient({
           </FadeInUp>
         )}
 
+        {/* ── ADD/EDIT MODAL ── */}
         <AnimatePresence>
           {showModal && (
             <motion.div
@@ -261,71 +322,70 @@ export default function AdminCoursesClient({
                   <div className={styles.formGrid}>
                     <div className="input-group">
                       <label>Course Title *</label>
-                      <input type="text" className="input-field" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required disabled={isLoading} />
+                      <input type="text" className="input-field" value={form.title}
+                        onChange={(e) => setForm({ ...form, title: e.target.value })}
+                        required disabled={isLoading} />
                     </div>
-
                     <div className="input-group">
                       <label>Category</label>
-                      <select className="input-field" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} disabled={isLoading}>
-                        <option>Web Development</option>
-                        <option>Python</option>
-                        <option>Java</option>
-                        <option>C++</option>
-                        <option>Data Science</option>
-                        <option>Cloud Computing</option>
-                        <option>DevOps</option>
-                        <option>Cybersecurity</option>
-                        <option>Other</option>
+                      <select className="input-field" value={form.category}
+                        onChange={(e) => setForm({ ...form, category: e.target.value })}
+                        disabled={isLoading}>
+                        {['Web Development','Python','Java','C++','Data Science','Cloud Computing','DevOps','Cybersecurity','Other'].map((c) => (
+                          <option key={c}>{c}</option>
+                        ))}
                       </select>
                     </div>
-
-                    <div className="input-group">
-                      <label>Course Image URL (PNG, SVG, etc.) *</label>
-                      <input type="text" className="input-field" value={form.logo} onChange={(e) => setForm({ ...form, logo: e.target.value })} required disabled={isLoading} />
-                    </div>
-
                     <div className="input-group">
                       <label>Assign Trainer *</label>
-                      <select className="input-field" value={form.trainerId} onChange={(e) => setForm({ ...form, trainerId: e.target.value })} required disabled={isLoading}>
+                      <select className="input-field" value={form.trainerId}
+                        onChange={(e) => setForm({ ...form, trainerId: e.target.value })}
+                        required disabled={isLoading}>
                         <option value="">Select trainer...</option>
                         {trainers.map((t) => (
                           <option key={t.id} value={t.id}>{t.name} — {t.specialization}</option>
                         ))}
                       </select>
                     </div>
-
-                    <div className="input-group">
-                      <label>Price (₹) *</label>
-                      <input type="number" className="input-field" value={form.price || ''} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} required disabled={isLoading} />
-                    </div>
-
-                    <div className="input-group">
-                      <label>Discount Price (₹)</label>
-                      <input type="number" className="input-field" value={form.discountPrice || ''} onChange={(e) => setForm({ ...form, discountPrice: e.target.value ? Number(e.target.value) : undefined })} disabled={isLoading} />
-                    </div>
-
                     <div className="input-group">
                       <label>Level</label>
-                      <select className="input-field" value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })} disabled={isLoading}>
+                      <select className="input-field" value={form.level}
+                        onChange={(e) => setForm({ ...form, level: e.target.value })}
+                        disabled={isLoading}>
                         <option>Beginner</option>
                         <option>Intermediate</option>
                         <option>Advanced</option>
                       </select>
                     </div>
-
+                    <div className="input-group">
+                      <label>Price (₹) *</label>
+                      <input type="number" className="input-field" value={form.price || ''}
+                        onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+                        required disabled={isLoading} />
+                    </div>
+                    <div className="input-group">
+                      <label>Discount Price (₹)</label>
+                      <input type="number" className="input-field" value={form.discountPrice || ''}
+                        onChange={(e) => setForm({ ...form, discountPrice: e.target.value ? Number(e.target.value) : undefined })}
+                        disabled={isLoading} />
+                    </div>
                     <div className="input-group">
                       <label>Duration</label>
-                      <input type="text" className="input-field" value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} disabled={isLoading} />
+                      <input type="text" className="input-field" value={form.duration}
+                        onChange={(e) => setForm({ ...form, duration: e.target.value })}
+                        disabled={isLoading} />
                     </div>
-
                     <div className="input-group">
                       <label>Lessons Count</label>
-                      <input type="number" className="input-field" value={form.lessonsCount || ''} onChange={(e) => setForm({ ...form, lessonsCount: Number(e.target.value) })} disabled={isLoading} />
+                      <input type="number" className="input-field" value={form.lessonsCount || ''}
+                        onChange={(e) => setForm({ ...form, lessonsCount: Number(e.target.value) })}
+                        disabled={isLoading} />
                     </div>
-
                     <div className="input-group">
                       <label>Published</label>
-                      <select className="input-field" value={form.isPublished ? 'yes' : 'no'} onChange={(e) => setForm({ ...form, isPublished: e.target.value === 'yes' })} disabled={isLoading}>
+                      <select className="input-field" value={form.isPublished ? 'yes' : 'no'}
+                        onChange={(e) => setForm({ ...form, isPublished: e.target.value === 'yes' })}
+                        disabled={isLoading}>
                         <option value="yes">Published</option>
                         <option value="no">Draft</option>
                       </select>
@@ -334,28 +394,34 @@ export default function AdminCoursesClient({
 
                   <div className="input-group">
                     <label>Short Description</label>
-                    <input type="text" className="input-field" value={form.shortDescription} onChange={(e) => setForm({ ...form, shortDescription: e.target.value })} disabled={isLoading} />
+                    <input type="text" className="input-field" value={form.shortDescription}
+                      onChange={(e) => setForm({ ...form, shortDescription: e.target.value })}
+                      disabled={isLoading} />
                   </div>
-
                   <div className="input-group">
                     <label>Full Description</label>
-                    <textarea className="input-field textarea-field" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} disabled={isLoading} />
+                    <textarea className="input-field textarea-field" value={form.description}
+                      onChange={(e) => setForm({ ...form, description: e.target.value })}
+                      disabled={isLoading} />
                   </div>
-
                   <div className="input-group">
                     <label>Tags (comma separated)</label>
-                    <input type="text" className="input-field" value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} disabled={isLoading} />
+                    <input type="text" className="input-field" value={tagsInput}
+                      onChange={(e) => setTagsInput(e.target.value)} disabled={isLoading} />
                   </div>
-
                   <div className="input-group">
                     <label>Syllabus (one topic per line)</label>
-                    <textarea className="input-field textarea-field" value={syllabusInput} onChange={(e) => setSyllabusInput(e.target.value)} disabled={isLoading} />
+                    <textarea className="input-field textarea-field" value={syllabusInput}
+                      onChange={(e) => setSyllabusInput(e.target.value)} disabled={isLoading} />
                   </div>
 
                   <div className={styles.formActions}>
-                    <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} disabled={isLoading}>Cancel</button>
+                    <button type="button" className="btn btn-secondary"
+                      onClick={() => setShowModal(false)} disabled={isLoading}>
+                      Cancel
+                    </button>
                     <button type="submit" className="btn btn-primary" disabled={isLoading}>
-                      {isLoading ? 'Saving...' : (editingCourse ? 'Update Course' : 'Create Course')}
+                      {isLoading ? 'Saving...' : editingCourse ? 'Update Course' : 'Create Course'}
                     </button>
                   </div>
                 </form>
@@ -364,6 +430,7 @@ export default function AdminCoursesClient({
           )}
         </AnimatePresence>
 
+        {/* ── DELETE CONFIRM MODAL ── */}
         <AnimatePresence>
           {deleteConfirm && (
             <motion.div
@@ -385,8 +452,12 @@ export default function AdminCoursesClient({
                   <h3>Delete Course?</h3>
                   <p>This action cannot be undone. The course will be permanently removed.</p>
                   <div className={styles.deleteActions}>
-                    <button className="btn btn-secondary" onClick={() => setDeleteConfirm(null)} disabled={isLoading}>Cancel</button>
-                    <button className="btn btn-danger" onClick={() => handleDelete(deleteConfirm)} disabled={isLoading}>
+                    <button className="btn btn-secondary"
+                      onClick={() => setDeleteConfirm(null)} disabled={isLoading}>
+                      Cancel
+                    </button>
+                    <button className="btn btn-danger"
+                      onClick={() => handleDelete(deleteConfirm)} disabled={isLoading}>
                       {isLoading ? 'Deleting...' : 'Delete Course'}
                     </button>
                   </div>
