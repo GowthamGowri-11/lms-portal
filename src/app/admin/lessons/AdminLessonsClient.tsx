@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit3, Trash2, X, Play, Clock, ChevronDown, ChevronRight, Search } from 'lucide-react';
+import { Plus, Edit3, Trash2, X, Play, Clock, ChevronDown, ChevronRight, Search, Paperclip } from 'lucide-react';
 import { FadeInUp, PageTransition } from '@/components/animations/MotionWrappers';
 import { Module, Lesson, Course } from '@/generated/prisma/client';
+import FileManager from '@/components/admin/FileManager';
 import styles from './lessons.module.css';
 
 type ModuleWithData = Module & {
@@ -28,6 +29,7 @@ export default function AdminLessonsClient({ modules }: { modules: ModuleWithDat
   const [showModal, setShowModal] = useState(false);
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
   const [form, setForm] = useState(emptyLesson);
+  const [filesLessonId, setFilesLessonId] = useState<string | null>(null);
   const [selectedModuleId, setSelectedModuleId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -166,10 +168,27 @@ export default function AdminLessonsClient({ modules }: { modules: ModuleWithDat
                           <button className={styles.actionBtn} onClick={() => openEdit(lesson, mod.id)}>
                             <Edit3 size={15} />
                           </button>
+                          <button
+                            className={styles.actionBtn}
+                            title="Manage Files"
+                            onClick={() => setFilesLessonId(filesLessonId === lesson.id ? null : lesson.id)}
+                          >
+                            <Paperclip size={15} />
+                          </button>
                           <button className={`${styles.actionBtn} ${styles.actionDanger}`} onClick={() => handleDelete(lesson.id)}>
                             <Trash2 size={15} />
                           </button>
                         </div>
+
+                        {/* Inline File Manager for this lesson */}
+                        {filesLessonId === lesson.id && (
+                          <div style={{ padding: '0.75rem 1.5rem 1rem', borderTop: '1px solid var(--glass-border)' }}>
+                            <FileManager
+                              lessonId={lesson.id}
+                              courseId={mod.course.id}
+                            />
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
