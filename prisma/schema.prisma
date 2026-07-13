@@ -66,22 +66,26 @@ model Module {
 
 // ===== Lessons =====
 model Lesson {
-  id          String           @id @default(cuid())
-  title       String
-  description String           @default("")
-  videoUrl    String           @default("")
-  notes       String           @default("")
-  resources   String           @default("[]")
-  order       Int              @default(0)
-  duration    String           @default("")
-  isFree      Boolean          @default(false)
-  moduleId    String
-  module      Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  progresses  LessonProgress[]
-  problems    CodingProblem[]
-  files       LessonFile[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id             String               @id @default(cuid())
+  title          String
+  description    String               @default("")
+  videoUrl       String               @default("")
+  notes          String               @default("")
+  resources      String               @default("[]")
+  order          Int                  @default(0)
+  duration       String               @default("")
+  isFree         Boolean              @default(false)
+  moduleId       String
+  module         Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progresses     LessonProgress[]
+  problems       CodingProblem[]
+  files          LessonFile[]
+  lessonNotes    LessonNote[]
+  lessonResources LessonResource[]
+  assignments    LessonAssignment[]
+  practiceFiles  LessonPracticeFile[]
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
 }
 
 // ===== Lesson Files (Cloudinary uploads) =====
@@ -98,6 +102,85 @@ model LessonFile {
   lesson      Lesson?  @relation(fields: [lessonId], references: [id], onDelete: SetNull)
   courseId    String   @default("")
   uploadedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ===== Lesson Notes =====
+model LessonNote {
+  id               String      @id @default(cuid())
+  title            String
+  description      String      @default("")
+  category         String      @default("Theory")   // Theory | Practical | Assignment | Cheat Sheet | Reference | Project
+  visibility       String      @default("Public")   // Public | Private | Draft
+  studentAccess    String      @default("Everyone") // Everyone | Only Enrolled Students | Only Premium Students
+  secureUrl        String
+  publicId         String      @unique
+  fileType         String      // pdf | pptx | docx | zip | txt | file
+  mimeType         String      @default("")
+  fileSize         Int         @default(0)
+  version          Int         @default(1)
+  parentId         String?     // points to the first/root note for version chains
+  parent           LessonNote? @relation("NoteVersions", fields: [parentId], references: [id], onDelete: SetNull)
+  versions         LessonNote[] @relation("NoteVersions")
+  downloadCount    Int         @default(0)
+  lastDownloadedAt DateTime?
+  uploadedBy       String      @default("Admin")
+  lessonId         String
+  lesson           Lesson      @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  courseId         String      @default("")
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+// ===== Lesson Resources (External Links) =====
+model LessonResource {
+  id           String   @id @default(cuid())
+  title        String
+  url          String
+  type         String   @default("Link") // GitHub | Documentation | Official Website | Reference | YouTube | Blog | Article | Research Paper | External URL
+  description  String   @default("")
+  lessonId     String
+  lesson       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  courseId     String   @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ===== Lesson Assignments =====
+model LessonAssignment {
+  id           String    @id @default(cuid())
+  title        String
+  description  String    @default("")
+  instructions String    @default("")
+  deadline     DateTime?
+  maxMarks     Int       @default(100)
+  secureUrl    String    @default("") // PDF attachment (Cloudinary)
+  publicId     String    @default("")
+  fileType     String    @default("")
+  mimeType     String    @default("")
+  fileSize     Int       @default(0)
+  lessonId     String
+  lesson       Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  courseId     String    @default("")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// ===== Lesson Practice Files =====
+model LessonPracticeFile {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @default("")
+  type        String   @default("Starter Code") // Starter Code | Completed Code | ZIP Project | Source Code | Sample Project
+  secureUrl   String
+  publicId    String   @unique
+  fileType    String   // zip | file | pdf | etc.
+  mimeType    String   @default("")
+  fileSize    Int      @default(0)
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  courseId    String   @default("")
+  createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 

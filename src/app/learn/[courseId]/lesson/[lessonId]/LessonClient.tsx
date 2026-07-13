@@ -6,8 +6,11 @@ import { useRouter } from 'next/navigation';
 import {
   ChevronLeft, ChevronRight, CheckCircle, Play, Lock,
   BookOpen, Code, FileText, Menu, X, ArrowLeft,
+  Download, ExternalLink, Eye, ClipboardList, FileCode,
+  GitBranch, Globe, ExternalLink as YoutubeLink, Calendar, Award,
 } from 'lucide-react';
 import { Course, Lesson, CodingProblem } from '@/generated/prisma/client';
+import type { LessonNote, LessonResource, LessonAssignment, LessonPracticeFile } from '@/generated/prisma/client';
 import { useLearn } from '@/app/learn/[courseId]/LearnContext';
 import styles from './lesson.module.css';
 
@@ -26,6 +29,10 @@ export default function LessonClient({
   prevItem,
   nextItem,
   codingProblems,
+  lessonNotes,
+  lessonResources,
+  lessonAssignments,
+  lessonPracticeFiles,
 }: {
   course: Course;
   lesson: Lesson;
@@ -34,11 +41,15 @@ export default function LessonClient({
   prevItem: any;
   nextItem: any;
   codingProblems: CodingProblem[];
+  lessonNotes: LessonNote[];
+  lessonResources: LessonResource[];
+  lessonAssignments: LessonAssignment[];
+  lessonPracticeFiles: LessonPracticeFile[];
 }) {
   const router = useRouter();
   const { setMobileSidebarOpen } = useLearn();
   
-  const [activeTab, setActiveTab] = useState<'notes' | 'resources' | 'coding'>('notes');
+  const [activeTab, setActiveTab] = useState<'notes' | 'docs' | 'resources' | 'assignments' | 'practice' | 'coding'>('notes');
   const [completed, setCompleted] = useState(initialProgress?.completed ?? false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -239,21 +250,24 @@ export default function LessonClient({
       });
   };
 
-  const resources = (() => {
-    try { return JSON.parse(lesson.resources); } catch { return []; }
-  })();
-
-  const pdfResources = resources.filter(
-    (r: any) => r.url?.toLowerCase().endsWith('.pdf') || r.name?.toLowerCase().includes('pdf')
-  );
-  const notesResources = resources.filter(
-    (r: any) => r.name?.toLowerCase().includes('notes') || r.name?.toLowerCase().includes('note')
-  );
-  const otherResources = resources.filter(
-    (r: any) => !pdfResources.includes(r) && !notesResources.includes(r)
-  );
-
   const nextLocked = nextItem ? !completed : false;
+
+  const trackDownload = async (noteId: string) => {
+    try {
+      await fetch('/api/lessons/track-download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ noteId }),
+      });
+    } catch { /* non-fatal */ }
+  };
+
+  const resourceIcon = (type: string) => {
+    if (type === 'GitHub') return <GitBranch size={15} />;
+    if (type === 'YouTube') return <YoutubeLink size={15} />;
+    if (type === 'Official Website' || type === 'Documentation') return <Globe size={15} />;
+    return <ExternalLink size={15} />;
+  };
 
   return (
     <div className={styles.layout}>
@@ -319,9 +333,12 @@ export default function LessonClient({
         <div className={styles.tabs}>
           {[
             { key: 'notes', label: 'Lesson Notes', icon: <FileText size={15} /> },
-            { key: 'resources', label: 'Resources', icon: <BookOpen size={15} /> },
+            ...(lessonNotes.length > 0 ? [{ key: 'docs', label: `Notes (${lessonNotes.length})`, icon: <Download size={15} /> }] : []),
+            ...(lessonResources.length > 0 ? [{ key: 'resources', label: `Resources (${lessonResources.length})`, icon: <BookOpen size={15} /> }] : []),
+            ...(lessonAssignments.length > 0 ? [{ key: 'assignments', label: `Assignments (${lessonAssignments.length})`, icon: <ClipboardList size={15} /> }] : []),
+            ...(lessonPracticeFiles.length > 0 ? [{ key: 'practice', label: `Practice (${lessonPracticeFiles.length})`, icon: <FileCode size={15} /> }] : []),
             ...(codingProblems.length > 0
-              ? [{ key: 'coding', label: `Practice (${codingProblems.length})`, icon: <Code size={15} /> }]
+              ? [{ key: 'coding', label: `Problems (${codingProblems.length})`, icon: <Code size={15} /> }]
               : []),
           ].map((tab) => (
             <button
@@ -342,52 +359,152 @@ export default function LessonClient({
               {lesson.notes ? (
                 <div className={styles.notesBody}>{parseNotes(lesson.notes)}</div>
               ) : (
-                <p className={styles.emptyState}>No notes available for this lesson.</p>
+                <p className={styles.emptyState}>No lesson notes available.</p>
               )}
+            </div>
+          )}
+
+          {activeTab === 'docs' && (
+            <div className={styles.resourcesContent}>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+                Download course notes for this lesson.
+              </p>
+              {lessonNotes.map((note) => (
+                <div key={note.id} className={styles.resourceItem} style={{ marginBottom: 8, flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
+                    <FileText size={16} style={{ flexShrink: 0 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 600, fontSize: '0.88rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{note.title}</div>
+                      {note.description && <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: 2 }}>{note.description}</div>}
+                      <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.68rem', background: 'rgba(99,102,241,0.1)', color: 'var(--accent-primary)', padding: '1px 6px', borderRadius: 5, fontWeight: 700 }}>{note.fileType.toUpperCase()}</span>
+                        <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>{note.category}</span>
+                        <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>v{note.version}</span>
+                        <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>↓ {note.downloadCount}</span>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                      {note.fileType === 'pdf' && (
+                        <a
+                          href={note.secureUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`btn btn-secondary btn-sm`}
+                          style={{ fontSize: '0.75rem', padding: '5px 10px' }}
+                          onClick={() => trackDownload(note.id)}
+                        >
+                          <Eye size={13} /> View
+                        </a>
+                      )}
+                      <a
+                        href={note.secureUrl}
+                        download
+                        className={`btn btn-primary btn-sm`}
+                        style={{ fontSize: '0.75rem', padding: '5px 10px' }}
+                        onClick={() => trackDownload(note.id)}
+                      >
+                        <Download size={13} /> Download
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
           {activeTab === 'resources' && (
             <div className={styles.resourcesContent}>
-              {resources.length > 0 ? (
-                <>
-                  {pdfResources.length > 0 && (
-                    <div style={{ marginBottom: '1.5rem' }}>
-                      <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 8 }}>Download PDF</h4>
-                      {pdfResources.map((r: any, i: number) => (
-                        <a key={i} href={r.url} target="_blank" rel="noopener noreferrer" className={styles.resourceItem} style={{ marginBottom: 6 }}>
-                          <BookOpen size={16} />
-                          <span>{r.name}</span>
-                        </a>
-                      ))}
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+                External resources and reference links for this lesson.
+              </p>
+              {lessonResources.map((r) => (
+                <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" className={styles.resourceItem} style={{ marginBottom: 8 }}>
+                  {resourceIcon(r.type)}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 600, fontSize: '0.88rem' }}>{r.title}</div>
+                    {r.description && <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: 2 }}>{r.description}</div>}
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', marginTop: 4 }}>{r.type}</div>
+                  </div>
+                  <ExternalLink size={14} style={{ flexShrink: 0, opacity: 0.5 }} />
+                </a>
+              ))}
+            </div>
+          )}
+
+          {activeTab === 'assignments' && (
+            <div className={styles.resourcesContent}>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+                Complete and submit your assignments below.
+              </p>
+              {lessonAssignments.map((a) => (
+                <div key={a.id} className={styles.resourceItem} style={{ marginBottom: 10, flexDirection: 'column', alignItems: 'flex-start', gap: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, width: '100%' }}>
+                    <ClipboardList size={16} style={{ marginTop: 2, flexShrink: 0 }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{a.title}</div>
+                      {a.description && <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: 4 }}>{a.description}</div>}
+                      <div style={{ display: 'flex', gap: 10, marginTop: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                        {a.deadline && (
+                          <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', color: 'var(--accent-warning)' }}>
+                            <Calendar size={12} /> Due: {new Date(a.deadline).toLocaleDateString()}
+                          </span>
+                        )}
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
+                          <Award size={12} /> {a.maxMarks} marks
+                        </span>
+                      </div>
+                      {a.instructions && (
+                        <div style={{ marginTop: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', background: 'rgba(99,102,241,0.04)', padding: '8px 12px', borderRadius: 8, lineHeight: 1.6 }}>
+                          {a.instructions}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {a.secureUrl && (
+                    <div style={{ display: 'flex', gap: 8, paddingLeft: 28 }}>
+                      <a href={a.secureUrl} target="_blank" rel="noopener noreferrer"
+                        className="btn btn-secondary btn-sm" style={{ fontSize: '0.75rem', padding: '5px 10px' }}>
+                        <Eye size={13} /> View PDF
+                      </a>
+                      <a href={a.secureUrl} download
+                        className="btn btn-primary btn-sm" style={{ fontSize: '0.75rem', padding: '5px 10px' }}>
+                        <Download size={13} /> Download
+                      </a>
                     </div>
                   )}
-                  {notesResources.length > 0 && (
-                    <div style={{ marginBottom: '1.5rem' }}>
-                      <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 8 }}>Download Notes</h4>
-                      {notesResources.map((r: any, i: number) => (
-                        <a key={i} href={r.url} target="_blank" rel="noopener noreferrer" className={styles.resourceItem} style={{ marginBottom: 6 }}>
-                          <FileText size={16} />
-                          <span>{r.name}</span>
-                        </a>
-                      ))}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {activeTab === 'practice' && (
+            <div className={styles.resourcesContent}>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+                Download starter code, completed examples, and project files.
+              </p>
+              {lessonPracticeFiles.map((f) => (
+                <div key={f.id} className={styles.resourceItem} style={{ marginBottom: 8, gap: 12 }}>
+                  <FileCode size={16} style={{ flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 600, fontSize: '0.88rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.title}</div>
+                    {f.description && <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: 2 }}>{f.description}</div>}
+                    <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: '0.68rem', background: 'rgba(16,185,129,0.1)', color: 'var(--accent-success)', padding: '1px 6px', borderRadius: 5, fontWeight: 700 }}>{f.type}</span>
+                      <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>{f.fileType.toUpperCase()}</span>
                     </div>
-                  )}
-                  {otherResources.length > 0 && (
-                    <div>
-                      <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 8 }}>Download Attachments</h4>
-                      {otherResources.map((r: any, i: number) => (
-                        <a key={i} href={r.url} target="_blank" rel="noopener noreferrer" className={styles.resourceItem} style={{ marginBottom: 6 }}>
-                          <FileText size={16} />
-                          <span>{r.name}</span>
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <p className={styles.emptyState}>No resources for this lesson.</p>
-              )}
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                    <a href={f.secureUrl} target="_blank" rel="noopener noreferrer"
+                      className="btn btn-secondary btn-sm" style={{ fontSize: '0.75rem', padding: '5px 10px' }}>
+                      <Eye size={13} /> View
+                    </a>
+                    <a href={f.secureUrl} download
+                      className="btn btn-primary btn-sm" style={{ fontSize: '0.75rem', padding: '5px 10px' }}>
+                      <Download size={13} /> Download
+                    </a>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 

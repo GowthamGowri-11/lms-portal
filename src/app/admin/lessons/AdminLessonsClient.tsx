@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Edit3, Trash2, X, Play, Clock, ChevronDown, ChevronRight, Search, Paperclip } from 'lucide-react';
 import { FadeInUp, PageTransition } from '@/components/animations/MotionWrappers';
 import { Module, Lesson, Course } from '@/generated/prisma/client';
-import FileManager from '@/components/admin/FileManager';
+import LessonContentManager from '@/components/admin/LessonContentManager';
 import styles from './lessons.module.css';
 
 type ModuleWithData = Module & {
@@ -180,12 +180,13 @@ export default function AdminLessonsClient({ modules }: { modules: ModuleWithDat
                           </button>
                         </div>
 
-                        {/* Inline File Manager for this lesson */}
+                        {/* Inline Content Manager for this lesson */}
                         {filesLessonId === lesson.id && (
                           <div style={{ padding: '0.75rem 1.5rem 1rem', borderTop: '1px solid var(--glass-border)' }}>
-                            <FileManager
+                            <LessonContentManager
                               lessonId={lesson.id}
                               courseId={mod.course.id}
+                              lessonTitle={lesson.title}
                             />
                           </div>
                         )}

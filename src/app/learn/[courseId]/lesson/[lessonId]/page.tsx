@@ -84,6 +84,22 @@ export default async function LessonPage({
       prevItem={prevItem}
       nextItem={nextItem}
       codingProblems={codingProblems.filter((p) => p.lessonId === lessonId)}
+      lessonNotes={await prisma.lessonNote.findMany({
+        where: { lessonId, visibility: { not: 'Private' } },
+        orderBy: { createdAt: 'desc' },
+      })}
+      lessonResources={await prisma.lessonResource.findMany({
+        where: { lessonId },
+        orderBy: { createdAt: 'asc' },
+      })}
+      lessonAssignments={await prisma.lessonAssignment.findMany({
+        where: { lessonId },
+        orderBy: { createdAt: 'asc' },
+      })}
+      lessonPracticeFiles={await prisma.lessonPracticeFile.findMany({
+        where: { lessonId },
+        orderBy: { createdAt: 'asc' },
+      })}
     />
   );
 }
