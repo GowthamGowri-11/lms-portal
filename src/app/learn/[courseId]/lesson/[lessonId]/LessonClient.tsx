@@ -14,12 +14,7 @@ import type { LessonNote, LessonResource, LessonAssignment, LessonPracticeFile }
 import { useLearn } from '@/app/learn/[courseId]/LearnContext';
 import styles from './lesson.module.css';
 
-function getYouTubeId(url: string) {
-  if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  const match = url.match(regExp);
-  return (match && match[2].length === 11) ? match[2] : null;
-}
+
 
 export default function LessonClient({
   course,
@@ -53,151 +48,10 @@ export default function LessonClient({
   const [completed, setCompleted] = useState(initialProgress?.completed ?? false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const progressSavedRef = useRef<number>(initialProgress?.watchedSeconds ?? 0);
-
   // Sync completed state with server initialProgress
   useEffect(() => {
     setCompleted(initialProgress?.completed ?? false);
-    progressSavedRef.current = initialProgress?.watchedSeconds ?? 0;
   }, [lesson.id, initialProgress]);
-
-  const saveProgress = async (watchedSeconds: number, totalDuration: number, forceCompleted = false) => {
-    if (watchedSeconds === 0 || totalDuration === 0) return;
-    
-    // Avoid redundant network requests if progress hasn't changed much
-    if (!forceCompleted && Math.abs(watchedSeconds - progressSavedRef.current) < 4) {
-      return;
-    }
-    
-    progressSavedRef.current = watchedSeconds;
-    
-    try {
-      const isWatchCompleted = forceCompleted || (watchedSeconds / totalDuration >= 0.90);
-      
-      const response = await fetch('/api/lessons/video-progress', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          studentId: student.id,
-          lessonId: lesson.id,
-          watchedSeconds,
-          totalDuration,
-          completed: isWatchCompleted,
-        }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.progress?.completed && !completed) {
-          setCompleted(true);
-          router.refresh();
-        }
-      }
-    } catch (error) {
-      console.error('Failed to save video progress', error);
-    }
-  };
-
-  // Video tracking for YouTube
-  useEffect(() => {
-    const ytId = getYouTubeId(lesson.videoUrl);
-    if (!ytId) return;
-
-    let player: any = null;
-    let intervalId: any = null;
-
-    const initPlayer = () => {
-      player = new (window as any).YT.Player('yt-player', {
-        videoId: ytId,
-        playerVars: {
-          start: Math.floor(progressSavedRef.current),
-          autoplay: 0,
-        },
-        events: {
-          onReady: () => {
-            // Player loaded
-          },
-          onStateChange: (event: any) => {
-            if (event.data === (window as any).YT.PlayerState.PLAYING) {
-              intervalId = setInterval(() => {
-                if (player && player.getCurrentTime) {
-                  const currentTime = player.getCurrentTime();
-                  const duration = player.getDuration();
-                  saveProgress(currentTime, duration);
-                }
-              }, 5000);
-            } else {
-              if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = null;
-              }
-              if (player && player.getCurrentTime) {
-                const currentTime = player.getCurrentTime();
-                const duration = player.getDuration();
-                const isEnded = event.data === (window as any).YT.PlayerState.ENDED;
-                saveProgress(currentTime, duration, isEnded);
-              }
-            }
-          },
-        },
-      });
-    };
-
-    if ((window as any).YT && (window as any).YT.Player) {
-      initPlayer();
-    } else {
-      const prevCallback = (window as any).onYouTubeIframeAPIReady;
-      (window as any).onYouTubeIframeAPIReady = () => {
-        if (prevCallback) prevCallback();
-        initPlayer();
-      };
-
-      if (!document.getElementById('youtube-iframe-api')) {
-        const tag = document.createElement('script');
-        tag.id = 'youtube-iframe-api';
-        tag.src = 'https://www.youtube.com/iframe_api';
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-      }
-    }
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-      if (player && player.destroy) player.destroy();
-    };
-  }, [lesson.id, lesson.videoUrl]);
-
-  // Video tracking for Direct MP4 Video
-  const handleDirectVideoTimeUpdate = () => {
-    if (videoRef.current) {
-      const currentTime = videoRef.current.currentTime;
-      const duration = videoRef.current.duration;
-      saveProgress(currentTime, duration);
-    }
-  };
-
-  const handleDirectVideoPause = () => {
-    if (videoRef.current) {
-      const currentTime = videoRef.current.currentTime;
-      const duration = videoRef.current.duration;
-      saveProgress(currentTime, duration);
-    }
-  };
-
-  const handleDirectVideoEnded = () => {
-    if (videoRef.current) {
-      const currentTime = videoRef.current.currentTime;
-      const duration = videoRef.current.duration;
-      saveProgress(currentTime, duration, true);
-    }
-  };
-
-  const handleDirectVideoMetadata = () => {
-    if (videoRef.current && progressSavedRef.current > 0) {
-      videoRef.current.currentTime = progressSavedRef.current;
-    }
-  };
 
   const toggleComplete = async () => {
     setIsUpdating(true);
@@ -284,34 +138,7 @@ export default function LessonClient({
 
       {/* Main Content */}
       <main className={styles.main}>
-        {/* Video Area */}
-        <div className={styles.videoSection}>
-          {lesson.videoUrl ? (
-            getYouTubeId(lesson.videoUrl) ? (
-              <div className={styles.videoWrapper}>
-                <div id="yt-player" className={styles.videoIframe}></div>
-              </div>
-            ) : (
-              <div className={styles.videoWrapper}>
-                <video
-                  ref={videoRef}
-                  src={lesson.videoUrl}
-                  controls
-                  className={styles.videoIframe}
-                  onLoadedMetadata={handleDirectVideoMetadata}
-                  onTimeUpdate={handleDirectVideoTimeUpdate}
-                  onPause={handleDirectVideoPause}
-                  onEnded={handleDirectVideoEnded}
-                />
-              </div>
-            )
-          ) : (
-            <div className={styles.videoPlaceholder}>
-              <Play size={48} />
-              <p>Video coming soon</p>
-            </div>
-          )}
-        </div>
+
 
         {/* Lesson Header */}
         <div className={styles.lessonHeader}>
@@ -319,14 +146,6 @@ export default function LessonClient({
             <h1 className={styles.lessonTitle}>{lesson.title}</h1>
             {lesson.description && <p className={styles.lessonDesc}>{lesson.description}</p>}
           </div>
-          <button
-            className={`${styles.completeBtn} ${completed ? styles.completeBtnDone : ''}`}
-            onClick={toggleComplete}
-            disabled={isUpdating}
-          >
-            <CheckCircle size={18} />
-            {completed ? 'Completed!' : 'Mark as Complete'}
-          </button>
         </div>
 
         {/* Tabs */}

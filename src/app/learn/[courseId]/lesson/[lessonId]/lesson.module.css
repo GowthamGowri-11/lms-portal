@@ -3,7 +3,7 @@
 .layout {
   display: flex;
   min-height: 100vh;
-  background: var(--bg-primary);
+  background: transparent;
 }
 
 /* ===== SIDEBAR ===== */
@@ -173,6 +173,8 @@
   flex: 1;
   overflow-y: auto;
   min-width: 0;
+  background: transparent;
+  border-left: none;
 }
 
 /* ===== VIDEO ===== */
