@@ -28,7 +28,7 @@ model Course {
   title            String
   description      String       @default("")
   shortDescription String       @default("")
-  logo             String       @default("📘")
+  logo             String       @default("")
   price            Float
   discountPrice    Float?
   category         String       @default("General")
