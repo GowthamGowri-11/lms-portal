@@ -1,11 +1,14 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function GalaxyBackground() {
+  const pathname = usePathname();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    if (pathname?.startsWith('/admin')) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -245,6 +248,8 @@ export default function GalaxyBackground() {
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
+
+  if (pathname?.startsWith('/admin')) return null;
 
   return (
     <canvas

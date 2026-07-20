@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Edit3, Trash2, X, HelpCircle, ChevronDown,
@@ -46,6 +46,17 @@ export default function AdminQuizzesClient({
   const [qForm, setQForm] = useState({ ...emptyQ });
   const [editingQIdx, setEditingQIdx] = useState<number | null>(null);
   const [activeQuizId, setActiveQuizId] = useState('');
+
+  useEffect(() => {
+    if (showQuizModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showQuizModal]);
 
   const toggle = (id: string) =>
     setExpanded((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
@@ -223,6 +234,10 @@ export default function AdminQuizzesClient({
           {showQuizModal && (
             <motion.div
               className="modal-overlay"
+              style={{
+                background: 'rgba(5, 8, 15, 0.85)',
+                backdropFilter: 'blur(8px)',
+              }}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -230,116 +245,159 @@ export default function AdminQuizzesClient({
             >
               <motion.div
                 className="modal-content"
-                style={{ maxWidth: 760, maxHeight: '90vh', overflowY: 'auto' }}
+                style={{
+                  maxWidth: 950,
+                  width: '95vw',
+                  maxHeight: '90vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: 0,
+                  overflow: 'hidden',
+                  background: 'var(--bg-secondary)',
+                  backdropFilter: 'blur(20px)',
+                }}
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="modal-header">
-                  <h2>{editingQuiz ? 'Edit Quiz' : 'Create Quiz'}</h2>
-                  <button className="modal-close" onClick={() => setShowQuizModal(false)}><X size={20} /></button>
+                <div className="modal-header" style={{
+                  padding: '1.5rem 2rem',
+                  borderBottom: '1px solid var(--glass-border)',
+                  marginBottom: 0,
+                }}>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>{editingQuiz ? 'Edit Quiz' : 'Create Quiz'}</h2>
+                  <button className="modal-close" onClick={() => setShowQuizModal(false)} style={{ margin: 0 }}><X size={20} /></button>
                 </div>
 
-                <form onSubmit={handleSaveQuiz} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                  {/* Quiz Info */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-                    <div className="input-group" style={{ gridColumn: '1 / -1' }}>
-                      <label>Quiz Title *</label>
-                      <input className="input-field" value={quizForm.title} onChange={(e) => setQuizForm({ ...quizForm, title: e.target.value })} required />
+                <form onSubmit={handleSaveQuiz} style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flex: 1,
+                  overflow: 'hidden',
+                }}>
+                  <div style={{
+                    flex: 1,
+                    overflowY: 'auto',
+                    padding: '2rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1.5rem',
+                  }}>
+                    {/* Quiz Info */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
+                      <div className="input-group" style={{ gridColumn: '1 / -1' }}>
+                        <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Quiz Title *</label>
+                        <input className="input-field" value={quizForm.title} onChange={(e) => setQuizForm({ ...quizForm, title: e.target.value })} required />
+                      </div>
+                      <div className="input-group">
+                        <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Assign to Course</label>
+                        <select className="input-field" value={quizForm.courseId} onChange={(e) => setQuizForm({ ...quizForm, courseId: e.target.value, moduleId: '' })}>
+                          <option value="">No course</option>
+                          {courses.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
+                        </select>
+                      </div>
+                      <div className="input-group">
+                        <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Assign to Module</label>
+                        <select className="input-field" value={quizForm.moduleId} onChange={(e) => setQuizForm({ ...quizForm, moduleId: e.target.value })}>
+                          <option value="">No module</option>
+                          {modules.filter((m) => !quizForm.courseId || m.courseId === quizForm.courseId).map((m) => (
+                            <option key={m.id} value={m.id}>{m.title}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="input-group">
+                        <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Time Limit (minutes, 0 = no limit)</label>
+                        <input type="number" className="input-field" value={quizForm.timeLimit} onChange={(e) => setQuizForm({ ...quizForm, timeLimit: Number(e.target.value) })} />
+                      </div>
+                      <div className="input-group">
+                        <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Pass Mark (%)</label>
+                        <input type="number" className="input-field" value={quizForm.passMark} min={0} max={100} onChange={(e) => setQuizForm({ ...quizForm, passMark: Number(e.target.value) })} />
+                      </div>
                     </div>
-                    <div className="input-group">
-                      <label>Assign to Course</label>
-                      <select className="input-field" value={quizForm.courseId} onChange={(e) => setQuizForm({ ...quizForm, courseId: e.target.value, moduleId: '' })}>
-                        <option value="">No course</option>
-                        {courses.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
-                      </select>
-                    </div>
-                    <div className="input-group">
-                      <label>Assign to Module</label>
-                      <select className="input-field" value={quizForm.moduleId} onChange={(e) => setQuizForm({ ...quizForm, moduleId: e.target.value })}>
-                        <option value="">No module</option>
-                        {modules.filter((m) => !quizForm.courseId || m.courseId === quizForm.courseId).map((m) => (
-                          <option key={m.id} value={m.id}>{m.title}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="input-group">
-                      <label>Time Limit (minutes, 0 = no limit)</label>
-                      <input type="number" className="input-field" value={quizForm.timeLimit} onChange={(e) => setQuizForm({ ...quizForm, timeLimit: Number(e.target.value) })} />
-                    </div>
-                    <div className="input-group">
-                      <label>Pass Mark (%)</label>
-                      <input type="number" className="input-field" value={quizForm.passMark} min={0} max={100} onChange={(e) => setQuizForm({ ...quizForm, passMark: Number(e.target.value) })} />
-                    </div>
-                  </div>
 
-                  {/* Questions */}
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                      <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>Questions ({questions.length})</span>
-                      <button type="button" className="btn btn-secondary btn-sm" onClick={addQuestion}>
+                    {/* Questions Section Header */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--glass-border)', paddingTop: '1.5rem', marginTop: '0.5rem' }}>
+                      <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>Questions ({questions.length})</span>
+                      <button type="button" className="btn btn-secondary btn-sm" onClick={addQuestion} style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
                         <PlusCircle size={14} /> Add Question
                       </button>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {/* Questions List */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                       {questions.map((q, i) => (
-                        <div key={i} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--glass-border)', borderRadius: 12, padding: '1rem' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)' }}>Question {i + 1}</span>
-                            <button type="button" onClick={() => removeQuestion(i)} style={{ color: 'var(--accent-danger)', fontSize: '0.75rem' }}>
+                        <div key={i} style={{
+                          background: 'rgba(15, 20, 35, 0.4)',
+                          border: '1px solid var(--glass-border)',
+                          borderRadius: 16,
+                          padding: '1.5rem',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '1.25rem',
+                          boxShadow: 'var(--glass-shadow)',
+                        }}>
+                          {/* Question Card Header */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--glass-border)', paddingBottom: '0.75rem', marginBottom: '0.25rem' }}>
+                            <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--accent-primary-light)' }}>Question {i + 1}</span>
+                            <button type="button" onClick={() => removeQuestion(i)} style={{ color: 'var(--accent-danger)', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
                               Remove
                             </button>
                           </div>
 
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                          {/* Question Form Fields */}
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                             <div className="input-group">
-                              <label>Question Text</label>
+                              <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Question Text</label>
                               <input className="input-field" value={q.question} onChange={(e) => updateQuestion(i, 'question', e.target.value)} required />
                             </div>
 
-                            <div className="input-group">
-                              <label>Question Type</label>
-                              <select className="input-field" value={q.type} onChange={(e) => updateQuestion(i, 'type', e.target.value)}>
-                                <option value="mcq">Multiple Choice (Single)</option>
-                                <option value="multiple">Multiple Choice (Multi)</option>
-                                <option value="truefalse">True / False</option>
-                                <option value="fillin">Fill in the Blank</option>
-                              </select>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+                              <div className="input-group">
+                                <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Question Type</label>
+                                <select className="input-field" value={q.type} onChange={(e) => updateQuestion(i, 'type', e.target.value)}>
+                                  <option value="mcq">Multiple Choice (Single)</option>
+                                  <option value="multiple">Multiple Choice (Multi)</option>
+                                  <option value="truefalse">True / False</option>
+                                  <option value="fillin">Fill in the Blank</option>
+                                </select>
+                              </div>
+
+                              <div className="input-group">
+                                <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Correct Answer</label>
+                                {q.type === 'truefalse' ? (
+                                  <select className="input-field" value={q.correctAnswer} onChange={(e) => updateQuestion(i, 'correctAnswer', e.target.value)}>
+                                    <option value="">Select...</option>
+                                    <option>True</option>
+                                    <option>False</option>
+                                  </select>
+                                ) : (
+                                  <input className="input-field" value={q.correctAnswer} placeholder={q.type === 'multiple' ? 'Comma-separated: Option1,Option2' : 'Correct answer'} onChange={(e) => updateQuestion(i, 'correctAnswer', e.target.value)} />
+                                )}
+                              </div>
                             </div>
 
                             {q.type !== 'truefalse' && q.type !== 'fillin' && (
-                              <div className="input-group">
-                                <label>Options</label>
-                                {q.options.map((opt, oi) => (
-                                  <input
-                                    key={oi}
-                                    className="input-field"
-                                    style={{ marginBottom: 6 }}
-                                    value={opt}
-                                    placeholder={`Option ${oi + 1}`}
-                                    onChange={(e) => updateOption(i, oi, e.target.value)}
-                                  />
-                                ))}
+                              <div className="input-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Options</label>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
+                                  {q.options.map((opt, oi) => (
+                                    <div key={oi} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Option {oi + 1}</span>
+                                      <input
+                                        className="input-field"
+                                        value={opt}
+                                        placeholder={`Option ${oi + 1}`}
+                                        onChange={(e) => updateOption(i, oi, e.target.value)}
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
                             )}
 
                             <div className="input-group">
-                              <label>Correct Answer</label>
-                              {q.type === 'truefalse' ? (
-                                <select className="input-field" value={q.correctAnswer} onChange={(e) => updateQuestion(i, 'correctAnswer', e.target.value)}>
-                                  <option value="">Select...</option>
-                                  <option>True</option>
-                                  <option>False</option>
-                                </select>
-                              ) : (
-                                <input className="input-field" value={q.correctAnswer} placeholder={q.type === 'multiple' ? 'Comma-separated: Option1,Option2' : 'Correct answer'} onChange={(e) => updateQuestion(i, 'correctAnswer', e.target.value)} />
-                              )}
-                            </div>
-
-                            <div className="input-group">
-                              <label>Explanation (optional)</label>
+                              <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Explanation (optional)</label>
                               <input className="input-field" value={q.explanation} onChange={(e) => updateQuestion(i, 'explanation', e.target.value)} />
                             </div>
                           </div>
@@ -348,7 +406,15 @@ export default function AdminQuizzesClient({
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+                  <div style={{
+                    padding: '1.25rem 2rem',
+                    borderTop: '1px solid var(--glass-border)',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    gap: 12,
+                    background: 'rgba(10, 15, 25, 0.4)',
+                    backdropFilter: 'blur(10px)',
+                  }}>
                     <button type="button" className="btn btn-secondary" onClick={() => setShowQuizModal(false)}>Cancel</button>
                     <button type="submit" className="btn btn-primary" disabled={isLoading}>
                       {isLoading ? 'Saving...' : (editingQuiz ? 'Update Quiz' : 'Create Quiz')}

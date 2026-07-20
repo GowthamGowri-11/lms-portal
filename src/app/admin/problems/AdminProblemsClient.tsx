@@ -206,89 +206,136 @@ export default function AdminProblemsClient({
             <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => !isLoading && setShowModal(false)}>
               <motion.div
                 className="modal-content"
-                style={{ maxWidth: 800, maxHeight: '90vh', overflowY: 'auto' }}
+                style={{
+                  maxWidth: 1000,
+                  width: '95vw',
+                  maxHeight: '90vh',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: 0,
+                  overflow: 'hidden',
+                  background: 'var(--bg-secondary)',
+                  backdropFilter: 'blur(20px)',
+                }}
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="modal-header">
-                  <h2>{editing ? 'Edit Problem' : 'Add Coding Problem'}</h2>
-                  <button className="modal-close" onClick={() => setShowModal(false)}><X size={20} /></button>
+                <div className="modal-header" style={{
+                  padding: '1.25rem 2rem',
+                  borderBottom: '1px solid var(--glass-border)',
+                  marginBottom: 0,
+                }}>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>{editing ? 'Edit Problem' : 'Add Coding Problem'}</h2>
+                  <button className="modal-close" onClick={() => setShowModal(false)} style={{ margin: 0 }}><X size={20} /></button>
                 </div>
 
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-                    <div className="input-group" style={{ gridColumn: '1/-1' }}>
+                <form onSubmit={handleSubmit} style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flex: 1,
+                  overflow: 'hidden',
+                }}>
+                  <div style={{
+                    flex: 1,
+                    overflowY: 'auto',
+                    padding: '1.5rem 2rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1.25rem',
+                  }}>
+                    {/* Problem Title */}
+                    <div className="input-group">
                       <label>Problem Title *</label>
                       <input className="input-field" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
                     </div>
-                    <div className="input-group">
-                      <label>Difficulty</label>
-                      <select className="input-field" value={form.difficulty} onChange={(e) => setForm({ ...form, difficulty: e.target.value })}>
-                        <option>Easy</option><option>Medium</option><option>Hard</option>
-                      </select>
+
+                    {/* Metadata Grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
+                      <div className="input-group">
+                        <label>Difficulty</label>
+                        <select className="input-field" value={form.difficulty} onChange={(e) => setForm({ ...form, difficulty: e.target.value })}>
+                          <option>Easy</option><option>Medium</option><option>Hard</option>
+                        </select>
+                      </div>
+                      <div className="input-group">
+                        <label>Assign to Lesson</label>
+                        <select className="input-field" value={form.lessonId} onChange={(e) => setForm({ ...form, lessonId: e.target.value })}>
+                          <option value="">No lesson</option>
+                          {lessons.map((l) => (
+                            <option key={l.id} value={l.id}>{l.title}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                    <div className="input-group">
-                      <label>Assign to Lesson</label>
-                      <select className="input-field" value={form.lessonId} onChange={(e) => setForm({ ...form, lessonId: e.target.value })}>
-                        <option value="">No lesson</option>
-                        {lessons.map((l) => (
-                          <option key={l.id} value={l.id}>{l.title}</option>
-                        ))}
-                      </select>
+
+                    {/* Limits and Points Grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.25rem' }}>
+                      <div className="input-group">
+                        <label>Points</label>
+                        <input type="number" className="input-field" value={form.points} onChange={(e) => setForm({ ...form, points: Number(e.target.value) })} />
+                      </div>
+                      <div className="input-group">
+                        <label>Time Limit (seconds)</label>
+                        <input type="number" className="input-field" value={form.timeLimit} onChange={(e) => setForm({ ...form, timeLimit: Number(e.target.value) })} />
+                      </div>
+                      <div className="input-group">
+                        <label>Memory Limit (MB)</label>
+                        <input type="number" className="input-field" value={form.memoryLimit} onChange={(e) => setForm({ ...form, memoryLimit: Number(e.target.value) })} />
+                      </div>
                     </div>
-                    <div className="input-group">
-                      <label>Points</label>
-                      <input type="number" className="input-field" value={form.points} onChange={(e) => setForm({ ...form, points: Number(e.target.value) })} />
-                    </div>
-                    <div className="input-group">
-                      <label>Time Limit (seconds)</label>
-                      <input type="number" className="input-field" value={form.timeLimit} onChange={(e) => setForm({ ...form, timeLimit: Number(e.target.value) })} />
-                    </div>
-                    <div className="input-group">
-                      <label>Memory Limit (MB)</label>
-                      <input type="number" className="input-field" value={form.memoryLimit} onChange={(e) => setForm({ ...form, memoryLimit: Number(e.target.value) })} />
+
+                    {/* Text Areas - Full Width */}
+                    {[
+                      { label: 'Description *', key: 'description', required: true },
+                      { label: 'Input Format', key: 'inputFormat' },
+                      { label: 'Output Format', key: 'outputFormat' },
+                      { label: 'Constraints', key: 'constraints' },
+                    ].map(({ label, key, required }) => (
+                      <div key={key} className="input-group">
+                        <label>{label}</label>
+                        <textarea className="input-field textarea-field" style={{ minHeight: 80 }} value={(form as Record<string, unknown>)[key] as string} onChange={(e) => setForm({ ...form, [key]: e.target.value })} required={required} />
+                      </div>
+                    ))}
+
+                    {[
+                      { label: 'Examples (JSON array)', key: 'examples', ph: '[{"input":"3 5","output":"8","explanation":"3+5=8"}]' },
+                      { label: 'Visible Test Cases (JSON array)', key: 'visibleTests', ph: '[{"input":"3 5","expected":"8"}]' },
+                      { label: 'Hidden Test Cases (JSON array)', key: 'hiddenTests', ph: '[{"input":"100 200","expected":"300"}]' },
+                    ].map(({ label, key, ph }) => (
+                      <div key={key} className="input-group">
+                        <label>{label}</label>
+                        <textarea className="input-field textarea-field" style={{ minHeight: 80, fontFamily: 'monospace', fontSize: '0.82rem' }} placeholder={ph} value={(form as Record<string, unknown>)[key] as string} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
+                      </div>
+                    ))}
+
+                    {/* Starter Code */}
+                    <div style={{ fontWeight: 700, fontSize: '0.95rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1.25rem', marginTop: '0.5rem' }}>Starter Code</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+                      {[
+                        { label: 'Python', key: 'starterPython' },
+                        { label: 'JavaScript', key: 'starterJS' },
+                        { label: 'Java', key: 'starterJava' },
+                        { label: 'C++', key: 'starterCpp' },
+                      ].map(({ label, key }) => (
+                        <div key={key} className="input-group">
+                          <label>{label}</label>
+                          <textarea className="input-field textarea-field" style={{ minHeight: 100, fontFamily: 'monospace', fontSize: '0.82rem' }} value={(form as Record<string, unknown>)[key] as string} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
+                        </div>
+                      ))}
                     </div>
                   </div>
 
-                  {[
-                    { label: 'Description *', key: 'description', required: true },
-                    { label: 'Input Format', key: 'inputFormat' },
-                    { label: 'Output Format', key: 'outputFormat' },
-                    { label: 'Constraints', key: 'constraints' },
-                  ].map(({ label, key, required }) => (
-                    <div key={key} className="input-group">
-                      <label>{label}</label>
-                      <textarea className="input-field textarea-field" style={{ minHeight: 80 }} value={(form as Record<string, unknown>)[key] as string} onChange={(e) => setForm({ ...form, [key]: e.target.value })} required={required} />
-                    </div>
-                  ))}
-
-                  {[
-                    { label: 'Examples (JSON array)', key: 'examples', ph: '[{"input":"3 5","output":"8","explanation":"3+5=8"}]' },
-                    { label: 'Visible Test Cases (JSON array)', key: 'visibleTests', ph: '[{"input":"3 5","expected":"8"}]' },
-                    { label: 'Hidden Test Cases (JSON array)', key: 'hiddenTests', ph: '[{"input":"100 200","expected":"300"}]' },
-                  ].map(({ label, key, ph }) => (
-                    <div key={key} className="input-group">
-                      <label>{label}</label>
-                      <textarea className="input-field textarea-field" style={{ minHeight: 80, fontFamily: 'monospace', fontSize: '0.82rem' }} placeholder={ph} value={(form as Record<string, unknown>)[key] as string} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
-                    </div>
-                  ))}
-
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: -8 }}>Starter Code</div>
-                  {[
-                    { label: 'Python', key: 'starterPython' },
-                    { label: 'JavaScript', key: 'starterJS' },
-                    { label: 'Java', key: 'starterJava' },
-                    { label: 'C++', key: 'starterCpp' },
-                  ].map(({ label, key }) => (
-                    <div key={key} className="input-group">
-                      <label>{label}</label>
-                      <textarea className="input-field textarea-field" style={{ minHeight: 80, fontFamily: 'monospace', fontSize: '0.82rem' }} value={(form as Record<string, unknown>)[key] as string} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
-                    </div>
-                  ))}
-
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+                  <div style={{
+                    padding: '1.25rem 2rem',
+                    borderTop: '1px solid var(--glass-border)',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    gap: 12,
+                    background: 'rgba(10, 15, 25, 0.4)',
+                    backdropFilter: 'blur(10px)',
+                  }}>
                     <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
                     <button type="submit" className="btn btn-primary" disabled={isLoading}>
                       {isLoading ? 'Saving...' : (editing ? 'Update' : 'Create Problem')}
