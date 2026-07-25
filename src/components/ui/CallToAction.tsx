@@ -3,22 +3,21 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import styles from './CallToAction.module.css';
+import TiltCard from '../animations/TiltCard';
 
 export default function CallToAction() {
   return (
     <section className={styles.ctaWrapper}>
-      <div className={styles.backgroundMesh} />
       <div className="container">
-        <motion.div 
+        <TiltCard 
           className={styles.ctaCard}
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, ease: "easeOut" }}
+          style={{ perspective: '1200px' }}
         >
-          {/* Decorative Orbs */}
-          <div className={styles.orb1} />
-          <div className={styles.orb2} />
+          {/* Decorative Orbs Removed */}
 
           <motion.div 
             className={styles.badge}
@@ -26,6 +25,7 @@ export default function CallToAction() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
+            style={{ transform: 'translateZ(30px)' }}
           >
             <Sparkles size={16} className={styles.badgeIcon} />
             Your Future Starts Here
@@ -37,6 +37,7 @@ export default function CallToAction() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
+            style={{ transform: 'translateZ(40px)' }}
           >
             Ready to <span className={styles.highlight}>Transform</span> Your Career?
           </motion.h2>
@@ -47,6 +48,7 @@ export default function CallToAction() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
+            style={{ transform: 'translateZ(30px)' }}
           >
             Join thousands of professionals who have upgraded their skills. Get unlimited access to premium courses taught by industry elite and start building your legacy today.
           </motion.p>
@@ -57,6 +59,7 @@ export default function CallToAction() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.5 }}
+            style={{ transform: 'translateZ(50px)' }}
           >
             <Link href="/courses" className={styles.primaryBtn}>
               Get Started Now <ArrowRight size={20} />
@@ -66,7 +69,7 @@ export default function CallToAction() {
             </Link>
           </motion.div>
 
-        </motion.div>
+        </TiltCard>
       </div>
     </section>
   );

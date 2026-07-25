@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { BookOpen, Users, GraduationCap, DollarSign, Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { FadeInUp, StaggerContainer, StaggerItem, PageTransition } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
-import { Course, Trainer, Student, Enrollment } from '@/generated/prisma/client';
+import { CourseWithArrays } from '@/lib/utils';
+import { Trainer, Student, Enrollment } from '@/generated/prisma/client';
 
 export default function AdminDashboardClient({
   courses,
@@ -12,7 +13,7 @@ export default function AdminDashboardClient({
   students,
   enrollments,
 }: {
-  courses: Course[];
+  courses: CourseWithArrays[];
   trainers: Trainer[];
   students: Student[];
   enrollments: Enrollment[];
@@ -187,7 +188,9 @@ export default function AdminDashboardClient({
                         <span className={styles.quickTitle}>{course.title}</span>
                         <span className={styles.quickMeta}>{course.studentsEnrolled} students</span>
                       </div>
-                      <div className={styles.quickLogo}>{course.logo}</div>
+                      <div className={styles.quickLogo}>
+                        <img src={course.logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                      </div>
                     </div>
                   ))}
               </div>

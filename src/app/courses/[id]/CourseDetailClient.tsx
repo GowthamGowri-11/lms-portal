@@ -4,35 +4,49 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import {
-  ArrowLeft,
-  Star,
-  Clock,
-  BookOpen,
-  CheckCircle,
-  Play,
-  ShieldCheck,
-  X,
+  ArrowLeft, ArrowRight, Star, Clock, BookOpen, CheckCircle,
+  Play, ShieldCheck, X, Lock, ChevronDown, ChevronRight,
+  Users, Award, Target, Layout
 } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, ScrollReveal, PageTransition } from '@/components/animations/MotionWrappers';
+import TechIllustration from '@/components/ui/TechIllustration';
 import styles from './page.module.css';
-import { Course, Trainer } from '@/generated/prisma/client';
+import { CourseWithArrays } from '@/lib/utils';
+import { Trainer, Module, Lesson } from '@/generated/prisma/client';
 
-export default function CourseDetailClient({ 
-  course, 
-  trainer 
-}: { 
-  course: Course, 
-  trainer: Trainer | null 
+type ModuleWithLessons = Module & { lessons: Lesson[] };
+
+export default function CourseDetailClient({
+  course,
+  trainer,
+  modules = [],
+}: {
+  course: CourseWithArrays;
+  trainer: Trainer | null;
+  modules?: ModuleWithLessons[];
 }) {
   const [showEnrollModal, setShowEnrollModal] = useState(false);
+  const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set([modules[0]?.id ?? '']));
+
+  const totalLessons = modules.reduce((t, m) => t + m.lessons.length, 0);
+
+  const toggleModule = (id: string) => {
+    setExpandedModules((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const firstLesson = modules[0]?.lessons[0];
 
   return (
     <>
       <Navbar />
       <PageTransition>
         <main className={styles.main}>
-          {/* Hero */}
+          {/* Hero Section */}
           <section className={styles.hero}>
             <div className={styles.heroBg} />
             <div className={`container ${styles.heroContent}`}>
@@ -44,57 +58,258 @@ export default function CourseDetailClient({
               </FadeInUp>
 
               <div className={styles.heroGrid}>
-                <div className={styles.heroLeft}>
+                {/* Left Content column */}
+                <div className={styles.heroMain}>
                   <FadeInUp delay={0.1}>
                     <div className={styles.heroBadges}>
-                      <span className="badge badge-primary">{course.level}</span>
-                      <span className="badge badge-success">{course.category}</span>
+                      <span className="badge badge-primary" style={{ background: 'rgba(99,102,241,0.15)', color: 'var(--accent-primary-light)', border: '1px solid rgba(99,102,241,0.3)' }}>{course.level}</span>
+                      <span className="badge badge-success" style={{ background: 'rgba(45,212,191,0.15)', color: 'var(--accent-secondary)', border: '1px solid rgba(45,212,191,0.3)' }}>{course.category}</span>
                     </div>
                   </FadeInUp>
-
+                  
                   <FadeInUp delay={0.15}>
                     <h1 className={styles.heroTitle}>{course.title}</h1>
                   </FadeInUp>
 
-                  <FadeInUp delay={0.2}>
-                    <p className={styles.heroDesc}>{course.shortDescription}</p>
-                  </FadeInUp>
-
-                  <FadeInUp delay={0.25}>
-                    <div className={styles.heroMeta}>
-                      <div className={styles.metaItem}>
-                        <Star size={16} fill="#fdcb6e" stroke="#fdcb6e" />
-                        <strong>{course.rating}</strong>
-                        <span>({course.studentsEnrolled.toLocaleString()} students)</span>
-                      </div>
-                      <div className={styles.metaItem}>
-                        <Clock size={16} />
-                        <span>{course.duration}</span>
-                      </div>
-                      <div className={styles.metaItem}>
-                        <BookOpen size={16} />
-                        <span>{course.lessonsCount} lessons</span>
-                      </div>
+                  {/* Subtle Metadata near title */}
+                  <FadeInUp delay={0.18}>
+                    <div className={styles.premiumMetaRow}>
+                      <span className={styles.premiumMetaItem}>
+                        <Star size={13} fill="var(--accent-warning)" stroke="var(--accent-warning)" /> {course.rating} Rating
+                      </span>
+                      <span className={styles.premiumMetaDivider}>•</span>
+                      <span className={styles.premiumMetaItem}>
+                        👨‍🎓 {course.studentsEnrolled.toLocaleString()} Students
+                      </span>
                     </div>
                   </FadeInUp>
 
+                  {/* Tiny Premium Details Pills */}
+                  <FadeInUp delay={0.19}>
+                    <div className={styles.premiumDetailPills}>
+                      <span className={styles.detailPill}>📅 Completion: ~4 Weeks</span>
+                      <span className={styles.detailPill}>⏱ Last updated: July 2026</span>
+                      <span className={styles.detailPill}>🌐 Language: English</span>
+                      <span className={styles.detailPill}>💬 Subtitles: English [CC]</span>
+                      <span className={styles.detailPill}>♾ Lifetime Updates</span>
+                      <span className={styles.detailPill}>📁 Downloadable Resources</span>
+                      <span className={styles.detailPill}>💻 Mobile & Desktop Support</span>
+                    </div>
+                  </FadeInUp>
+                  
+                  <FadeInUp delay={0.20}>
+                    <p className={styles.heroDesc}>{course.shortDescription}</p>
+                  </FadeInUp>
+
+                  {/* Instructor Preview */}
                   {trainer && (
-                    <FadeInUp delay={0.3}>
-                      <div className={styles.trainerInfo}>
-                        <div className={styles.trainerAvatar}>{trainer.name.charAt(0)}</div>
-                        <div>
-                          <span className={styles.trainerLabel}>Instructor</span>
-                          <span className={styles.trainerName}>{trainer.name}</span>
+                    <FadeInUp delay={0.22}>
+                      <div className={styles.heroTrainerPreview}>
+                        <div className={styles.heroTrainerDot}>{trainer.name.charAt(0)}</div>
+                        <div className={styles.heroTrainerInfo}>
+                          <div className={styles.heroTrainerNameRow}>
+                            <span className={styles.heroTrainerName}>{trainer.name}</span>
+                            <span className={styles.verifiedBadge}>✓ Verified Instructor</span>
+                          </div>
+                          <div className={styles.heroTrainerStats}>
+                            <span>{trainer.experience} Experience</span>
+                            <span className={styles.bullet}>•</span>
+                            <span>⭐ {trainer.rating} Trainer Rating</span>
+                          </div>
                         </div>
                       </div>
                     </FadeInUp>
                   )}
+
+                  {/* Trust Badges */}
+                  <FadeInUp delay={0.25}>
+                    <div className={styles.trustBadgesRow}>
+                      <span className={styles.trustBadge}>✓ Lifetime Access</span>
+                      <span className={styles.trustBadge}>🏆 Certificate Included</span>
+                      <span className={styles.trustBadge}>🚀 {course.level} Friendly</span>
+                      <span className={styles.trustBadge}>💬 Community Support</span>
+                    </div>
+                  </FadeInUp>
                 </div>
 
-                <div className={styles.heroRight}>
-                  <FadeInUp delay={0.2}>
-                    <div className={styles.enrollCard}>
-                      <div className={styles.enrollLogo}>{course.logo}</div>
+                {/* Right Illustration column */}
+                <FadeInUp delay={0.2} className={styles.heroIllustrationContainer}>
+                  <div className={styles.hologramWrapper}>
+                    <div className={styles.hologramCircleFrame} />
+                    <div className={styles.hologramGlow} />
+                    <TechIllustration title={course.title} category={course.category} size={340} />
+                  </div>
+                </FadeInUp>
+              </div>
+
+            </div>
+          </section>
+          
+          <div className={styles.heroSeparator} />
+
+          {/* Main Layout: Two Columns */}
+          <section className="container">
+            <div className={styles.layoutGrid}>
+              
+              {/* Left Column (Content) */}
+              <div className={styles.contentMain}>
+                
+                {/* Progress Overview Grid */}
+                {modules.length > 0 && (
+                  <ScrollReveal>
+                    <div className={styles.progressGrid}>
+                      {[
+                        { icon: <Layout size={22} />, value: modules.length, label: 'MODULES', color: 'var(--accent-primary)' },
+                        { icon: <Play size={22} />, value: totalLessons, label: 'LESSONS', color: 'var(--accent-secondary)' },
+                        { icon: <Clock size={22} />, value: course.duration, label: 'DURATION', color: 'var(--accent-tertiary)' },
+                        { icon: <Award size={22} />, value: '1', label: 'CERTIFICATE', color: 'var(--accent-warning)' },
+                      ].map((stat, i) => (
+                        <motion.div key={i} className={styles.progressStat} whileHover={{ y: -5 }}>
+                          <div className={styles.progressStatIcon} style={{ color: stat.color, background: `${stat.color}12` }}>
+                            {stat.icon}
+                          </div>
+                          <div className={styles.progressStatContent}>
+                            <div className={styles.progressStatValue}>{stat.value}</div>
+                            <div className={styles.progressStatLabel}>{stat.label}</div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </ScrollReveal>
+                )}
+
+                {/* About Section */}
+                <ScrollReveal>
+                  <div className={`${styles.contentBlock} ${styles.aboutBlock}`}>
+                    <h2><Target size={24} color="var(--accent-primary)" /> About This Course</h2>
+                    <p>{course.description}</p>
+                  </div>
+                </ScrollReveal>
+
+                {/* Skills Tags */}
+                {course.tags.length > 0 && (
+                  <ScrollReveal>
+                    <div className={styles.contentBlock}>
+                      <h2><ShieldCheck size={24} color="var(--accent-secondary)" /> Skills You&apos;ll Learn</h2>
+                      <div className={styles.tagsList}>
+                        {course.tags.map((tag: string) => (
+                          <span key={tag} className={styles.tag}>
+                            <CheckCircle size={14} /> {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </ScrollReveal>
+                )}
+
+                {/* Modules Section */}
+                {modules.length > 0 && (
+                  <ScrollReveal>
+                    <div className={styles.contentBlock}>
+                      <div className={styles.modulesSectionHeader}>
+                        <h2><BookOpen size={24} color="var(--accent-primary)" /> Course Content</h2>
+                        <span className={styles.modulesCount}>
+                          {modules.length} sections • {totalLessons} lessons
+                        </span>
+                      </div>
+
+                      <div className={styles.modulesList}>
+                        {modules.map((mod, mIdx) => (
+                          <div key={mod.id} className={styles.moduleItem}>
+                            <button
+                              className={styles.moduleHeader}
+                              onClick={() => toggleModule(mod.id)}
+                            >
+                              <div className={styles.moduleHeaderLeft}>
+                                {expandedModules.has(mod.id)
+                                  ? <ChevronDown size={18} />
+                                  : <ChevronRight size={18} />
+                                }
+                                <span className={styles.moduleNum}>Section {mIdx + 1}</span>
+                                <span className={styles.moduleTitle}>{mod.title}</span>
+                              </div>
+                              <span className={styles.moduleCount}>{mod.lessons.length} lessons</span>
+                            </button>
+
+                            <AnimatePresence>
+                              {expandedModules.has(mod.id) && (
+                                <motion.div
+                                  className={styles.lessonsContainer}
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                >
+                                  {mod.lessons.map((lesson) => (
+                                    <Link
+                                      key={lesson.id}
+                                      href={`/learn/${course.id}/lesson/${lesson.id}`}
+                                      className={styles.lessonRow}
+                                    >
+                                      <Play size={14} className={styles.lessonPlay} />
+                                      <span className={styles.lessonTitle}>{lesson.title}</span>
+                                      <div className={styles.lessonMeta}>
+                                        {lesson.duration && <span className={styles.lessonDuration}>{lesson.duration}</span>}
+                                        {lesson.isFree
+                                          ? <span className={styles.freeBadge}>Free</span>
+                                          : <Lock size={12} className={styles.lockIcon} />
+                                        }
+                                      </div>
+                                    </Link>
+                                  ))}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </ScrollReveal>
+                )}
+
+                {/* Trainer Section */}
+                {trainer && (
+                  <ScrollReveal>
+                    <div className={styles.contentBlock}>
+                      <h2><Users size={24} color="var(--accent-primary)" /> Meet Your Instructor</h2>
+                      <div className={styles.trainerCard}>
+                        <div className={styles.trainerCardAvatar}>{trainer.name.charAt(0)}</div>
+                        <div className={styles.trainerCardInfo}>
+                          <h3>{trainer.name}</h3>
+                          <span className={styles.trainerCardSpec}>{trainer.specialization}</span>
+                          <p>{trainer.bio}</p>
+                          <div className={styles.trainerCardStats}>
+                            <div>
+                              <strong>{trainer.experience}</strong>
+                              <span>Experience</span>
+                            </div>
+                            <div>
+                              <strong>{course.studentsEnrolled}</strong>
+                              <span>Students</span>
+                            </div>
+                            <div>
+                              <strong>{trainer.rating}</strong>
+                              <span>Rating</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </ScrollReveal>
+                )}
+              </div>
+
+              {/* Right Column (Sticky Enroll Card) */}
+              <div className={styles.sidebarColumn}>
+                <FadeInUp delay={0.3}>
+                  <div className={styles.enrollCard}>
+                    <div className={styles.premiumBadge}>
+                      <span>BEST VALUE</span>
+                    </div>
+                    <div className={styles.enrollLogo}>
+                      <TechIllustration title={course.title} category={course.category} size={80} />
+                    </div>
+                    <div className={styles.priceContainer}>
                       <div className={styles.enrollPrice}>
                         {course.discountPrice ? (
                           <>
@@ -108,120 +323,37 @@ export default function CourseDetailClient({
                           <span className={styles.enrollCurrentPrice}>₹{course.price}</span>
                         )}
                       </div>
+                    </div>
+                    <div className={styles.ctaContainer}>
+                      {firstLesson && (
+                        <Link
+                          href={`/learn/${course.id}/lesson/${firstLesson.id}`}
+                          className={`btn btn-primary btn-lg ${styles.startLearningBtn}`}
+                          style={{ width: '100%', justifyContent: 'center' }}
+                        >
+                          <Play size={18} /> Start Learning <ArrowRight size={16} className={styles.btnArrow} />
+                        </Link>
+                      )}
                       <button
-                        className="btn btn-primary btn-lg"
+                        className="btn btn-secondary btn-lg"
                         style={{ width: '100%' }}
                         onClick={() => setShowEnrollModal(true)}
                       >
                         Enroll Now
                       </button>
-                      <div className={styles.enrollFeatures}>
-                        <div><CheckCircle size={14} /> Lifetime Access</div>
-                        <div><CheckCircle size={14} /> Certificate of Completion</div>
-                        <div><CheckCircle size={14} /> Project-Based Learning</div>
-                        <div><CheckCircle size={14} /> 24/7 Support</div>
-                      </div>
                     </div>
-                  </FadeInUp>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Content */}
-          <section className={styles.contentSection}>
-            <div className="container">
-              <div className={styles.contentGrid}>
-                {/* Description */}
-                <div className={styles.contentMain}>
-                  <ScrollReveal>
-                    <div className={styles.contentBlock}>
-                      <h2>About This Course</h2>
-                      <p>{course.description}</p>
+                    <div className={styles.enrollDivider} />
+                    <div className={styles.enrollFeatures}>
+                      <div><CheckCircle size={16} /> {totalLessons} Lessons</div>
+                      <div><CheckCircle size={16} /> Lifetime Access</div>
+                      <div><CheckCircle size={16} /> Certificate of Completion</div>
+                      <div><CheckCircle size={16} /> Coding Practice</div>
+                      <div><CheckCircle size={16} /> Quizzes & Assessments</div>
                     </div>
-                  </ScrollReveal>
-
-                  {/* Tags */}
-                  {course.tags.length > 0 && (
-                    <ScrollReveal>
-                      <div className={styles.contentBlock}>
-                        <h2>Skills You&apos;ll Learn</h2>
-                        <div className={styles.tagsList}>
-                          {course.tags.map((tag: string) => (
-                            <span key={tag} className={styles.tag}>
-                              <CheckCircle size={14} /> {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </ScrollReveal>
-                  )}
-
-                  {/* Syllabus */}
-                  {course.syllabus.length > 0 && (
-                    <ScrollReveal>
-                      <div className={styles.contentBlock}>
-                        <h2>Course Syllabus</h2>
-                        <div className={styles.syllabusList}>
-                          {course.syllabus.map((item: string, i: number) => (
-                            <motion.div
-                              key={i}
-                              className={styles.syllabusItem}
-                              initial={{ opacity: 0, x: -20 }}
-                              whileInView={{ opacity: 1, x: 0 }}
-                              viewport={{ once: true }}
-                              transition={{ delay: i * 0.08 }}
-                            >
-                              <div className={styles.syllabusNumber}>
-                                {String(i + 1).padStart(2, '0')}
-                              </div>
-                              <div className={styles.syllabusContent}>
-                                <span>{item}</span>
-                              </div>
-                              <Play size={16} className={styles.syllabusPlay} />
-                            </motion.div>
-                          ))}
-                        </div>
-                      </div>
-                    </ScrollReveal>
-                  )}
-
-                  {/* Trainer Details */}
-                  {trainer && (
-                    <ScrollReveal>
-                      <div className={styles.contentBlock}>
-                        <h2>Meet Your Instructor</h2>
-                        <div className={styles.trainerCard}>
-                          <div className={styles.trainerCardAvatar}>
-                            {trainer.name.charAt(0)}
-                          </div>
-                          <div className={styles.trainerCardInfo}>
-                            <h3>{trainer.name}</h3>
-                            <span className={styles.trainerCardSpec}>
-                              {trainer.specialization}
-                            </span>
-                            <p>{trainer.bio}</p>
-                            <div className={styles.trainerCardStats}>
-                              <div>
-                                <strong>{trainer.experience}</strong>
-                                <span>Experience</span>
-                              </div>
-                              <div>
-                                <strong>{(course.title.length * 7) + 50}</strong>
-                                <span>Students</span>
-                              </div>
-                              <div>
-                                <strong>{trainer.rating}</strong>
-                                <span>Rating</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </ScrollReveal>
-                  )}
-                </div>
+                  </div>
+                </FadeInUp>
               </div>
+
             </div>
           </section>
         </main>
@@ -265,10 +397,7 @@ export default function CourseDetailClient({
                   <span>Amount: </span>
                   <strong>₹{course.discountPrice || course.price}</strong>
                 </div>
-                <button
-                  className="btn btn-primary btn-lg"
-                  onClick={() => setShowEnrollModal(false)}
-                >
+                <button className="btn btn-primary btn-lg" onClick={() => setShowEnrollModal(false)}>
                   Got it!
                 </button>
               </div>

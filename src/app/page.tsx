@@ -10,13 +10,20 @@ import {
   FadeInUp,
   ScrollReveal,
 } from '@/components/animations/MotionWrappers';
+import GalaxyBackground from '@/components/animations/GalaxyBackground';
 import CodeTypingAnimation from '@/components/ui/CodeTypingAnimation';
 import SuccessRoadmap from '@/components/ui/SuccessRoadmap';
 import TrendingBento from '@/components/ui/TrendingBento';
 import CallToAction from '@/components/ui/CallToAction';
+import TiltCard from '@/components/animations/TiltCard';
+import { prisma } from '@/lib/prisma';
 import styles from './page.module.css';
 
-export default function Home() {
+export default async function Home() {
+  const studentsCount = await prisma.student.count();
+  const coursesCount = await prisma.course.count();
+  const trainersCount = await prisma.trainer.count();
+
   return (
     <>
       <Navbar />
@@ -60,27 +67,27 @@ export default function Home() {
               </FadeInUp>
 
               <FadeInUp delay={0.5}>
-                <div className={styles.heroStats}>
-                  <div className={styles.heroStat}>
-                    <strong>5K+</strong>
-                    <span>Students</span>
+                  <div className={styles.heroStats}>
+                    <div className={styles.heroStat}>
+                      <strong>{studentsCount}</strong>
+                      <span>Students</span>
+                    </div>
+                    <div className={styles.heroStatDivider} />
+                    <div className={styles.heroStat}>
+                      <strong>{coursesCount}</strong>
+                      <span>Courses</span>
+                    </div>
+                    <div className={styles.heroStatDivider} />
+                    <div className={styles.heroStat}>
+                      <strong>{trainersCount}</strong>
+                      <span>Expert Trainers</span>
+                    </div>
                   </div>
-                  <div className={styles.heroStatDivider} />
-                  <div className={styles.heroStat}>
-                    <strong>50+</strong>
-                    <span>Courses</span>
-                  </div>
-                  <div className={styles.heroStatDivider} />
-                  <div className={styles.heroStat}>
-                    <strong>98%</strong>
-                    <span>Success Rate</span>
-                  </div>
-                </div>
               </FadeInUp>
             </div>
 
             <div className={styles.heroVisual}>
-              <div className={styles.heroCard}>
+              <TiltCard className={styles.heroCard}>
                 <div className={styles.heroCardHeader}>
                   <div className={styles.heroCardDot} style={{ background: '#ef4444' }} />
                   <div className={styles.heroCardDot} style={{ background: '#eab308' }} />
@@ -89,7 +96,7 @@ export default function Home() {
                 <div className={styles.heroCardBody}>
                   <CodeTypingAnimation />
                 </div>
-              </div>
+              </TiltCard>
             </div>
           </div>
         </section>
@@ -141,18 +148,18 @@ export default function Home() {
                 },
               ].map((item, i) => (
                 <ScrollReveal key={i}>
-                  <div className={styles.whyCard}>
+                  <TiltCard className={styles.whyCard}>
                     <div
                       className={styles.whyIcon}
-                      style={{ color: item.color }}
+                      style={{ color: item.color, transform: 'translateZ(30px)' }}
                     >
                       {item.icon}
                     </div>
-                    <div className={styles.whyText}>
+                    <div className={styles.whyText} style={{ transform: 'translateZ(20px)' }}>
                       <h3>{item.title}</h3>
                       <p>{item.desc}</p>
                     </div>
-                  </div>
+                  </TiltCard>
                 </ScrollReveal>
               ))}
             </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import defaultAnimationData from './lottieData.json';
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });

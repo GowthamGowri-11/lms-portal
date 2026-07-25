@@ -3,7 +3,6 @@
 .main {
   min-height: 100vh;
   padding-bottom: 4rem;
-  background: var(--bg-primary);
 }
 
 .accentText {
@@ -13,9 +12,7 @@
 /* ===== HERO ===== */
 .hero {
   position: relative;
-  background: var(--bg-secondary);
-  padding: 140px 0 60px 0;
-  border-bottom: 1px solid var(--glass-border);
+  padding: 240px 0 80px 0;
   overflow: hidden;
 }
 
@@ -46,7 +43,7 @@
   font-size: clamp(2.5rem, 4vw, 3.5rem);
   font-weight: 800;
   line-height: 1.1;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   letter-spacing: -0.02em;
   color: var(--text-primary);
 }
@@ -55,7 +52,7 @@
   font-size: 1.1rem;
   color: var(--text-secondary);
   max-width: 600px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 /* ===== TRAINERS SECTION ===== */
@@ -66,172 +63,24 @@
 .trainersGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
+  gap: 1.75rem;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
+  .trainersGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 600px) {
   .trainersGrid {
     grid-template-columns: 1fr;
   }
 }
 
-.trainerCard {
-  display: flex;
-  background: var(--bg-card);
-  border: 1px solid var(--glass-border);
-  border-left: 4px solid var(--accent-primary);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  transition: all 0.25s;
-}
-
-@media (max-width: 640px) {
-  .trainerCard {
-    flex-direction: column;
-  }
-}
-
-.trainerCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
-  border-color: var(--glass-border);
-}
-
-.cardLeft {
-  padding: 2rem;
-  background: var(--bg-tertiary);
-  border-right: 1px solid var(--glass-border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 200px;
-}
-
-@media (max-width: 640px) {
-  .cardLeft {
-    border-right: none;
-    border-bottom: 1px solid var(--glass-border);
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 1.5rem;
-  }
-}
-
-.cardAvatar {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: var(--accent-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: white;
-  margin-bottom: 1.5rem;
-}
-
-@media (max-width: 640px) {
-  .cardAvatar {
-    margin-bottom: 0;
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
-  }
-}
-
-.cardStats {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-}
-
-@media (max-width: 640px) {
-  .cardStats {
-    width: auto;
-    flex-direction: row;
-    gap: 1.5rem;
-  }
-}
-
-.statItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.statItem svg {
-  color: var(--text-tertiary);
-}
-
-.cardRight {
-  padding: 2rem;
-  flex-grow: 1;
-}
-
-.cardHeader {
-  margin-bottom: 1rem;
-}
-
-.cardName {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  margin-bottom: 4px;
-}
-
-.cardSpec {
-  font-size: 0.95rem;
-  color: var(--accent-secondary);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.cardBio {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 2rem;
-}
-
-.cardCourses {
-  border-top: 1px solid var(--glass-border);
-  padding-top: 1.5rem;
-}
-
-.cardCourses h4 {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 1rem;
-}
-
-.coursesList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.courseChip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.courseChipLogo {
-  font-size: 1.2rem;
+/* Legacy — keep for backward compat */
+.staggerItemWrapper {
+  height: 100%;
+  display: block;
 }

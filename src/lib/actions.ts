@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { prisma } from './prisma';
+import { stringifyArray } from './utils';
 
 // ===== TRAINERS =====
 
@@ -21,7 +22,7 @@ export async function createTrainer(data: {
       experience: data.experience || '',
     },
   });
-  
+
   revalidatePath('/admin/trainers');
   revalidatePath('/trainers');
   return trainer;
@@ -35,25 +36,28 @@ export async function updateTrainer(id: string, data: {
   avatar?: string;
   experience?: string;
 }) {
-  const trainer = await prisma.trainer.update({
-    where: { id },
-    data,
-  });
-  
+  const trainer = await prisma.trainer.update({ where: { id }, data });
+
   revalidatePath('/admin/trainers');
   revalidatePath('/trainers');
-  revalidatePath('/admin/courses'); // Refresh assigned courses view
+  revalidatePath('/admin/courses');
   return trainer;
 }
 
 export async function deleteTrainer(id: string) {
-  // Disconnect or delete courses associated with this trainer?
-  // Since we have a strict relation, deleting the trainer will fail if they have courses.
-  // For this LMS, we'll delete the trainer and cascade delete courses, OR just delete the trainer if no courses.
-  // Let's delete courses associated first to avoid constraint errors (or change schema to cascade later).
-  await prisma.course.deleteMany({ where: { trainerId: id } });
+  // Find all courses taught by this trainer
+  const courses = await prisma.course.findMany({
+    where: { trainerId: id },
+    select: { id: true }
+  });
+
+  // Call deleteCourse for each to properly cascade all nested dependencies
+  for (const c of courses) {
+    await deleteCourse(c.id);
+  }
+
   const trainer = await prisma.trainer.delete({ where: { id } });
-  
+
   revalidatePath('/admin/trainers');
   revalidatePath('/trainers');
   revalidatePath('/admin/courses');
@@ -80,17 +84,20 @@ export async function createCourse(data: {
 }) {
   const course = await prisma.course.create({
     data: {
-      ...data,
+      title: data.title,
       description: data.description || '',
       shortDescription: data.shortDescription || '',
       logo: data.logo || '📘',
+      price: data.price,
+      discountPrice: data.discountPrice ?? null,
       category: data.category || 'General',
       level: data.level || 'Beginner',
       duration: data.duration || '0 hours',
       lessonsCount: data.lessonsCount || 0,
-      tags: data.tags || [],
-      syllabus: data.syllabus || [],
+      tags: stringifyArray(data.tags || []),
+      syllabus: stringifyArray(data.syllabus || []),
       isPublished: data.isPublished ?? false,
+      trainerId: data.trainerId,
     },
   });
 
@@ -101,10 +108,16 @@ export async function createCourse(data: {
 }
 
 export async function updateCourse(id: string, data: Record<string, unknown>) {
-  const course = await prisma.course.update({
-    where: { id },
-    data,
-  });
+  // Serialize array fields if provided
+  const updateData = { ...data };
+  if (Array.isArray(updateData.tags)) {
+    updateData.tags = stringifyArray(updateData.tags as string[]);
+  }
+  if (Array.isArray(updateData.syllabus)) {
+    updateData.syllabus = stringifyArray(updateData.syllabus as string[]);
+  }
+
+  const course = await prisma.course.update({ where: { id }, data: updateData });
 
   revalidatePath('/admin/courses');
   revalidatePath('/courses');
@@ -114,7 +127,44 @@ export async function updateCourse(id: string, data: Record<string, unknown>) {
 }
 
 export async function deleteCourse(id: string) {
+  // 1. Get modules and lessons
+  const modules = await prisma.module.findMany({ where: { courseId: id }, select: { id: true } });
+  const moduleIds = modules.map((m) => m.id);
+  
+  let lessonIds: string[] = [];
+  if (moduleIds.length > 0) {
+    const lessons = await prisma.lesson.findMany({ where: { moduleId: { in: moduleIds } }, select: { id: true } });
+    lessonIds = lessons.map((l) => l.id);
+  }
+
+  // 2. Delete Coding problems & submissions
+  if (lessonIds.length > 0) {
+    const problems = await prisma.codingProblem.findMany({ where: { lessonId: { in: lessonIds } }, select: { id: true } });
+    const problemIds = problems.map((p) => p.id);
+    if (problemIds.length > 0) {
+      await prisma.codingSubmission.deleteMany({ where: { problemId: { in: problemIds } } });
+    }
+    await prisma.codingProblem.deleteMany({ where: { lessonId: { in: lessonIds } } });
+  }
+
+  // 3. Delete Quizzes and Attempts
+  const quizzes = await prisma.quiz.findMany({ 
+    where: { OR: [ { courseId: id }, { moduleId: { in: moduleIds.length > 0 ? moduleIds : [''] } } ] }, 
+    select: { id: true } 
+  });
+  const quizIds = quizzes.map((q) => q.id);
+  
+  if (quizIds.length > 0) {
+    await prisma.quizAttempt.deleteMany({ where: { quizId: { in: quizIds } } });
+    await prisma.quiz.deleteMany({ where: { id: { in: quizIds } } });
+  }
+
+  // 4. Delete top-level attachments
   await prisma.enrollment.deleteMany({ where: { courseId: id } });
+  await prisma.certificate.deleteMany({ where: { courseId: id } });
+  await prisma.courseProgress.deleteMany({ where: { courseId: id } });
+
+  // 5. Delete course (Cascades will handle Modules -> Lessons -> LessonProgress)
   const course = await prisma.course.delete({ where: { id } });
 
   revalidatePath('/admin/courses');
@@ -144,7 +194,7 @@ export async function createDeveloper(data: {
       resume: data.resume || '',
     },
   });
-  
+
   revalidatePath('/admin/developers');
   revalidatePath('/about');
   return developer;
@@ -159,11 +209,8 @@ export async function updateDeveloper(id: string, data: {
   linkedin?: string;
   resume?: string;
 }) {
-  const developer = await prisma.developer.update({
-    where: { id },
-    data,
-  });
-  
+  const developer = await prisma.developer.update({ where: { id }, data });
+
   revalidatePath('/admin/developers');
   revalidatePath('/about');
   return developer;
@@ -171,7 +218,7 @@ export async function updateDeveloper(id: string, data: {
 
 export async function deleteDeveloper(id: string) {
   const developer = await prisma.developer.delete({ where: { id } });
-  
+
   revalidatePath('/admin/developers');
   revalidatePath('/about');
   return developer;

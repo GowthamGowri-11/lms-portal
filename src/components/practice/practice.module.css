@@ -1,0 +1,126 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.topBar {
+  padding: 1rem;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+}
+
+.backBtn {
+  color: var(--accent-purple);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.split {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.left, .right {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.left {
+  background: var(--bg-primary);
+}
+
+.right {
+  background: var(--bg-secondary);
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.pre {
+  background: var(--pre-bg);
+  padding: 0.5rem;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.testCase {
+  margin-top: 0.5rem;
+}
+
+.editorToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.langSelect {
+  padding: 0.3rem;
+  border-radius: 4px;
+}
+
+.resetBtn, .runBtn, .submitBtn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.resetBtn { background: var(--reset-bg); color: var(--reset-text); }
+.runBtn { background: var(--run-bg); color: var(--run-text); margin-right: 0.5rem; }
+.submitBtn { background: var(--submit-bg); color: var(--submit-text); }
+
+.customInputSection {
+  margin-top: 1rem;
+}
+
+.customInput {
+  width: 100%;
+  height: 4rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--input-text);
+}
+
+.actionButtons {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.console {
+  margin-top: 1rem;
+  flex: 1;
+  overflow-y: auto;
+}

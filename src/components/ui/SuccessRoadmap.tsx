@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Flame, Repeat, Target, Zap, Trophy } from 'lucide-react';
+import TiltCard from '../animations/TiltCard';
 import styles from './SuccessRoadmap.module.css';
 
 const roadmapSteps = [
@@ -83,7 +84,10 @@ export default function SuccessRoadmap() {
                 stroke="var(--accent-primary)"
                 strokeWidth="6"
                 strokeLinecap="round"
-                style={{ pathLength }}
+                style={{ 
+                  pathLength, 
+                  filter: 'drop-shadow(0 0 10px var(--accent-primary)) drop-shadow(0 0 20px var(--accent-primary))'
+                }}
               />
             </svg>
           </div>
@@ -99,24 +103,43 @@ export default function SuccessRoadmap() {
               if (isRight) positionClass = styles.nodeRight;
 
               return (
-                <div key={step.id} className={`${styles.nodeRow} ${positionClass}`}>
-                  <motion.div
+                <div key={step.id} className={`${styles.nodeRow} ${positionClass}`} style={{ perspective: '1200px' }}>
+                  <TiltCard
                     className={styles.nodeCard}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-100px' }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    style={{ borderLeftColor: step.color }}
+                    initial={{ 
+                      opacity: 0, 
+                      y: 80, 
+                      rotateX: 45, 
+                      rotateY: isLeft ? 30 : isRight ? -30 : 0, 
+                      scale: 0.8,
+                      z: -100
+                    }}
+                    whileInView={{ 
+                      opacity: 1, 
+                      y: 0, 
+                      rotateX: 0, 
+                      rotateY: 0, 
+                      scale: 1,
+                      z: 0
+                    }}
+                    whileHover={{ 
+                      scale: 1.05, 
+                      z: 50,
+                      boxShadow: '0 30px 60px rgba(0,0,0,0.6)'
+                    }}
+                    viewport={{ once: true, margin: '-50px' }}
+                    transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
+                    style={{ borderLeftColor: step.color, transformStyle: 'preserve-3d' }}
                   >
-                    <div className={styles.nodeIcon} style={{ color: step.color, background: `${step.color}15` }}>
+                    <div className={styles.nodeIcon} style={{ color: step.color, background: `${step.color}15`, transform: 'translateZ(30px)' }}>
                       {step.icon}
                     </div>
-                    <div className={styles.nodeContent}>
+                    <div className={styles.nodeContent} style={{ transform: 'translateZ(20px)' }}>
                       <span className={styles.nodeNumber}>0{index + 1}</span>
                       <h3>{step.title}</h3>
                       <p>{step.desc}</p>
                     </div>
-                  </motion.div>
+                  </TiltCard>
                 </div>
               );
             })}

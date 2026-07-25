@@ -8,22 +8,57 @@ type Line = Token[];
 
 const lines: Line[] = [
   [
+    { text: 'import ', color: 'var(--accent-tertiary)' },
+    { text: '{ Determination } ', color: 'rgba(255, 255, 255, 0.9)' },
+    { text: 'from ', color: 'var(--accent-tertiary)' },
+    { text: "'@/mindset';", color: 'var(--accent-warning)' },
+  ],
+  [],
+  [
     { text: 'const ', color: 'var(--accent-tertiary)' },
-    { text: 'career ', color: 'var(--accent-primary)' },
+    { text: 'potential ', color: 'var(--accent-primary)' },
     { text: '= ', color: 'rgba(255, 255, 255, 0.7)' },
-    { text: 'learn', color: 'var(--accent-secondary)' },
+    { text: 'unlock', color: 'var(--accent-secondary)' },
     { text: '();', color: 'rgba(255, 255, 255, 0.7)' },
   ],
   [
     { text: 'const ', color: 'var(--accent-tertiary)' },
-    { text: 'skills ', color: 'var(--accent-primary)' },
+    { text: 'limits ', color: 'var(--accent-primary)' },
     { text: '= ', color: 'rgba(255, 255, 255, 0.7)' },
-    { text: 'grow', color: 'var(--accent-secondary)' },
+    { text: 'break', color: 'var(--accent-secondary)' },
+    { text: '();', color: 'rgba(255, 255, 255, 0.7)' },
+  ],
+  [],
+  [
+    { text: 'while ', color: 'var(--accent-tertiary)' },
+    { text: '(', color: 'rgba(255, 255, 255, 0.7)' },
+    { text: 'journey', color: 'var(--accent-primary)' },
+    { text: '.', color: 'rgba(255, 255, 255, 0.7)' },
+    { text: 'isOngoing', color: 'var(--accent-secondary)' },
+    { text: ') {', color: 'rgba(255, 255, 255, 0.7)' },
+  ],
+  [
+    { text: '  skills.', color: 'var(--accent-primary)' },
+    { text: 'upgrade', color: 'var(--accent-secondary)' },
+    { text: '(', color: 'rgba(255, 255, 255, 0.7)' },
+    { text: 'Infinity', color: 'var(--accent-warning)' },
+    { text: ');', color: 'rgba(255, 255, 255, 0.7)' },
+  ],
+  [
+    { text: '  knowledge.', color: 'var(--accent-primary)' },
+    { text: 'expand', color: 'var(--accent-secondary)' },
     { text: '();', color: 'rgba(255, 255, 255, 0.7)' },
   ],
   [
-    { text: 'export ', color: 'var(--accent-tertiary)' },
-    { text: 'success;', color: 'var(--accent-primary)' },
+    { text: '}', color: 'rgba(255, 255, 255, 0.7)' },
+  ],
+  [],
+  [
+    { text: 'export const ', color: 'var(--accent-tertiary)' },
+    { text: 'legacy ', color: 'var(--accent-primary)' },
+    { text: '= ', color: 'rgba(255, 255, 255, 0.7)' },
+    { text: 'build', color: 'var(--accent-secondary)' },
+    { text: '();', color: 'rgba(255, 255, 255, 0.7)' },
   ]
 ];
 
@@ -44,18 +79,19 @@ export default function CodeTypingAnimation() {
       // Type next character
       timeout = setTimeout(() => {
         setDisplayedChars((prev) => prev + 1);
-      }, Math.random() * 50 + 30); // Random delay for realistic typing
+      }, Math.random() * 40 + 15); // Slightly slower typing speed (~0.75x)
     } else if (isTyping && displayedChars === totalChars) {
       // Pause at the end, then start deleting
       timeout = setTimeout(() => {
         setIsTyping(false);
-      }, 3000);
+      }, 4000);
     } else if (!isTyping && displayedChars > 0) {
-      // Delete characters
+      // Delete characters (fast)
       timeout = setTimeout(() => {
-        setDisplayedChars((prev) => prev - 1);
-      }, 20); // Faster deletion
-    } else if (!isTyping && displayedChars === 0) {
+        setDisplayedChars((prev) => prev - 2); // Delete 2 chars at a time
+      }, 15); // Slightly slower deletion speed too
+    } else if (!isTyping && displayedChars <= 0) {
+      setDisplayedChars(0);
       // Pause briefly before restarting
       timeout = setTimeout(() => {
         setIsTyping(true);
@@ -78,26 +114,39 @@ export default function CodeTypingAnimation() {
         const token = line[j];
         if (charsRemaining <= 0) break;
 
+        let renderText = '';
         if (charsRemaining >= token.text.length) {
-          // Add full token
-          visibleTokens.push(
-            <span key={j} style={{ color: token.color }}>
-              {token.text}
-            </span>
-          );
+          renderText = token.text;
           charsRemaining -= token.text.length;
         } else {
-          // Add partial token
-          visibleTokens.push(
-            <span key={j} style={{ color: token.color }}>
-              {token.text.substring(0, charsRemaining)}
-            </span>
-          );
+          renderText = token.text.substring(0, charsRemaining);
           charsRemaining = 0;
         }
+
+        // Render each character with a 3D pop animation
+        const charElements = renderText.split('').map((char, charIdx) => {
+          const isSpace = char === ' ';
+          return (
+            <motion.span
+              key={`${i}-${j}-${charIdx}`}
+              initial={{ opacity: 0, scale: 0.3, y: 15, rotateX: -90 }}
+              animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+              style={{ display: 'inline-block', whiteSpace: 'pre' }}
+            >
+              {isSpace ? ' ' : char}
+            </motion.span>
+          );
+        });
+
+        visibleTokens.push(
+          <span key={j} style={{ color: token.color }}>
+            {charElements}
+          </span>
+        );
       }
 
-      if (visibleTokens.length > 0) {
+      if (visibleTokens.length > 0 || (line.length === 0 && charsRemaining > 0)) {
         result.push(
           <div key={i} style={{ whiteSpace: 'nowrap' }}>
             {visibleTokens}
@@ -125,8 +174,8 @@ export default function CodeTypingAnimation() {
       }
     }
 
-    // Always ensure we have 3 lines rendered to prevent the card height from collapsing
-    while (result.length < 3) {
+    // Always ensure we have enough lines rendered to prevent the card height from collapsing
+    while (result.length < 11) {
         result.push(<div key={`empty-${result.length}`} style={{ height: '24px' }}></div>);
     }
 
@@ -154,5 +203,9 @@ export default function CodeTypingAnimation() {
     return result;
   };
 
-  return <>{renderLines()}</>;
+  return (
+    <div style={{ perspective: '1000px', fontSize: '0.9rem' }}>
+      {renderLines()}
+    </div>
+  );
 }
