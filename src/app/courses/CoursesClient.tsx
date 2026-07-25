@@ -2,17 +2,34 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Search, Star, ArrowRight, Filter, BookOpen } from 'lucide-react';
+import { Search, Star, BookOpen, Clock, ArrowRight } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
-import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
+import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
+import TiltCard from '@/components/animations/TiltCard';
+import TechIllustration from '@/components/ui/TechIllustration';
 import styles from './page.module.css';
-import { Course, Trainer } from '@/generated/prisma/client';
+import { CourseWithArrays } from '@/lib/utils';
+import { Trainer } from '@/generated/prisma/client';
 
-const categories = ['All', 'Web Development', 'Design', 'Data Science', 'Mobile Development', 'Cloud Computing', 'DevOps', 'Cybersecurity', 'Other'];
+const categories = ['All', 'Web Development', 'Python', 'Java', 'C++', 'Data Science', 'Cloud Computing', 'DevOps', 'Cybersecurity', 'Other'];
 const levels = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 
-export default function CoursesClient({ courses, trainers }: { courses: Course[], trainers: Trainer[] }) {
+// Per-category accent color for arrow button and level badge
+function getAccentColor(title: string, category: string) {
+  const t = (title + ' ' + category).toLowerCase();
+  if (t.includes('python')) return '#3b82f6';
+  if (t.includes('java') && !t.includes('javascript')) return '#22c55e';
+  if (t.includes('react')) return '#f97316';
+  if (t.includes('node') || t.includes('express')) return '#a855f7';
+  if (t.includes('angular')) return '#ef4444';
+  if (t.includes('vue')) return '#10b981';
+  if (t.includes('frontend') || t.includes('html')) return '#f97316';
+  if (t.includes('data')) return '#06b6d4';
+  if (t.includes('cloud') || t.includes('devops')) return '#f59e0b';
+  return '#6366f1';
+}
+
+export default function CoursesClient({ courses, trainers }: { courses: CourseWithArrays[], trainers: Trainer[] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedLevel, setSelectedLevel] = useState('All');
@@ -29,136 +46,159 @@ export default function CoursesClient({ courses, trainers }: { courses: Course[]
   return (
     <>
       <Navbar />
-      <PageTransition>
-        <main className={styles.main}>
-          <section className={styles.hero}>
-            <div className={styles.heroBg} />
-            <div className="container">
-              <FadeInUp>
-                <h1 className={styles.heroTitle}>
-                  Explore Our <span className="gradient-text">Courses</span>
-                </h1>
-                <p className={styles.heroSubtitle}>
-                  Discover courses taught by industry experts. Learn at your own pace
-                  and advance your career.
-                </p>
-              </FadeInUp>
-            </div>
-          </section>
+      <main className={styles.main}>
+        <section className={styles.hero}>
+          <div className={styles.heroDotGrid} />
+          <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+            <FadeInUp>
+              <span className={styles.heroTag}>Course Catalog</span>
+              <h1 className={styles.heroTitle}>
+                Explore Our <span className={styles.accentText}>Courses</span>
+              </h1>
+              <p className={styles.heroSubtitle}>
+                Discover courses taught by industry experts. Learn at your own pace
+                and advance your career.
+              </p>
+            </FadeInUp>
+          </div>
+        </section>
 
-          <section className={styles.filtersSection}>
-            <div className="container">
-              <FadeInUp delay={0.1}>
-                <div className={styles.filtersRow}>
-                  <div className={styles.searchBar}>
-                    <Search size={18} className={styles.searchIcon} />
-                    <input
-                      type="text"
-                      placeholder="Search courses..."
-                      className={`input-field ${styles.searchInput}`}
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  <div className={styles.filterGroup}>
-                    <Filter size={16} />
-                    <div className={styles.chips}>
-                      {categories.map((cat) => (
-                        <button
-                          key={cat}
-                          className={`${styles.chip} ${selectedCategory === cat ? styles.chipActive : ''}`}
-                          onClick={() => setSelectedCategory(cat)}
-                        >
-                          {cat}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className={styles.filterGroup}>
-                    <div className={styles.chips}>
-                      {levels.map((lvl) => (
-                        <button
-                          key={lvl}
-                          className={`${styles.chip} ${selectedLevel === lvl ? styles.chipActive : ''}`}
-                          onClick={() => setSelectedLevel(lvl)}
-                        >
-                          {lvl}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+        <section className={styles.contentSection}>
+          <div className="container" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+
+            {/* Filter Bar */}
+            <FadeInUp delay={0.1}>
+              <div className={styles.topBar}>
+                <div className={styles.searchBar}>
+                  <Search size={18} className={styles.searchIcon} />
+                  <input
+                    type="text"
+                    placeholder="Search courses..."
+                    className={styles.searchInput}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                 </div>
-              </FadeInUp>
+                <div className={styles.filterControls}>
+                  <div className={styles.filterGroup}>
+                    <label>CATEGORY</label>
+                    <select className={styles.filterSelect} value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                      {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+                    </select>
+                  </div>
+                  <div className={styles.filterGroup}>
+                    <label>LEVEL</label>
+                    <select className={styles.filterSelect} value={selectedLevel} onChange={(e) => setSelectedLevel(e.target.value)}>
+                      {levels.map((lvl) => <option key={lvl} value={lvl}>{lvl}</option>)}
+                    </select>
+                  </div>
+                  <p className={styles.resultCount}>
+                    <strong>{filteredCourses.length}</strong> courses
+                  </p>
+                </div>
+              </div>
+            </FadeInUp>
 
-              <FadeInUp delay={0.15}>
-                <p className={styles.resultCount}>
-                  Showing <strong>{filteredCourses.length}</strong> courses
-                </p>
-              </FadeInUp>
-            </div>
-          </section>
+            {/* Grid */}
+            <div className={styles.scrollableGrid}>
+              {filteredCourses.length > 0 ? (
+                <StaggerContainer className={styles.coursesGrid}>
+                  {filteredCourses.map((course) => {
+                    const trainer = trainers.find((t) => t.id === course.trainerId);
+                    const accent = getAccentColor(course.title, course.category);
 
-          <section className={styles.coursesSection}>
-            <div className="container">
-              <StaggerContainer className={styles.coursesGrid}>
-                {filteredCourses.map((course) => {
-                  const trainer = trainers.find((t) => t.id === course.trainerId);
-                  return (
-                    <StaggerItem key={course.id}>
-                      <Link href={`/courses/${course.id}`}>
-                        <motion.div
-                          className={styles.courseCard}
-                          whileHover={{ y: -8 }}
-                          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                        >
-                          <div className={styles.cardTop}>
-                            <div className={styles.cardLogo}>{course.logo}</div>
-                            <span className={`badge badge-primary`}>{course.level}</span>
-                          </div>
-                          <div className={styles.cardBody}>
-                            <span className={styles.cardCategory}>{course.category}</span>
-                            <h3 className={styles.cardTitle}>{course.title}</h3>
-                            <p className={styles.cardDesc}>{course.shortDescription}</p>
-                            <div className={styles.cardMeta}>
-                              <div className={styles.rating}>
-                                <Star size={14} fill="#fdcb6e" stroke="#fdcb6e" />
-                                <span>{course.rating}</span>
+                    return (
+                      <StaggerItem key={course.id}>
+                        <Link href={`/courses/${course.id}`} style={{ display: 'block', height: '100%' }}>
+                          <TiltCard className={styles.courseCard}>
+                            <div className={styles.cardInner}>
+
+                              {/* ── LEFT TEXT ── */}
+                              <div className={styles.cardLeft}>
+                                {/* Top badges */}
+                                <div className={styles.cardTopRow}>
+                                  <span className={styles.cardCategory}>{course.category}</span>
+                                  <span style={{
+                                    fontSize: '0.68rem',
+                                    fontWeight: 700,
+                                    color: accent,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.06em',
+                                  }}>
+                                    {course.level}
+                                  </span>
+                                </div>
+
+                                {/* Title */}
+                                <h3 className={styles.cardTitle}>{course.title}</h3>
+
+                                {/* Description */}
+                                <p className={styles.cardDesc}>{course.shortDescription}</p>
+
+                                {/* Meta */}
+                                <div className={styles.cardMeta}>
+                                  <div className={styles.rating}>
+                                    <Star size={13} fill="#eab308" stroke="#eab308" />
+                                    <span>{course.rating}</span>
+                                  </div>
+                                  <span>•</span>
+                                  <Clock size={12} style={{ opacity: 0.5 }} />
+                                  <span>{course.duration}</span>
+                                  <span>•</span>
+                                  <BookOpen size={12} style={{ opacity: 0.5 }} />
+                                  <span>{course.lessonsCount} lessons</span>
+                                </div>
+
+                                {/* Bottom: trainer + price + arrow */}
+                                <div className={styles.cardBottom}>
+                                  {trainer ? (
+                                    <div className={styles.cardTrainer}>
+                                      <div className={styles.trainerDot} style={{ background: accent }}>
+                                        {trainer.name.charAt(0)}
+                                      </div>
+                                      <div className={styles.trainerInfo}>
+                                        <span className={styles.trainerName}>{trainer.name}</span>
+                                        <span className={styles.trainerLabel}>Instructor</span>
+                                      </div>
+                                    </div>
+                                  ) : <div />}
+
+                                  <div className={styles.priceBlock}>
+                                    <div className={styles.price}>
+                                      {course.discountPrice && (
+                                        <span className={styles.oldPrice}>₹{course.price}</span>
+                                      )}
+                                      <span className={styles.currentPrice}>
+                                        ₹{course.discountPrice ?? course.price}
+                                      </span>
+                                    </div>
+                                    <div
+                                      className={styles.arrowBtn}
+                                      style={{ background: accent }}
+                                    >
+                                      <ArrowRight size={15} color="white" />
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
-                              <span>•</span>
-                              <span>{course.duration}</span>
-                              <span>•</span>
-                              <span>{course.lessonsCount} lessons</span>
-                            </div>
-                            {trainer && (
-                              <div className={styles.cardTrainer}>
-                                <div className={styles.trainerDot}>{trainer.name.charAt(0)}</div>
-                                <span>{trainer.name}</span>
-                              </div>
-                            )}
-                          </div>
-                          <div className={styles.cardFooter}>
-                            <div className={styles.price}>
-                              {course.discountPrice ? (
-                                <>
-                                  <span className={styles.oldPrice}>₹{course.price}</span>
-                                  <span className={styles.currentPrice}>₹{course.discountPrice}</span>
-                                </>
-                              ) : (
-                                <span className={styles.currentPrice}>₹{course.price}</span>
-                              )}
-                            </div>
-                            <span className={styles.enrollLink}>
-                              View Details <ArrowRight size={16} />
-                            </span>
-                          </div>
-                        </motion.div>
-                      </Link>
-                    </StaggerItem>
-                  );
-                })}
-              </StaggerContainer>
 
-              {filteredCourses.length === 0 && (
+                              {/* ── RIGHT ILLUSTRATION ── */}
+                              <div className={styles.cardIllustration}>
+                                <TechIllustration
+                                  title={course.title}
+                                  category={course.category}
+                                  size={110}
+                                />
+                              </div>
+
+                            </div>
+                          </TiltCard>
+                        </Link>
+                      </StaggerItem>
+                    );
+                  })}
+                </StaggerContainer>
+              ) : (
                 <div className={styles.emptyState}>
                   <BookOpen size={48} />
                   <h3>No courses found</h3>
@@ -166,9 +206,9 @@ export default function CoursesClient({ courses, trainers }: { courses: Course[]
                 </div>
               )}
             </div>
-          </section>
-        </main>
-      </PageTransition>
+          </div>
+        </section>
+      </main>
     </>
   );
 }

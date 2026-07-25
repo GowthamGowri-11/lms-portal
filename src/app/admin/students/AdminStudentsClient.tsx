@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { GraduationCap, Mail, BookOpen, Award } from 'lucide-react';
 import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
-import { Student, Course, Enrollment } from '@/generated/prisma/client';
+import { CourseWithArrays } from '@/lib/utils';
+import { Student, Enrollment } from '@/generated/prisma/client';
 
 export default function AdminStudentsClient({
   students,
@@ -12,7 +13,7 @@ export default function AdminStudentsClient({
   enrollments
 }: {
   students: Student[],
-  courses: Course[],
+  courses: CourseWithArrays[],
   enrollments: Enrollment[]
 }) {
   return (
@@ -61,7 +62,9 @@ export default function AdminStudentsClient({
                       const course = courses.find((c) => c.id === enrollment.courseId);
                       return (
                         <div key={enrollment.id} className={styles.enrolledItem}>
-                          <span>{course?.logo} {course?.title}</span>
+                          <span>
+                            <img src={course?.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain', verticalAlign: 'middle', marginRight: '4px' }} /> {course?.title}
+                          </span>
                           <div className={styles.progressBar}>
                             <motion.div
                               className={styles.progressFill}

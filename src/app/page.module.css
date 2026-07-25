@@ -1,583 +1,663 @@
-/* ===== HOME PAGE STYLES ===== */
+/* ===== HOME PAGE STYLES — Structured Learning Design ===== */
 
 .main {
   min-height: 100vh;
 }
 
+.accentText {
+  color: var(--accent-primary);
+}
+
 /* ===== HERO ===== */
 .hero {
   position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 160px 0 80px 0;
   overflow: hidden;
-  padding: 120px 2rem 80px;
 }
 
-.heroBgOrbs {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
+.dotGrid {
+  display: none;
 }
 
-.gridLines {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 60px 60px;
-  pointer-events: none;
-  z-index: 0;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 20%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 20%, transparent 100%);
+.heroContainer {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .heroContainer {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
 }
 
 .heroContent {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
+  text-align: left;
 }
 
-.heroBadge {
+.heroTag {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 20px;
-  background: rgba(108, 92, 231, 0.1);
-  border: 1px solid rgba(108, 92, 231, 0.2);
-  border-radius: 999px;
-  color: var(--accent-primary-light);
-  font-size: 0.85rem;
-  font-weight: 500;
-  margin-bottom: 2rem;
+  padding: 6px 16px;
+  background: rgba(67, 56, 202, 0.06);
+  border: 1px solid rgba(67, 56, 202, 0.15);
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.5rem;
+}
+
+.heroTagDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
 .heroTitle {
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
-  font-weight: 900;
+  font-size: clamp(2.5rem, 5vw, 3.75rem);
+  font-weight: 800;
   line-height: 1.1;
   margin-bottom: 1.5rem;
   letter-spacing: -0.03em;
+  color: var(--text-primary);
 }
 
 .heroDescription {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   color: var(--text-secondary);
   line-height: 1.7;
-  max-width: 600px;
-  margin: 0 auto 2.5rem;
+  margin-bottom: 2rem;
+  max-width: 500px;
 }
 
 .heroActions {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
 }
 
 .heroStats {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
 .heroStat {
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
-.heroStatValue {
+.heroStat strong {
   font-family: var(--font-heading);
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #6c5ce7, #00cec9);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
-.heroStatLabel {
-  font-size: 0.85rem;
+.heroStat span {
+  font-size: 0.8rem;
   color: var(--text-tertiary);
-  margin-top: 4px;
+  font-weight: 500;
 }
 
 .heroStatDivider {
   width: 1px;
-  height: 40px;
+  height: 36px;
   background: var(--glass-border);
 }
 
-/* Floating Cards */
-.floatingCard1,
-.floatingCard2,
-.floatingCard3 {
-  position: absolute;
-  z-index: 3;
-}
-
-.floatingCard1 {
-  top: 25%;
-  left: 5%;
-}
-
-.floatingCard2 {
-  top: 30%;
-  right: 5%;
-}
-
-.floatingCard3 {
-  bottom: 20%;
-  left: 10%;
-}
-
-.floatingCardInner {
+/* Hero Visual — Code Editor Card */
+.heroVisual {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 10px;
-  padding: 14px 20px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  backdrop-filter: blur(20px);
-  color: var(--text-primary);
-  font-size: 0.875rem;
-  font-weight: 500;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-.floatingIcon {
-  color: var(--accent-primary-light);
+.heroCard {
+  width: 100%;
+  max-width: 520px; /* Increased from 420px */
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.heroCardHeader {
+  display: flex;
+  gap: 8px; /* Increased gap */
+  padding: 16px 20px; /* Increased padding */
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.heroCardDot {
+  width: 14px; /* Increased dot size */
+  height: 14px;
+  border-radius: 50%;
+}
+
+.heroCardBody {
+  padding: 2rem 2rem 2.5rem; /* Increased padding */
+  font-family: 'Courier New', monospace;
+  font-size: 1.25rem; /* Increased font size from 0.95rem */
+  line-height: 2;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.heroCodeLine {
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .heroVisual {
+    display: none;
+  }
+}
+
+/* ===== TECHNOLOGIES SECTION ===== */
+.techSection {
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.techTitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  margin-bottom: 2.5rem;
+}
+
+.techTitle strong {
+  color: var(--text-primary);
+}
+
+.techGrid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.whyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-xl);
+  perspective: 1500px;
+}
+
+.whyCard {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+
+.whyCard:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-card-hover);
+}
+
+.techItem {
+  padding: 8px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: all 0.25s;
+}
+
+.techItem:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(67, 56, 202, 0.08);
 }
 
 /* ===== SECTION HEADERS ===== */
 .sectionHeader {
-  text-align: center;
-  margin-bottom: 3.5rem;
+  text-align: left;
+  margin-bottom: 3rem;
 }
 
 .sectionTag {
   display: inline-block;
-  padding: 6px 16px;
-  background: rgba(108, 92, 231, 0.1);
-  border: 1px solid rgba(108, 92, 231, 0.2);
-  border-radius: 999px;
-  color: var(--accent-primary-light);
-  font-size: 0.8rem;
+  padding: 5px 14px;
+  background: rgba(67, 56, 202, 0.08);
+  border: 1px solid rgba(67, 56, 202, 0.15);
+  border-radius: var(--radius-full);
+  color: var(--accent-primary);
+  font-size: 0.78rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   margin-bottom: 1rem;
 }
 
-.sectionTitle {
-  font-size: clamp(1.8rem, 4vw, 2.75rem);
+.sectionHeaderCenter {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.sectionSubtitleCenter {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ===== FEATURED COURSES SECTION ===== */
+.featuredCoursesSection {
+  /* Transparent */
+}
+
+.coursesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 1024px) {
+  .coursesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .coursesGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.courseCard {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-left: 4px solid var(--accent-primary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.25s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.courseCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  border-color: var(--glass-border);
+}
+
+.cardTop {
+  padding: 1.5rem 1.5rem 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.cardLogo {
+  font-size: 2.5rem;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.cardBody {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardCategory {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.cardTitle {
+  font-size: 1.2rem;
   font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.cardDesc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
   margin-bottom: 1rem;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.metaDot {
+  color: var(--glass-border);
+}
+
+.cardFooter {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardTrainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.trainerDot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+}
+
+.price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.currentPrice {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.oldPrice {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.viewAllBtn {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.sectionTitle {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
 
 .sectionSubtitle {
   font-size: 1.05rem;
   color: var(--text-secondary);
   max-width: 560px;
-  margin: 0 auto;
 }
 
-.sectionCTA {
-  text-align: center;
-  margin-top: 3rem;
+/* ===== TRAINING PATHS ===== */
+.pathsSection {
+  /* Transparent */
 }
 
-/* ===== COURSES SECTION ===== */
-.coursesSection {
-  background: var(--bg-secondary);
-}
-
-.coursesGrid {
+.pathsGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xl);
 }
 
 @media (max-width: 900px) {
-  .coursesGrid {
+  .pathsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .pathsGrid {
     grid-template-columns: 1fr;
   }
 }
 
-/* Course Card */
-.courseCard {
-  display: flex;
-  flex-direction: column;
+.pathCard {
   background: var(--bg-card);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-left: 4px solid var(--accent-primary);
+  border-radius: 4px var(--radius-md) var(--radius-md) 4px;
+  padding: 2rem;
+  transition: all 0.25s;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.courseCard:hover {
-  border-color: rgba(108, 92, 231, 0.25);
-  transform: translateY(-6px);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+.pathCard:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  transform: translateY(-3px);
 }
 
-.courseCardTop {
+.pathHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem 1.5rem 0;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-.courseLogo {
-  font-size: 2.5rem;
-  width: 60px;
-  height: 60px;
+.pathIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(108, 92, 231, 0.08);
-  border-radius: 16px;
+  flex-shrink: 0;
 }
 
-.courseLevel {
-  display: flex;
-  align-items: center;
-}
-
-.courseCardBody {
-  padding: 1.25rem 1.5rem;
-  flex: 1;
-}
-
-.courseCategory {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--accent-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.courseTitle {
+.pathHeader h3 {
   font-size: 1.2rem;
   font-weight: 700;
-  margin: 8px 0;
-  line-height: 1.3;
 }
 
-.courseDesc {
-  font-size: 0.875rem;
+.pathDesc {
   color: var(--text-secondary);
+  font-size: 0.92rem;
   line-height: 1.6;
-  margin-bottom: 12px;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
 }
 
-.courseMeta {
+.pathMeta {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.8rem;
-  color: var(--text-tertiary);
-  margin-bottom: 12px;
-  flex-wrap: wrap;
-}
-
-.courseRating {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--accent-warning);
+  font-size: 0.82rem;
   font-weight: 600;
+  color: var(--text-tertiary);
+  margin-bottom: 1.5rem;
 }
 
-.courseDot {
-  color: var(--text-muted);
+.pathDot {
+  color: var(--glass-border);
 }
 
-.courseTrainer {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-}
-
-.trainerAvatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--gradient-accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: white;
-}
-
-.courseCardFooter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.5rem;
-  border-top: 1px solid var(--glass-border);
-  margin-top: auto;
-}
-
-.coursePrice {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.priceCurrent {
-  font-family: var(--font-heading);
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--accent-success);
-}
-
-.priceOld {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  text-decoration: line-through;
-}
-
-.enrollBtn {
+.pathLink {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.875rem;
   font-weight: 600;
-  color: var(--accent-primary-light);
-  transition: all 0.3s;
+  font-size: 0.92rem;
+  transition: gap 0.2s;
 }
 
-.courseCard:hover .enrollBtn {
-  color: var(--accent-primary);
+.pathLink:hover {
   gap: 10px;
 }
 
 /* ===== WHY SECTION ===== */
 .whySection {
-  background: var(--bg-primary);
+  /* Transparent */
 }
 
 .whyGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
 }
 
-@media (max-width: 1024px) {
-  .whyGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .whyGrid {
     grid-template-columns: 1fr;
   }
 }
 
 .whyCard {
-  background: var(--bg-card);
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.75rem;
+  background: var(--bg-primary);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 2rem;
-  text-align: center;
-  transition: all 0.3s;
+  border-radius: var(--radius-md);
+  transition: all 0.25s;
 }
 
 .whyCard:hover {
-  border-color: rgba(108, 92, 231, 0.2);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border-color: rgba(67, 56, 202, 0.15);
 }
 
 .whyIcon {
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--bg-tertiary);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.25rem;
+  flex-shrink: 0;
 }
 
-.whyCard h3 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-}
-
-.whyCard p {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-/* ===== TRAINERS SECTION ===== */
-.trainersSection {
-  background: var(--bg-secondary);
-}
-
-.trainersGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-}
-
-@media (max-width: 768px) {
-  .trainersGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.trainerCard {
-  background: var(--bg-card);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 2.5rem 2rem;
-  text-align: center;
-  transition: all 0.3s;
-}
-
-.trainerCard:hover {
-  border-color: rgba(108, 92, 231, 0.2);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
-}
-
-.trainerAvatarLg {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: var(--gradient-accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  font-weight: 800;
-  color: white;
-  margin: 0 auto 1.25rem;
-  box-shadow: 0 8px 30px rgba(108, 92, 231, 0.3);
-}
-
-.trainerName {
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.trainerSpec {
-  font-size: 0.85rem;
-  color: var(--accent-primary-light);
-  display: block;
-  margin-bottom: 1.25rem;
-}
-
-.trainerStats {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-}
-
-.trainerStats div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.trainerStats strong {
-  font-family: var(--font-heading);
+.whyText h3 {
   font-size: 1.1rem;
-  font-weight: 800;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
 }
 
-.trainerStats span {
-  font-size: 0.75rem;
-  color: var(--text-tertiary);
+.whyText p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 /* ===== CTA SECTION ===== */
 .ctaSection {
-  background: var(--bg-primary);
+  /* Transparent */
 }
 
 .ctaCard {
-  position: relative;
-  background: var(--gradient-card);
-  border: 1px solid var(--glass-border);
-  border-radius: 28px;
+  background: var(--accent-primary);
+  border-radius: var(--radius-lg);
   padding: 4rem 3rem;
   text-align: center;
-  overflow: hidden;
-}
-
-.ctaOrb1 {
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  background: var(--accent-primary);
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.15;
-  top: -100px;
-  left: -50px;
-  pointer-events: none;
-}
-
-.ctaOrb2 {
-  position: absolute;
-  width: 250px;
-  height: 250px;
-  background: var(--accent-secondary);
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.15;
-  bottom: -100px;
-  right: -50px;
-  pointer-events: none;
+  color: white;
 }
 
 .ctaCard h2 {
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   font-weight: 800;
   margin-bottom: 1rem;
-  position: relative;
-  z-index: 1;
+  color: white;
 }
 
 .ctaCard p {
   font-size: 1.05rem;
-  color: var(--text-secondary);
+  opacity: 0.85;
   max-width: 520px;
   margin: 0 auto 2rem;
-  position: relative;
-  z-index: 1;
+}
+
+.ctaCard .btn-primary {
+  background: white;
+  color: var(--accent-primary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.ctaCard .btn-primary:hover {
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+  background: #f1f5f9;
 }
 
 .ctaActions {
-  position: relative;
-  z-index: 1;
+  display: flex;
+  justify-content: center;
 }
 
 /* ===== FOOTER ===== */
 .footer {
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--glass-border);
   padding: 4rem 0 2rem;
 }
 
@@ -627,22 +707,12 @@
 }
 
 .footerLinks a:hover {
-  color: var(--accent-primary-light);
+  color: var(--accent-primary);
 }
 
 .footerBottom {
-  border-top: 1px solid var(--glass-border);
   padding-top: 2rem;
   text-align: center;
   font-size: 0.85rem;
   color: var(--text-tertiary);
-}
-
-/* ===== FLOATING CARDS RESPONSIVE ===== */
-@media (max-width: 1024px) {
-  .floatingCard1,
-  .floatingCard2,
-  .floatingCard3 {
-    display: none;
-  }
 }

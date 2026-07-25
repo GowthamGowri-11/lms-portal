@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { parseCourse } from '@/lib/utils';
 import CourseDetailClient from './CourseDetailClient';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -11,12 +12,10 @@ export default async function CourseDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  
-  const course = await prisma.course.findUnique({
-    where: { id },
-  });
 
-  if (!course) {
+  const raw = await prisma.course.findUnique({ where: { id } });
+
+  if (!raw) {
     return (
       <>
         <Navbar />
@@ -31,9 +30,16 @@ export default async function CourseDetailPage({
     );
   }
 
-  const trainer = await prisma.trainer.findUnique({
-    where: { id: course.trainerId },
+  const course = parseCourse(raw);
+  const trainer = await prisma.trainer.findUnique({ where: { id: raw.trainerId } });
+
+  const modules = await prisma.module.findMany({
+    where: { courseId: id },
+    orderBy: { order: 'asc' },
+    include: {
+      lessons: { orderBy: { order: 'asc' } },
+    },
   });
 
-  return <CourseDetailClient course={course} trainer={trainer} />;
+  return <CourseDetailClient course={course} trainer={trainer} modules={modules} />;
 }

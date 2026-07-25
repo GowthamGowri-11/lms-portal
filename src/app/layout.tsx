@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
+import GalaxyBackground from "@/components/animations/GalaxyBackground";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,8 +27,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
-      <body>
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <GalaxyBackground />
         {children}
       </body>
     </html>
