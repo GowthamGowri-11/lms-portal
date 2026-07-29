@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { BookOpen, Users, GraduationCap, DollarSign, Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { FadeInUp, StaggerContainer, StaggerItem, PageTransition } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
-import { CourseWithArrays } from '@/lib/utils';
+import { CourseWithArrays, formatDate } from '@/lib/utils';
 import { Trainer, Student, Enrollment } from '@/generated/prisma/client';
 
 export default function AdminDashboardClient({
@@ -32,8 +32,8 @@ export default function AdminDashboardClient({
       change: '+12%',
       positive: true,
       icon: <BookOpen size={24} />,
-      color: '#6c5ce7',
-      bg: 'rgba(108, 92, 231, 0.12)',
+      color: '#6366f1',
+      bg: 'rgba(99, 102, 241, 0.12)',
     },
     {
       label: 'Total Trainers',
@@ -41,8 +41,8 @@ export default function AdminDashboardClient({
       change: '+5%',
       positive: true,
       icon: <Users size={24} />,
-      color: '#00cec9',
-      bg: 'rgba(0, 206, 201, 0.12)',
+      color: '#3b82f6',
+      bg: 'rgba(59, 130, 246, 0.12)',
     },
     {
       label: 'Total Students',
@@ -50,8 +50,8 @@ export default function AdminDashboardClient({
       change: '+18%',
       positive: true,
       icon: <GraduationCap size={24} />,
-      color: '#fd79a8',
-      bg: 'rgba(253, 121, 168, 0.12)',
+      color: '#8b5cf6',
+      bg: 'rgba(139, 92, 246, 0.12)',
     },
     {
       label: 'Total Revenue',
@@ -59,8 +59,8 @@ export default function AdminDashboardClient({
       change: '+24%',
       positive: true,
       icon: <DollarSign size={24} />,
-      color: '#00b894',
-      bg: 'rgba(0, 184, 148, 0.12)',
+      color: '#10b981',
+      bg: 'rgba(16, 185, 129, 0.12)',
     },
   ];
 
@@ -85,7 +85,7 @@ export default function AdminDashboardClient({
             <StaggerItem key={i}>
               <motion.div
                 className={styles.statCard}
-                whileHover={{ y: -4, scale: 1.02 }}
+                whileHover={{ y: -4, scale: 1.01 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               >
                 <div className={styles.statTop}>
@@ -99,7 +99,6 @@ export default function AdminDashboardClient({
                 </div>
                 <div className={styles.statValue}>{stat.value}</div>
                 <div className={styles.statLabel}>{stat.label}</div>
-                <div className={styles.statBar} style={{ background: stat.color }} />
               </motion.div>
             </StaggerItem>
           ))}
@@ -155,7 +154,7 @@ export default function AdminDashboardClient({
                             <span>{enrollment.progress}%</span>
                           </div>
                         </td>
-                        <td className={styles.cellDate}>{new Date(enrollment.enrolledAt).toLocaleDateString()}</td>
+                        <td className={styles.cellDate}>{formatDate(enrollment.enrolledAt)}</td>
                       </tr>
                     );
                   })}
@@ -188,8 +187,8 @@ export default function AdminDashboardClient({
                         <span className={styles.quickTitle}>{course.title}</span>
                         <span className={styles.quickMeta}>{course.studentsEnrolled} students</span>
                       </div>
-                      <div className={styles.quickLogo}>
-                        <img src={course.logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                      <div className={styles.quickAvatar} style={{ background: 'linear-gradient(135deg, #6366f1, #3b82f6)' }}>
+                        {course.title.charAt(0)}
                       </div>
                     </div>
                   ))}

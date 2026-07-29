@@ -1,10 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import {
-  Star, Users, BookOpen, Award, BadgeCheck,
-  ArrowRight, ShieldCheck, Trophy, Zap,
-} from 'lucide-react';
+import { Star, Users, BookOpen, Award, BadgeCheck, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Trainer } from '@/generated/prisma/client';
 import styles from './TrainerCard.module.css';

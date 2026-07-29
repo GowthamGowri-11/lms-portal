@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft, ChevronRight, CheckCircle, Play, Lock,
-  BookOpen, Code, FileText, ChevronDown, Menu, X,
+  BookOpen, Code, ChevronDown, X,
   GraduationCap, Clock, HelpCircle,
 } from 'lucide-react';
 import type { Course, Module, Lesson, Quiz, CodingProblem } from '@/generated/prisma/client';
@@ -50,7 +50,7 @@ interface CourseSidebarProps {
 
 export default function CourseSidebar({
   course,
-  student,
+  student: _student,
   modules,
   codingProblems,
   quizzes,
@@ -176,6 +176,44 @@ export default function CourseSidebar({
           </Link>
         );
       }
+
+      // Render any quizzes placed immediately after this lesson
+      const afterLessonQuizzes = quizzes.filter((q) => q.afterLessonId === les.id);
+      afterLessonQuizzes.forEach((lesQuiz) => {
+        const isQActive = activeItem?.type === 'quiz' && activeItem.id === lesQuiz.id;
+        const isQDone = completedIds.has(lesQuiz.id);
+        const isQLocked = lockedIds.has(lesQuiz.id);
+
+        if (isQLocked) {
+          list.push(
+            <div key={`q-lock-${lesQuiz.id}`} className={styles.sidebarLessonLocked}>
+              <div className={styles.sidebarLessonIcon}>
+                <Lock size={13} className={styles.lockedIcon} />
+              </div>
+              <span className={styles.sidebarLessonTitle}>{lesQuiz.title || 'Lesson Quiz'}</span>
+            </div>
+          );
+        } else {
+          list.push(
+            <Link
+              key={`q-${lesQuiz.id}`}
+              href={`/learn/${course.id}/quiz/${lesQuiz.id}`}
+              className={`${styles.sidebarLesson} ${isQActive ? styles.sidebarLessonActive : ''}`}
+            >
+              <div className={styles.sidebarLessonIcon}>
+                {isQDone ? (
+                  <CheckCircle size={14} className={styles.doneIcon} />
+                ) : isQActive ? (
+                  <HelpCircle size={13} className={styles.activeIcon} />
+                ) : (
+                  <HelpCircle size={13} className={styles.pendingIcon} />
+                )}
+              </div>
+              <span className={styles.sidebarLessonTitle}>{lesQuiz.title || 'Lesson Quiz'}</span>
+            </Link>
+          );
+        }
+      });
     });
 
     // 2. Render Coding Practice (if any)
@@ -184,7 +222,6 @@ export default function CourseSidebar({
     );
     if (modProblems.length > 0) {
       const isActive = activeItem?.type === 'coding' && activeItem.id === mod.id;
-      const isDone = modProblems.every((p) => completedIds.has(mod.id) || false); // Or checked via item completion
       const isLocked = lockedIds.has(mod.id);
 
       if (isLocked) {
@@ -220,9 +257,9 @@ export default function CourseSidebar({
       }
     }
 
-    // 3. Render Module Quiz (if any)
-    const modQuiz = quizzes.find((q) => q.moduleId === mod.id);
-    if (modQuiz) {
+    // 3. Render Module Quizzes (if any)
+    const modQuizzes = quizzes.filter((q) => q.moduleId === mod.id && !q.afterLessonId && !q.isFinalAssessment);
+    modQuizzes.forEach((modQuiz) => {
       const isActive = activeItem?.type === 'quiz' && activeItem.id === modQuiz.id;
       const isDone = completedIds.has(modQuiz.id);
       const isLocked = lockedIds.has(modQuiz.id);
@@ -233,7 +270,7 @@ export default function CourseSidebar({
             <div className={styles.sidebarLessonIcon}>
               <Lock size={13} className={styles.lockedIcon} />
             </div>
-            <span className={styles.sidebarLessonTitle}>Module Quiz</span>
+            <span className={styles.sidebarLessonTitle}>{modQuiz.title || 'Module Quiz'}</span>
           </div>
         );
       } else {
@@ -252,11 +289,11 @@ export default function CourseSidebar({
                 <HelpCircle size={13} className={styles.pendingIcon} />
               )}
             </div>
-            <span className={styles.sidebarLessonTitle}>Module Quiz</span>
+            <span className={styles.sidebarLessonTitle}>{modQuiz.title || 'Module Quiz'}</span>
           </Link>
         );
       }
-    }
+    });
 
     return list;
   };
@@ -329,6 +366,54 @@ export default function CourseSidebar({
                 )}
               </div>
             ))}
+
+            {(() => {
+              const finalQuizzes = quizzes.filter((q) => q.isFinalAssessment || (!q.moduleId && !q.afterLessonId));
+              if (finalQuizzes.length === 0) return null;
+              return (
+                <div className={styles.sidebarModule} style={{ marginTop: '0.75rem' }}>
+                  <div className={styles.sidebarModuleHeader} style={{ cursor: 'default', padding: '10px 14px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '8px' }}>
+                    <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Final Assessments</span>
+                  </div>
+                  <div className={styles.sidebarLessons} style={{ paddingLeft: '8px' }}>
+                    {finalQuizzes.map((fq) => {
+                      const isActive = activeItem?.type === 'quiz' && activeItem.id === fq.id;
+                      const isDone = completedIds.has(fq.id);
+                      const isLocked = lockedIds.has(fq.id);
+
+                      if (isLocked) {
+                        return (
+                          <div key={`fq-lock-${fq.id}`} className={styles.sidebarLessonLocked}>
+                            <div className={styles.sidebarLessonIcon}>
+                              <Lock size={13} className={styles.lockedIcon} />
+                            </div>
+                            <span className={styles.sidebarLessonTitle}>{fq.title || 'Course Assessment'}</span>
+                          </div>
+                        );
+                      }
+                      return (
+                        <Link
+                          key={`fq-${fq.id}`}
+                          href={`/learn/${course.id}/quiz/${fq.id}`}
+                          className={`${styles.sidebarLesson} ${isActive ? styles.sidebarLessonActive : ''}`}
+                        >
+                          <div className={styles.sidebarLessonIcon}>
+                            {isDone ? (
+                              <CheckCircle size={14} className={styles.doneIcon} />
+                            ) : isActive ? (
+                              <HelpCircle size={13} className={styles.activeIcon} />
+                            ) : (
+                              <HelpCircle size={13} className={styles.pendingIcon} />
+                            )}
+                          </div>
+                          <span className={styles.sidebarLessonTitle}>{fq.title || 'Course Assessment'}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </>
       )}

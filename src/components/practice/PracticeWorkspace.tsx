@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { CodingProblem, Lesson, Course } from "@/generated/prisma/client";
 
 import ProblemPanel from "./ProblemPanel";
@@ -12,7 +12,7 @@ import ResultPanel from "./ResultPanel";
 
 interface PracticeWorkspaceProps {
   problem: CodingProblem & { lesson?: Lesson & { module?: { course: Course } } | null };
-  visibleTests: any[];
+  visibleTests: unknown[];
 }
 
 export default function PracticeWorkspace({ problem, visibleTests }: PracticeWorkspaceProps) {
@@ -41,28 +41,26 @@ export default function PracticeWorkspace({ problem, visibleTests }: PracticeWor
   
   // Status and evaluation states
   const [status, setStatus] = useState<"idle" | "running" | "success" | "error">("idle");
-  const [runResult, setRunResult] = useState<any>(null);
-  const [submitResult, setSubmitResult] = useState<any>(null);
+  const [runResult, setRunResult] = useState<unknown>(null);
+  const [submitResult, setSubmitResult] = useState<unknown>(null);
 
   // Submissions history state
-  const [submissions, setSubmissions] = useState<any[]>([]);
+  const [submissions, setSubmissions] = useState<unknown[]>([]);
 
   // Update editor code when language selection changes
   useEffect(() => {
-    try {
-      const map = JSON.parse(problem.starterCode as unknown as string);
-      setCode(map[language] ?? "");
-    } catch {
-      setCode("");
-    }
+    const timer = setTimeout(() => {
+      try {
+        const map = JSON.parse(problem.starterCode as unknown as string);
+        setCode(map[language] ?? "");
+      } catch {
+        setCode("");
+      }
+    }, 0);
+    return () => clearTimeout(timer);
   }, [language, problem.starterCode]);
 
-  // Load submissions history on mount
-  useEffect(() => {
-    fetchSubmissions();
-  }, [problem.id]);
-
-  const fetchSubmissions = async () => {
+  const fetchSubmissions = useCallback(async () => {
     try {
       const res = await fetch(`/api/practice/submissions/${problem.id}`);
       if (res.ok) {
@@ -72,7 +70,12 @@ export default function PracticeWorkspace({ problem, visibleTests }: PracticeWor
     } catch (err) {
       console.error("Failed to load submissions history:", err);
     }
-  };
+  }, [problem.id]);
+
+  // Load submissions history on mount
+  useEffect(() => {
+    fetchSubmissions();
+  }, [fetchSubmissions]);
 
   // Run handler (custom input execution)
   const handleRun = async () => {
@@ -171,8 +174,8 @@ export default function PracticeWorkspace({ problem, visibleTests }: PracticeWor
       <div className="w-full md:w-[60%] lg:w-1/2 flex flex-col h-full bg-white overflow-hidden border-r border-slate-200">
         <ProblemPanel
           problem={problem}
-          visibleTests={visibleTests}
-          submissions={submissions}
+          visibleTests={visibleTests as any[]}
+          submissions={submissions as any[]}
         />
       </div>
 
@@ -185,7 +188,7 @@ export default function PracticeWorkspace({ problem, visibleTests }: PracticeWor
           >
             <span className="mr-1">←</span> Back to Lesson
           </Link>
-          <span className="text-xs text-slate-400 font-medium">GM Coding Platform</span>
+          <span className="text-xs text-slate-400 font-medium">ATLYX Coding Platform</span>
         </div>
 
         {/* Code Editor Panel */}
@@ -208,8 +211,8 @@ export default function PracticeWorkspace({ problem, visibleTests }: PracticeWor
 
         {/* Results Panel */}
         <ResultPanel
-          runResult={runResult}
-          submitResult={submitResult}
+          runResult={runResult as any}
+          submitResult={submitResult as any}
           status={status}
           testCasesCount={visibleTests.length}
           maxScore={problem.points}

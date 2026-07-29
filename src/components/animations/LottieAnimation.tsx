@@ -6,20 +6,28 @@ import defaultAnimationData from './lottieData.json';
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
-export default function LottieAnimation() {
-  const [animationData] = useState<unknown>(defaultAnimationData);
+type Props = {
+  width?: number | string;
+  height?: number | string;
+  className?: string;
+  animationData?: unknown;
+};
+
+export default function LottieAnimation({ width = 240, height = 240, className, animationData: customData }: Props) {
+  const [animationData] = useState<unknown>(customData || defaultAnimationData);
 
   if (!animationData) {
     return (
-      <div style={{ width: 400, height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="animate-pulse" style={{ width: 200, height: 200, borderRadius: '50%', background: 'var(--bg-tertiary)' }} />
+      <div style={{ width, height, display: 'flex', alignItems: 'center', justifyContent: 'center' }} className={className}>
+        <div className="animate-pulse" style={{ width: '60%', height: '60%', borderRadius: '50%', background: 'var(--bg-tertiary)' }} />
       </div>
     );
   }
 
   return (
-    <div style={{ width: 400, height: 400, margin: '0 auto' }}>
-      <Lottie animationData={animationData} loop={true} />
+    <div style={{ width, height, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className={className}>
+      <Lottie animationData={animationData} loop={true} style={{ width: '100%', height: '100%' }} />
     </div>
   );
 }
+

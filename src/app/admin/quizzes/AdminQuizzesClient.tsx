@@ -13,6 +13,8 @@ type QuizWithData = Quiz & {
   questions: QuizQuestion[];
   course: Pick<Course, 'id' | 'title' | 'logo'> | null;
   module: Pick<Module, 'id' | 'title'> | null;
+  afterLessonId?: string | null;
+  isFinalAssessment?: boolean;
 };
 
 const QUESTION_TYPES = ['mcq', 'truefalse', 'multiple', 'fillin'];
@@ -32,14 +34,18 @@ export default function AdminQuizzesClient({
   modules,
 }: {
   quizzes: QuizWithData[];
-  courses: Pick<Course, 'id' | 'title' | 'logo'>[];
+  courses: (Pick<Course, 'id' | 'title' | 'logo'> & {
+    modules?: { id: string; title: string; lessons?: { id: string; title: string }[] }[];
+  })[];
   modules: Pick<Module, 'id' | 'title' | 'courseId'>[];
 }) {
   const [search, setSearch] = useState('');
+  const [selectedCourseFilter, setSelectedCourseFilter] = useState<string>('ALL');
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [editingQuiz, setEditingQuiz] = useState<QuizWithData | null>(null);
-  const [quizForm, setQuizForm] = useState({ title: '', description: '', courseId: '', moduleId: '', timeLimit: 10, passMark: 70 });
+  const [quizForm, setQuizForm] = useState({ title: '', description: '', courseId: '', moduleId: '', afterLessonId: '', isFinalAssessment: false, timeLimit: 10, passMark: 70 });
+  const [numQuestions, setNumQuestions] = useState(1);
   const [questions, setQuestions] = useState<typeof emptyQ[]>([{ ...emptyQ }]);
   const [isLoading, setIsLoading] = useState(false);
   const [showQModal, setShowQModal] = useState(false);
@@ -61,14 +67,16 @@ export default function AdminQuizzesClient({
   const toggle = (id: string) =>
     setExpanded((p) => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
-  const filtered = quizzes.filter((q) =>
-    q.title.toLowerCase().includes(search.toLowerCase()) ||
-    q.course?.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = quizzes.filter((q) => {
+    const matchesCourseFilter = selectedCourseFilter === 'ALL' || q.courseId === selectedCourseFilter;
+    const matchesSearch = q.title.toLowerCase().includes(search.toLowerCase()) || q.course?.title.toLowerCase().includes(search.toLowerCase());
+    return matchesCourseFilter && matchesSearch;
+  });
 
   const openCreateQuiz = () => {
     setEditingQuiz(null);
-    setQuizForm({ title: '', description: '', courseId: '', moduleId: '', timeLimit: 10, passMark: 70 });
+    setQuizForm({ title: '', description: '', courseId: selectedCourseFilter === 'ALL' ? '' : selectedCourseFilter, moduleId: '', afterLessonId: '', isFinalAssessment: false, timeLimit: 10, passMark: 70 });
+    setNumQuestions(1);
     setQuestions([{ ...emptyQ }]);
     setShowQuizModal(true);
   };
@@ -80,6 +88,8 @@ export default function AdminQuizzesClient({
       description: quiz.description,
       courseId: quiz.courseId ?? '',
       moduleId: quiz.moduleId ?? '',
+      afterLessonId: quiz.afterLessonId ?? '',
+      isFinalAssessment: Boolean(quiz.isFinalAssessment),
       timeLimit: quiz.timeLimit,
       passMark: quiz.passMark,
     });
@@ -91,6 +101,7 @@ export default function AdminQuizzesClient({
       explanation: q.explanation,
       order: q.order,
     })));
+    setNumQuestions(quiz.questions.length || 1);
     setShowQuizModal(true);
   };
 
@@ -150,6 +161,38 @@ export default function AdminQuizzesClient({
           </div>
         </FadeInUp>
 
+        <FadeInUp delay={0.05}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '1.5rem', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)', marginRight: '4px' }}>Filter Course:</span>
+            <button
+              onClick={() => setSelectedCourseFilter('ALL')}
+              style={{
+                padding: '6px 14px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 600, border: '1px solid var(--glass-border)', cursor: 'pointer',
+                background: selectedCourseFilter === 'ALL' ? 'var(--accent-primary)' : 'var(--bg-card)',
+                color: selectedCourseFilter === 'ALL' ? '#fff' : 'var(--text-secondary)',
+              }}
+            >
+              All Courses ({quizzes.length})
+            </button>
+            {courses.map((c) => {
+              const count = quizzes.filter((q) => q.courseId === c.id).length;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedCourseFilter(c.id)}
+                  style={{
+                    padding: '6px 14px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: 600, border: '1px solid var(--glass-border)', cursor: 'pointer',
+                    background: selectedCourseFilter === c.id ? 'var(--accent-primary)' : 'var(--bg-card)',
+                    color: selectedCourseFilter === c.id ? '#fff' : 'var(--text-secondary)',
+                  }}
+                >
+                  {c.title} ({count})
+                </button>
+              );
+            })}
+          </div>
+        </FadeInUp>
+
         <FadeInUp delay={0.1}>
           <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
             <Search size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
@@ -180,7 +223,8 @@ export default function AdminQuizzesClient({
                     <div>
                       <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{quiz.title}</div>
                       <div style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)' }}>
-                        <img src={quiz.course?.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain', verticalAlign: 'middle', marginRight: '4px' }} /> {quiz.course?.title ?? 'No course'} {quiz.module ? `• ${quiz.module.title}` : ''} • {quiz.questions.length} questions
+                        <img src={quiz.course?.logo || 'https://via.placeholder.com/150'} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain', verticalAlign: 'middle', marginRight: '4px' }} /> {quiz.course?.title ?? 'No course'}
+                        {quiz.isFinalAssessment ? ' • Final Assessment' : quiz.afterLessonId ? ' • Custom Lesson Placement' : quiz.module ? ` • ${quiz.module.title}` : ''} • {quiz.questions.length} questions
                       </div>
                     </div>
                   </div>
@@ -292,23 +336,50 @@ export default function AdminQuizzesClient({
                       </div>
                       <div className="input-group">
                         <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Assign to Course</label>
-                        <select className="input-field" value={quizForm.courseId} onChange={(e) => setQuizForm({ ...quizForm, courseId: e.target.value, moduleId: '' })}>
+                        <select className="input-field" value={quizForm.courseId} onChange={(e) => setQuizForm({ ...quizForm, courseId: e.target.value, moduleId: '', afterLessonId: '', isFinalAssessment: false })}>
                           <option value="">No course</option>
                           {courses.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
                         </select>
                       </div>
+                      {quizForm.courseId && (
+                        <div className="input-group" style={{ gridColumn: '1 / -1' }}>
+                          <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Quiz Placement (Where it appears in curriculum)</label>
+                          <select
+                            className="input-field"
+                            value={quizForm.isFinalAssessment ? 'FINAL' : quizForm.afterLessonId ? `LESSON_${quizForm.afterLessonId}` : quizForm.moduleId ? `MOD_${quizForm.moduleId}` : 'FINAL'}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val === 'FINAL') {
+                                setQuizForm({ ...quizForm, isFinalAssessment: true, afterLessonId: '', moduleId: '' });
+                              } else if (val.startsWith('LESSON_')) {
+                                const lesId = val.replace('LESSON_', '');
+                                const selectedCourse = courses.find((c) => c.id === quizForm.courseId);
+                                let modId = '';
+                                selectedCourse?.modules?.forEach((m) => {
+                                  if (m.lessons?.some((l) => l.id === lesId)) modId = m.id;
+                                });
+                                setQuizForm({ ...quizForm, isFinalAssessment: false, afterLessonId: lesId, moduleId: modId });
+                              } else if (val.startsWith('MOD_')) {
+                                setQuizForm({ ...quizForm, isFinalAssessment: false, afterLessonId: '', moduleId: val.replace('MOD_', '') });
+                              }
+                            }}
+                          >
+                            <option value="FINAL">At the end of the course (Final Assessment)</option>
+                            {courses.find((c) => c.id === quizForm.courseId)?.modules?.map((m, mIdx) => (
+                              <optgroup key={m.id} label={`Module ${mIdx + 1}: ${m.title}`}>
+                                <option value={`MOD_${m.id}`}>At Module end (General Module Quiz)</option>
+                                {m.lessons?.map((les, lIdx) => (
+                                  <option key={les.id} value={`LESSON_${les.id}`}>After Lesson {lIdx + 1}: {les.title}</option>
+                                ))}
+                              </optgroup>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                       <div className="input-group">
-                        <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Assign to Module</label>
-                        <select className="input-field" value={quizForm.moduleId} onChange={(e) => setQuizForm({ ...quizForm, moduleId: e.target.value })}>
-                          <option value="">No module</option>
-                          {modules.filter((m) => !quizForm.courseId || m.courseId === quizForm.courseId).map((m) => (
-                            <option key={m.id} value={m.id}>{m.title}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="input-group">
-                        <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Time Limit (minutes, 0 = no limit)</label>
-                        <input type="number" className="input-field" value={quizForm.timeLimit} onChange={(e) => setQuizForm({ ...quizForm, timeLimit: Number(e.target.value) })} />
+                        <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Time Limit (minutes) *</label>
+                        <input type="number" className="input-field" value={quizForm.timeLimit} min={1} required onChange={(e) => setQuizForm({ ...quizForm, timeLimit: Math.max(1, Number(e.target.value)) })} />
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)', marginTop: '4px', display: 'block' }}>Quiz will auto-close when timer expires</span>
                       </div>
                       <div className="input-group">
                         <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>Pass Mark (%)</label>
@@ -316,8 +387,30 @@ export default function AdminQuizzesClient({
                       </div>
                     </div>
 
+                    {/* Number of Questions */}
+                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '1rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1.5rem', marginTop: '0.5rem' }}>
+                      <div className="input-group" style={{ flex: '0 0 180px' }}>
+                        <label style={{ color: 'var(--text-primary)', fontWeight: 600 }}>No. of Questions *</label>
+                        <input type="number" className="input-field" value={numQuestions} min={1} required onChange={(e) => {
+                          const n = Math.max(1, Number(e.target.value));
+                          setNumQuestions(n);
+                        }} />
+                      </div>
+                      <button type="button" className="btn btn-secondary btn-sm" style={{ padding: '8px 16px', fontSize: '0.85rem', marginBottom: '2px' }} onClick={() => {
+                        const n = numQuestions;
+                        if (n < questions.length) {
+                          setQuestions(questions.slice(0, n));
+                        } else {
+                          const extras = Array.from({ length: n - questions.length }, (_, i) => ({ ...emptyQ, order: questions.length + i }));
+                          setQuestions([...questions, ...extras]);
+                        }
+                      }}>
+                        <PlusCircle size={14} /> Generate {numQuestions} Placeholder{numQuestions > 1 ? 's' : ''}
+                      </button>
+                    </div>
+
                     {/* Questions Section Header */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--glass-border)', paddingTop: '1.5rem', marginTop: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.5rem' }}>
                       <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' }}>Questions ({questions.length})</span>
                       <button type="button" className="btn btn-secondary btn-sm" onClick={addQuestion} style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
                         <PlusCircle size={14} /> Add Question

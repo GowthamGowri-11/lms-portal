@@ -4,12 +4,13 @@
   left: 0;
   bottom: 0;
   width: 280px;
-  background: var(--bg-secondary);
-  border-right: 1px solid var(--glass-border);
+  background: rgba(15, 23, 42, 0.95);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
   z-index: 50;
   overflow: hidden;
+  backdrop-filter: blur(12px);
 }
 
 .sidebar.collapsed {
@@ -22,7 +23,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 16px;
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   min-height: 72px;
 }
 
@@ -35,23 +36,23 @@
 }
 
 .logoIcon {
-  min-width: 44px;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--accent-primary);
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 4px 14px rgba(67, 56, 202, 0.2);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
 }
 
 .logoText {
   font-family: var(--font-heading);
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--accent-primary);
+  color: #f8fafc;
   overflow: hidden;
 }
 
@@ -87,30 +88,32 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  color: var(--text-secondary);
-  font-size: 0.925rem;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #94a3b8;
+  font-size: 0.9rem;
   font-weight: 500;
-  transition: color 0.2s;
+  transition: all 0.2s;
   white-space: nowrap;
   overflow: hidden;
 }
 
 .navItem:hover {
-  color: var(--text-primary);
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .navItem.active {
-  color: var(--text-primary);
+  color: #f8fafc;
+  font-weight: 600;
 }
 
 .activeBg {
   position: absolute;
   inset: 0;
-  background: rgba(67, 56, 202, 0.1);
-  border: 1px solid rgba(67, 56, 202, 0.15);
-  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 10px;
   z-index: -1;
 }
 

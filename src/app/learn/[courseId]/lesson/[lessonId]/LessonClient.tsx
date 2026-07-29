@@ -7,11 +7,12 @@ import {
   ChevronLeft, ChevronRight, CheckCircle, Play, Lock,
   BookOpen, Code, FileText, Menu, X, ArrowLeft,
   Download, ExternalLink, Eye, ClipboardList, FileCode,
-  GitBranch, Globe, ExternalLink as YoutubeLink, Calendar, Award,
+  GitBranch, Globe, ExternalLink as YoutubeLink, Calendar, Award, RotateCcw,
 } from 'lucide-react';
 import { Course, Lesson, CodingProblem } from '@/generated/prisma/client';
 import type { LessonNote, LessonResource, LessonAssignment, LessonPracticeFile } from '@/generated/prisma/client';
 import { useLearn } from '@/app/learn/[courseId]/LearnContext';
+import ReactMarkdown from 'react-markdown';
 import styles from './lesson.module.css';
 
 
@@ -78,31 +79,7 @@ export default function LessonClient({
     }
   };
 
-  // Parse notes markdown-ish
-  const parseNotes = (notes: string) => {
-    return notes
-      .split('\n')
-      .map((line, i) => {
-        if (line.startsWith('# ')) return <h1 key={i} className={styles.notesH1}>{line.slice(2)}</h1>;
-        if (line.startsWith('## ')) return <h2 key={i} className={styles.notesH2}>{line.slice(3)}</h2>;
-        if (line.startsWith('### ')) return <h3 key={i} className={styles.notesH3}>{line.slice(4)}</h3>;
-        if (line.startsWith('- ')) return <li key={i} className={styles.notesBullet}>{line.slice(2)}</li>;
-        if (line.startsWith('```')) return null;
-        if (line.trim() === '') return <br key={i} />;
-        
-        // Inline bold
-        const parts = line.split(/(\*\*[^*]+\*\*)/g);
-        return (
-          <p key={i} className={styles.notesP}>
-            {parts.map((part, j) =>
-              part.startsWith('**') && part.endsWith('**')
-                ? <strong key={j}>{part.slice(2, -2)}</strong>
-                : part
-            )}
-          </p>
-        );
-      });
-  };
+  // Using react-markdown for robust rendering
 
   const nextLocked = nextItem ? !completed : false;
 
@@ -138,15 +115,20 @@ export default function LessonClient({
 
       {/* Main Content */}
       <main className={styles.main}>
-
-
-        {/* Lesson Header */}
-        <div className={styles.lessonHeader}>
-          <div>
-            <h1 className={styles.lessonTitle}>{lesson.title}</h1>
-            {lesson.description && <p className={styles.lessonDesc}>{lesson.description}</p>}
+        <div className={styles.glassContainer}>
+          {/* Lesson Header */}
+          <div className={styles.lessonHeader}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <Link href={`/courses/${course.id}`} className={styles.backButton}>
+                <ArrowLeft size={16} />
+                <span>Back to Course</span>
+              </Link>
+              <div>
+                <h1 className={styles.lessonTitle}>{lesson.title}</h1>
+                {lesson.description && <p className={styles.lessonDesc}>{lesson.description}</p>}
+              </div>
+            </div>
           </div>
-        </div>
 
         {/* Tabs */}
         <div className={styles.tabs}>
@@ -176,7 +158,9 @@ export default function LessonClient({
           {activeTab === 'notes' && (
             <div className={styles.notesContent}>
               {lesson.notes ? (
-                <div className={styles.notesBody}>{parseNotes(lesson.notes)}</div>
+                <div className={styles.notesBody}>
+                  <ReactMarkdown>{lesson.notes}</ReactMarkdown>
+                </div>
               ) : (
                 <p className={styles.emptyState}>No lesson notes available.</p>
               )}
@@ -265,7 +249,7 @@ export default function LessonClient({
                       <div style={{ display: 'flex', gap: 10, marginTop: 6, flexWrap: 'wrap', alignItems: 'center' }}>
                         {a.deadline && (
                           <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', color: 'var(--accent-warning)' }}>
-                            <Calendar size={12} /> Due: {new Date(a.deadline).toLocaleDateString()}
+                            <Calendar size={12} /> Due: {new Date(a.deadline).toLocaleDateString('en-US')}
                           </span>
                         )}
                         <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
@@ -366,18 +350,42 @@ export default function LessonClient({
             <div />
           )}
 
-          <button
-            className={`btn ${completed ? 'btn-success' : 'btn-primary'} ${styles.navBtn}`}
-            onClick={toggleComplete}
-            disabled={isUpdating}
-            style={{ minWidth: 200 }}
-          >
-            <CheckCircle size={18} />
-            <span>
-              <span className={styles.navLabel}>Status</span>
-              <span className={styles.navTitle}>{completed ? 'Completed!' : 'Mark as Complete'}</span>
-            </span>
-          </button>
+          {completed ? (
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button 
+                className={`btn btn-secondary ${styles.navBtn}`}
+                onClick={toggleComplete}
+                disabled={isUpdating}
+                title="Mark as incomplete to relearn"
+              >
+                <RotateCcw size={18} />
+                <span>
+                  <span className={styles.navLabel}>Relearn</span>
+                  <span className={styles.navTitle}>Redo Topic</span>
+                </span>
+              </button>
+              <div className={`btn btn-success ${styles.navBtn}`} style={{ cursor: 'default' }}>
+                <CheckCircle size={18} />
+                <span>
+                  <span className={styles.navLabel}>Status</span>
+                  <span className={styles.navTitle}>Completed!</span>
+                </span>
+              </div>
+            </div>
+          ) : (
+            <button
+              className={`btn btn-primary ${styles.navBtn}`}
+              onClick={toggleComplete}
+              disabled={isUpdating}
+              style={{ minWidth: 200 }}
+            >
+              <CheckCircle size={18} />
+              <span>
+                <span className={styles.navLabel}>Status</span>
+                <span className={styles.navTitle}>Mark as Complete</span>
+              </span>
+            </button>
+          )}
 
           {nextItem ? (
             nextLocked ? (
@@ -404,6 +412,7 @@ export default function LessonClient({
           ) : (
             <div />
           )}
+        </div>
         </div>
       </main>
     </div>

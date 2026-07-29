@@ -623,7 +623,7 @@ export default function LessonContentManager({ lessonId, courseId, lessonTitle }
                                 <div className={styles.itemSub}>
                                   <span className={styles.badge}>v{v.version}</span>
                                   <span>{formatSize(v.fileSize)}</span>
-                                  <span>{new Date(v.createdAt).toLocaleDateString()}</span>
+                                  <span>{new Date(v.createdAt).toLocaleDateString('en-US')}</span>
                                   <span>↓ {v.downloadCount}</span>
                                 </div>
                               </div>
@@ -809,7 +809,7 @@ export default function LessonContentManager({ lessonId, courseId, lessonTitle }
                     <div className={styles.itemMeta}>
                       <div className={styles.itemTitle}>{a.title}</div>
                       <div className={styles.itemSub}>
-                        {a.deadline && <span className={styles.badge} data-kind="deadline"><Calendar size={11} /> {new Date(a.deadline).toLocaleDateString()}</span>}
+                        {a.deadline && <span className={styles.badge} data-kind="deadline"><Calendar size={11} /> {new Date(a.deadline).toLocaleDateString('en-US')}</span>}
                         <span className={styles.badge}><Award size={11} /> {a.maxMarks} marks</span>
                         {a.description && <span>{a.description}</span>}
                       </div>

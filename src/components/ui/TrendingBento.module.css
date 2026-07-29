@@ -222,11 +222,36 @@
     min-height: 280px;
   }
 }
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .bentoGrid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .bentoCard {
+    padding: 1.25rem 1.15rem;
+    border-radius: 16px;
+  }
+  .iconWrapper {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 0.85rem;
+    border-radius: 10px;
+  }
+  .iconWrapper svg {
+    width: 20px;
+    height: 20px;
+  }
+  .bentoCard h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.35rem;
+  }
+  .bentoCard p {
+    font-size: 0.82rem;
+    line-height: 1.45;
   }
   .span2x2, .span1x2, .span2x1, .span1x1 {
     grid-column: span 1;
+    grid-row: auto;
+    min-height: auto !important;
   }
 }
