@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BookOpen, Users, GraduationCap, DollarSign, Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { BookOpen, Users, GraduationCap, DollarSign, Activity, ArrowUpRight, ArrowDownRight, HelpCircle, Bell, User } from 'lucide-react';
 import { FadeInUp, StaggerContainer, StaggerItem, PageTransition } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
 import { CourseWithArrays, formatDate } from '@/lib/utils';
@@ -70,8 +70,8 @@ export default function AdminDashboardClient({
         <FadeInUp>
           <div className={styles.header}>
             <div>
-              <h1 className={styles.title}>Dashboard</h1>
-              <p className={styles.subtitle}>Welcome back! Here&apos;s your overview.</p>
+              <h1 className={styles.title}>Overview</h1>
+              <p className={styles.subtitle}>Welcome back! Here&apos;s your dashboard.</p>
             </div>
             <div className={styles.headerBadge}>
               <Activity size={16} />

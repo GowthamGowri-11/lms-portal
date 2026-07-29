@@ -51,8 +51,8 @@ export default function AdminSidebar() {
       {/* Header */}
       <div className={styles.header}>
         <Link href="/admin" className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <GraduationCap size={24} />
+          <div className={styles.logoIcon} style={{ background: 'var(--accent-primary)' }}>
+            <GraduationCap size={24} color="white" />
           </div>
           <AnimatePresence>
             {!collapsed && (

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {
   BookOpen, CheckCircle, Clock, Trophy, User, MessageSquare,
   Edit2, Save, X, ChevronRight, BarChart3, LogOut, Send, AlertCircle,
-  HelpCircle
+  HelpCircle, GraduationCap
 } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
 import { formatDate } from '@/lib/utils';
@@ -188,8 +188,10 @@ export default function StudentDashboardClient({
       {/* Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarBrand}>
-          <div className={styles.brandIcon}>A</div>
-          <span>ATLYX</span>
+          <div className={styles.brandIcon} style={{ background: 'var(--accent-primary)' }}>
+            <GraduationCap size={20} color="white" />
+          </div>
+          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.4rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>ATLYX</span>
         </div>
 
         <div className={styles.sidebarProfile}>

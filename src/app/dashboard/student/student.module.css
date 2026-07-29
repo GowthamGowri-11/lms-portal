@@ -1,8 +1,25 @@
 .layout {
+  /* Light Theme Overrides */
+  --bg-primary: #f9fafb;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f3f4f6;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f9fafb;
+  --bg-glass: #ffffff;
+  --border-color: #e5e7eb;
+  --glass-border: #e5e7eb;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --text-muted: #9ca3af;
+  --accent-primary: #4f46e5;
+  --accent-secondary: #6366f1;
+
   display: flex;
   min-height: 100vh;
   background: var(--bg-primary);
   font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
 }
 
 /* ===== SIDEBAR ===== */
@@ -57,7 +74,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  background: var(--accent-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -355,7 +372,7 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  background: var(--accent-primary);
   border-radius: 3px;
 }
 
