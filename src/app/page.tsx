@@ -10,14 +10,17 @@ import {
   FadeInUp,
   ScrollReveal,
 } from '@/components/animations/MotionWrappers';
-import GalaxyBackground from '@/components/animations/GalaxyBackground';
 import CodeTypingAnimation from '@/components/ui/CodeTypingAnimation';
 import SuccessRoadmap from '@/components/ui/SuccessRoadmap';
 import TrendingBento from '@/components/ui/TrendingBento';
 import CallToAction from '@/components/ui/CallToAction';
+import Footer from '@/components/ui/Footer';
 import TiltCard from '@/components/animations/TiltCard';
+import HeroAuthButtons from '@/components/auth/HeroAuthButtons';
 import { prisma } from '@/lib/prisma';
 import styles from './page.module.css';
+
+export const revalidate = 3600; // Cache this page for 1 hour
 
 export default async function Home() {
   const studentsCount = await prisma.student.count();
@@ -30,60 +33,46 @@ export default async function Home() {
       <main className={styles.main}>
         {/* ===== HERO SECTION ===== */}
         <section className={styles.hero}>
+
           <div className={styles.dotGrid} />
           <div className={styles.heroContainer}>
             <div className={styles.heroContent}>
-              <FadeInUp delay={0.1}>
-                <div className={styles.heroTag}>
-                  <span className={styles.heroTagDot} />
-                  Learning Management System
+              <div className={styles.heroTag}>
+                <span className={styles.heroTagDot} />
+                Learning Management System
+              </div>
+
+              <h1 className={styles.heroTitle}>
+                Master the Skills{' '}
+                <span className={styles.accentText}>That Drive Your Career</span>
+              </h1>
+
+              <p className={styles.heroDescription}>
+                Join millions of learners advancing their careers with world-class
+                courses in Tech, Design, and Business. Learn from industry experts
+                at your own pace and build a portfolio of real-world projects.
+              </p>
+
+              <div className={styles.heroActions}>
+                <HeroAuthButtons />
+              </div>
+
+              <div className={styles.heroStats}>
+                <div className={styles.heroStat}>
+                  <strong>{studentsCount}</strong>
+                  <span>Students</span>
                 </div>
-              </FadeInUp>
-
-              <FadeInUp delay={0.2}>
-                <h1 className={styles.heroTitle}>
-                  Master the Skills{' '}
-                  <span className={styles.accentText}>That Drive Your Career</span>
-                </h1>
-              </FadeInUp>
-
-              <FadeInUp delay={0.3}>
-                <p className={styles.heroDescription}>
-                  Join millions of learners advancing their careers with world-class
-                  courses in Tech, Design, and Business. Learn from industry experts
-                  at your own pace and build a portfolio of real-world projects.
-                </p>
-              </FadeInUp>
-
-              <FadeInUp delay={0.4}>
-                <div className={styles.heroActions}>
-                  <Link href="/courses" className="btn btn-primary btn-lg">
-                    Join for Free
-                  </Link>
-                  <Link href="/courses" className="btn btn-secondary btn-lg">
-                    Explore Programs
-                  </Link>
+                <div className={styles.heroStatDivider} />
+                <div className={styles.heroStat}>
+                  <strong>{coursesCount}</strong>
+                  <span>Courses</span>
                 </div>
-              </FadeInUp>
-
-              <FadeInUp delay={0.5}>
-                  <div className={styles.heroStats}>
-                    <div className={styles.heroStat}>
-                      <strong>{studentsCount}</strong>
-                      <span>Students</span>
-                    </div>
-                    <div className={styles.heroStatDivider} />
-                    <div className={styles.heroStat}>
-                      <strong>{coursesCount}</strong>
-                      <span>Courses</span>
-                    </div>
-                    <div className={styles.heroStatDivider} />
-                    <div className={styles.heroStat}>
-                      <strong>{trainersCount}</strong>
-                      <span>Expert Trainers</span>
-                    </div>
-                  </div>
-              </FadeInUp>
+                <div className={styles.heroStatDivider} />
+                <div className={styles.heroStat}>
+                  <strong>{trainersCount}</strong>
+                  <span>Expert Trainers</span>
+                </div>
+              </div>
             </div>
 
             <div className={styles.heroVisual}>
@@ -113,7 +102,7 @@ export default async function Home() {
           <div className="container">
             <ScrollReveal>
               <div className={styles.sectionHeader}>
-                <span className={styles.sectionTag}>Why GM Training</span>
+                <span className={styles.sectionTag}>Why ATLYX</span>
                 <h2 className={styles.sectionTitle}>
                   Why Learners <span className={styles.accentText}>Choose Us</span>
                 </h2>
@@ -170,43 +159,7 @@ export default async function Home() {
         <CallToAction />
 
         {/* ===== FOOTER ===== */}
-        <footer className={styles.footer}>
-          <div className="container">
-            <div className={styles.footerGrid}>
-              <div className={styles.footerBrand}>
-                <h3>
-                  GM <span style={{ color: 'var(--accent-primary)' }}>Training</span>
-                </h3>
-                <p>
-                  Empowering learners worldwide with premium, expert-led courses
-                  designed for the real world.
-                </p>
-              </div>
-              <div className={styles.footerLinks}>
-                <h4>Quick Links</h4>
-                <Link href="/courses">Courses</Link>
-                <Link href="/trainers">Trainers</Link>
-                <Link href="/about">About Us</Link>
-                <Link href="/admin">Admin Panel</Link>
-              </div>
-              <div className={styles.footerLinks}>
-                <h4>Categories</h4>
-                <span>Web Development</span>
-                <span>UI/UX Design</span>
-                <span>Data Science</span>
-                <span>Mobile Development</span>
-              </div>
-              <div className={styles.footerLinks}>
-                <h4>Contact</h4>
-                <span>hello@gmtraining.com</span>
-                <span>+91 98765 43210</span>
-              </div>
-            </div>
-            <div className={styles.footerBottom}>
-              <span>© {new Date().getFullYear()} GM Training. All rights reserved.</span>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </main>
     </>
   );

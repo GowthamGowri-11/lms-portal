@@ -14,7 +14,7 @@ export default async function LearnLandingPage({
     student = await prisma.student.create({
       data: {
         name: 'Sample Student',
-        email: 'student@gmtraining.com',
+        email: 'student@atlyx.com',
       },
     });
   }

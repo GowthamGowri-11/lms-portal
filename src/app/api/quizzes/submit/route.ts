@@ -13,6 +13,35 @@ export async function POST(req: NextRequest) {
     timeTaken,
   } = await req.json();
 
+  // Check if the student has already attempted this quiz
+  const existingAttempts = await prisma.quizAttempt.findMany({
+    where: { studentId, quizId },
+  });
+
+  if (existingAttempts.length > 0) {
+    // Student already took this quiz — check for an APPROVED retake request
+    const approvedRetake = await prisma.quizRetakeRequest.findFirst({
+      where: {
+        studentId,
+        quizId,
+        status: 'APPROVED',
+      },
+    });
+
+    if (!approvedRetake) {
+      return NextResponse.json(
+        { error: 'You have already attempted this quiz. Request a retake to try again.' },
+        { status: 403 }
+      );
+    }
+
+    // Consume the approved retake request (mark as USED)
+    await prisma.quizRetakeRequest.update({
+      where: { id: approvedRetake.id },
+      data: { status: 'USED', resolvedAt: new Date() },
+    });
+  }
+
   // Create a quiz attempt record
   const attempt = await prisma.quizAttempt.create({
     data: {

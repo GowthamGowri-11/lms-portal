@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
 import styles from './page.module.css';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 export default async function CourseDetailPage({
   params,
@@ -12,6 +14,7 @@ export default async function CourseDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const session = await getServerSession(authOptions);
 
   const raw = await prisma.course.findUnique({ where: { id } });
 
@@ -41,5 +44,38 @@ export default async function CourseDetailPage({
     },
   });
 
-  return <CourseDetailClient course={course} trainer={trainer} modules={modules} />;
+  let enrollmentStatus = 'NONE'; // NONE, PENDING, ENROLLED
+
+  if (session?.user?.id) {
+    // Check if enrolled
+    const student = await prisma.student.findUnique({ where: { userId: session.user.id } });
+    if (student) {
+      const enrollment = await prisma.enrollment.findUnique({
+        where: {
+          studentId_courseId: {
+            studentId: student.id,
+            courseId: id,
+          },
+        },
+      });
+      if (enrollment) enrollmentStatus = 'ENROLLED';
+    }
+
+    // If not enrolled, check request status
+    if (enrollmentStatus === 'NONE') {
+      const request = await prisma.joinRequest.findFirst({
+        where: {
+          userId: session.user.id,
+          targetId: id,
+          type: 'COURSE_ENROLLMENT',
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (request?.status === 'PENDING') {
+        enrollmentStatus = 'PENDING';
+      }
+    }
+  }
+
+  return <CourseDetailClient course={course} trainer={trainer} modules={modules} enrollmentStatus={enrollmentStatus} />;
 }

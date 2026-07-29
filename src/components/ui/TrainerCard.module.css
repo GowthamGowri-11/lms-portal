@@ -510,3 +510,48 @@
   left: 160%;
   transition: left 0.52s ease;
 }
+
+/* ===== MOBILE RESPONSIVE SIZING ===== */
+@media (max-width: 768px) {
+  .header {
+    padding: 1.25rem 1.15rem 0;
+    gap: 1rem;
+  }
+  .avatarWrap,
+  .avatarImg,
+  .avatarInitials {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  .name {
+    font-size: 1.05rem;
+  }
+  .statsGrid {
+    padding: 1rem 1.15rem 0;
+    gap: 6px;
+  }
+  .statCard {
+    padding: 8px 4px 7px;
+    border-radius: 10px;
+  }
+  .statVal {
+    font-size: 0.88rem;
+  }
+  .statLbl {
+    font-size: 0.58rem;
+  }
+  .gradDivider {
+    margin: 1rem 1.15rem 0;
+  }
+  .section {
+    padding: 0.85rem 1.15rem 0;
+  }
+  .ctaWrap {
+    padding: 1.15rem 1.15rem 1.25rem;
+  }
+  .ctaBtn {
+    padding: 9px 16px;
+    font-size: 0.8rem;
+  }
+}

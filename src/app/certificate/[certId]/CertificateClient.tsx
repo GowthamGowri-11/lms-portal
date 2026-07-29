@@ -41,7 +41,7 @@ export default function CertificateClient({ cert }: { cert: FullCert }) {
           <div className={styles.logo}>
             <img src={cert.course.logo || ''} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
-          <div className={styles.gmName}>GM Training</div>
+          <div className={styles.gmName}>ATLYX</div>
           <div className={styles.tagline}>Premium Learning Management System</div>
         </div>
 
@@ -80,7 +80,7 @@ export default function CertificateClient({ cert }: { cert: FullCert }) {
 
           <div className={styles.signatureBlock}>
             <div className={styles.signatureLine} />
-            <div className={styles.signerName}>GM Training</div>
+            <div className={styles.signerName}>ATLYX</div>
             <div className={styles.signerTitle}>Platform Director</div>
           </div>
         </div>

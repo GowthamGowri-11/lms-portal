@@ -26,7 +26,7 @@ export default async function QuizPage({
     student = await prisma.student.create({
       data: {
         name: 'Sample Student',
-        email: 'student@gmtraining.com',
+        email: 'student@atlyx.com',
       },
     });
   }
@@ -55,12 +55,29 @@ export default async function QuizPage({
     orderBy: { completedAt: 'desc' },
   });
 
+  // Check retake request status
+  const retakeRequest = await prisma.quizRetakeRequest.findFirst({
+    where: {
+      studentId: student.id,
+      quizId,
+      status: { in: ['PENDING', 'APPROVED'] },
+    },
+    orderBy: { requestedAt: 'desc' },
+  });
+
+  const hasAttempted = attempts.length > 0;
+  const canRetake = retakeRequest?.status === 'APPROVED';
+  const retakeRequestStatus = retakeRequest?.status ?? null; // PENDING | APPROVED | null
+
   return (
     <QuizClient
       quiz={quiz}
       course={course}
       student={student}
       attempts={attempts}
+      hasAttempted={hasAttempted}
+      canRetake={canRetake}
+      retakeRequestStatus={retakeRequestStatus}
     />
   );
 }

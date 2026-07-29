@@ -5,10 +5,27 @@ import type { CodingProblem } from '@/generated/prisma/client';
 import ProblemHeader from './ProblemHeader';
 import ProblemTabs from './ProblemTabs';
 
+interface SubmissionItem {
+  status: string;
+  language: string;
+  passedTests: number;
+  totalTests: number;
+  timeTaken?: number;
+  memoryUsed?: number;
+  submittedAt: string | Date;
+}
+
+interface TestCase {
+  input?: string;
+  output?: string;
+  expected?: string;
+  explanation?: string;
+}
+
 interface ProblemPanelProps {
   problem: CodingProblem;
-  visibleTests: any[];
-  submissions: any[];
+  visibleTests: TestCase[];
+  submissions: SubmissionItem[];
 }
 
 export default function ProblemPanel({ problem, visibleTests, submissions }: ProblemPanelProps) {
@@ -108,7 +125,7 @@ export default function ProblemPanel({ problem, visibleTests, submissions }: Pro
         <div>
           <h3 className="text-lg font-bold text-slate-800 mb-3">Examples</h3>
           <div className="space-y-4">
-            {examplesList.map((example: any, idx: number) => (
+            {examplesList.map((example: TestCase, idx: number) => (
               <div key={idx} className="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
                 <span className="text-sm font-semibold text-purple-700 block mb-2">Example {idx + 1}</span>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

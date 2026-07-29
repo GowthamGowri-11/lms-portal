@@ -43,12 +43,15 @@ export default function EnhancedPracticeWorkspace({ problem, visibleTests }: Enh
 
   // Update code when language changes
   useEffect(() => {
-    try {
-      const map = JSON.parse(problem.starterCode as unknown as string);
-      setCode(map[language] ?? "");
-    } catch {
-      setCode("");
-    }
+    const timer = setTimeout(() => {
+      try {
+        const map = JSON.parse(problem.starterCode as unknown as string);
+        setCode(map[language] ?? "");
+      } catch {
+        setCode("");
+      }
+    }, 0);
+    return () => clearTimeout(timer);
   }, [language, problem.starterCode]);
 
   // Drag handling for divider

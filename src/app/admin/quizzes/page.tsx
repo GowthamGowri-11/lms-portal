@@ -12,7 +12,22 @@ export default async function AdminQuizzesPage() {
   });
 
   const courses = await prisma.course.findMany({
-    select: { id: true, title: true, logo: true },
+    select: {
+      id: true,
+      title: true,
+      logo: true,
+      modules: {
+        orderBy: { order: 'asc' },
+        select: {
+          id: true,
+          title: true,
+          lessons: {
+            orderBy: { order: 'asc' },
+            select: { id: true, title: true },
+          },
+        },
+      },
+    },
     orderBy: { title: 'asc' },
   });
 
@@ -21,5 +36,7 @@ export default async function AdminQuizzesPage() {
     orderBy: { order: 'asc' },
   });
 
-  return <AdminQuizzesClient quizzes={quizzes} courses={courses} modules={modules} />;
+  return <AdminQuizzesClient quizzes={quizzes} courses={courses as any} modules={modules} />;
 }
+
+

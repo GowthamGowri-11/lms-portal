@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const resourceType = getResourceType(file.type);
-    const folder = `GM-Training/Developers/Courses/Lessons/Notes/${getNoteFileTypeLabel(file.type).toUpperCase()}`;
+    const folder = `ATLYX/Developers/Courses/Lessons/Notes/${getNoteFileTypeLabel(file.type).toUpperCase()}`;
 
     const uploadResult = await new Promise<any>((resolve, reject) => {
       const stream = cld.uploader.upload_stream(

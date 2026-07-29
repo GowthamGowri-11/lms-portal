@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
       const cld = getCloudinary();
       const buffer = Buffer.from(await file.arrayBuffer());
-      const folder = `GM-Training/Developers/Courses/Lessons/Assignments`;
+      const folder = `ATLYX/Developers/Courses/Lessons/Assignments`;
 
       const uploadResult = await new Promise<any>((resolve, reject) => {
         const stream = cld.uploader.upload_stream(

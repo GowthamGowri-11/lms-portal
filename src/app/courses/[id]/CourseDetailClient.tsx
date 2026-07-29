@@ -9,6 +9,7 @@ import {
   Users, Award, Target, Layout
 } from 'lucide-react';
 import Navbar from '@/components/ui/Navbar';
+import JoinRequestButton from '@/components/ui/JoinRequestButton';
 import { FadeInUp, ScrollReveal, PageTransition } from '@/components/animations/MotionWrappers';
 import TechIllustration from '@/components/ui/TechIllustration';
 import styles from './page.module.css';
@@ -21,10 +22,12 @@ export default function CourseDetailClient({
   course,
   trainer,
   modules = [],
+  enrollmentStatus = 'NONE',
 }: {
   course: CourseWithArrays;
   trainer: Trainer | null;
   modules?: ModuleWithLessons[];
+  enrollmentStatus?: string;
 }) {
   const [showEnrollModal, setShowEnrollModal] = useState(false);
   const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set([modules[0]?.id ?? '']));
@@ -325,22 +328,34 @@ export default function CourseDetailClient({
                       </div>
                     </div>
                     <div className={styles.ctaContainer}>
-                      {firstLesson && (
-                        <Link
-                          href={`/learn/${course.id}/lesson/${firstLesson.id}`}
-                          className={`btn btn-primary btn-lg ${styles.startLearningBtn}`}
-                          style={{ width: '100%', justifyContent: 'center' }}
-                        >
-                          <Play size={18} /> Start Learning <ArrowRight size={16} className={styles.btnArrow} />
-                        </Link>
-                      )}
-                      <button
-                        className="btn btn-secondary btn-lg"
-                        style={{ width: '100%' }}
-                        onClick={() => setShowEnrollModal(true)}
-                      >
-                        Enroll Now
-                      </button>
+                      <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+                        {enrollmentStatus === 'ENROLLED' ? (
+                          firstLesson ? (
+                            <Link
+                              href={`/learn/${course.id}/lesson/${firstLesson.id}`}
+                              className={`btn btn-primary btn-lg ${styles.startLearningBtn}`}
+                              style={{ width: '100%', justifyContent: 'center' }}
+                            >
+                              <Play size={18} /> Start Learning <ArrowRight size={16} className={styles.btnArrow} />
+                            </Link>
+                          ) : (
+                            <button className="btn btn-secondary btn-lg" disabled>
+                              Coming Soon
+                            </button>
+                          )
+                        ) : enrollmentStatus === 'PENDING' ? (
+                          <button className="btn btn-secondary btn-lg" disabled>
+                            Pending Approval
+                          </button>
+                        ) : (
+                          <JoinRequestButton 
+                            type="COURSE_ENROLLMENT" 
+                            targetId={course.id} 
+                            label="Enroll Now" 
+                            className="btn btn-primary btn-lg"
+                          />
+                        )}
+                      </div>
                     </div>
                     <div className={styles.enrollDivider} />
                     <div className={styles.enrollFeatures}>

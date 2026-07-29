@@ -2,13 +2,17 @@ import { prisma } from '@/lib/prisma';
 import AdminLessonsClient from './AdminLessonsClient';
 
 export default async function AdminLessonsPage() {
-  const modules = await prisma.module.findMany({
-    orderBy: [{ course: { title: 'asc' } }, { order: 'asc' }],
+  const courses = await prisma.course.findMany({
+    orderBy: { title: 'asc' },
     include: {
-      course: { select: { id: true, title: true, logo: true } },
-      lessons: { orderBy: { order: 'asc' } },
+      modules: {
+        orderBy: { order: 'asc' },
+        include: {
+          lessons: { orderBy: { order: 'asc' } },
+        },
+      },
     },
   });
 
-  return <AdminLessonsClient modules={modules} />;
+  return <AdminLessonsClient courses={courses} />;
 }

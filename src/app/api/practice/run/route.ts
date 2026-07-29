@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     const result = await runCode(problem, language, code, input);
 
     return NextResponse.json(result);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("POST /api/practice/run error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

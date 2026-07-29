@@ -6,7 +6,7 @@ import { Settings, Moon, Globe, Bell, Shield, Save } from 'lucide-react';
 import { FadeInUp, PageTransition } from '@/components/animations/MotionWrappers';
 
 export default function AdminSettingsPage() {
-  const [siteName, setSiteName] = useState('GM Training');
+  const [siteName, setSiteName] = useState('ATLYX');
   const [siteDesc, setSiteDesc] = useState('Premium Learning Management System');
   const [notifications, setNotifications] = useState(true);
   const [saved, setSaved] = useState(false);
