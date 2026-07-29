@@ -1,13 +1,15 @@
 import { prisma } from '@/lib/prisma';
 import { DEVELOPMENT_MODE } from '@/lib/config';
 
+import type { CodingProblem } from '@/generated/prisma/client';
+
 export interface ProgressionItem {
   type: 'lesson' | 'coding' | 'quiz';
   id: string; // lessonId, moduleId (for coding), quizId (for quiz)
   moduleId: string;
   title: string;
   url: string;
-  problems?: any[];
+  problems?: CodingProblem[];
   quizId?: string;
 }
 
@@ -75,6 +77,19 @@ export async function getCourseProgression(courseId: string, studentId: string) 
         title: les.title,
         url: `/learn/${courseId}/lesson/${les.id}`,
       });
+
+      // Insert any quizzes placed specifically after this lesson
+      const lessonQuizzes = quizzes.filter((q) => (q as any).afterLessonId === les.id);
+      for (const q of lessonQuizzes) {
+        items.push({
+          type: 'quiz',
+          id: q.id,
+          moduleId: mod.id,
+          title: q.title || 'Course Quiz',
+          url: `/learn/${courseId}/quiz/${q.id}`,
+          quizId: q.id,
+        });
+      }
     }
 
     const modProblems = codingProblems.filter((p) => p.lessonId && mod.lessons.some((l) => l.id === p.lessonId));
@@ -89,17 +104,31 @@ export async function getCourseProgression(courseId: string, studentId: string) 
       });
     }
 
-    const modQuiz = quizzes.find((q) => q.moduleId === mod.id);
+    // Backwards compatibility for module-level quizzes without afterLessonId or isFinalAssessment
+    const modQuiz = quizzes.find((q) => q.moduleId === mod.id && !(q as any).afterLessonId && !(q as any).isFinalAssessment);
     if (modQuiz) {
       items.push({
         type: 'quiz',
         id: modQuiz.id,
         moduleId: mod.id,
-        title: 'Module Quiz',
+        title: modQuiz.title || 'Module Quiz',
         url: `/learn/${courseId}/quiz/${modQuiz.id}`,
         quizId: modQuiz.id,
       });
     }
+  }
+
+  // Add final assessments or standalone course quizzes at the very end
+  const finalQuizzes = quizzes.filter((q) => (q as any).isFinalAssessment || (!q.moduleId && !(q as any).afterLessonId));
+  for (const fq of finalQuizzes) {
+    items.push({
+      type: 'quiz',
+      id: fq.id,
+      moduleId: modules[modules.length - 1]?.id || '',
+      title: fq.title || 'Final Assessment',
+      url: `/learn/${courseId}/quiz/${fq.id}`,
+      quizId: fq.id,
+    });
   }
 
   // Calculate completion and locked states

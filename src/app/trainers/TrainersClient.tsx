@@ -1,8 +1,10 @@
 'use client';
 
 import Navbar from '@/components/ui/Navbar';
-import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
+import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import TrainerCard from '@/components/ui/TrainerCard';
+import JoinRequestButton from '@/components/ui/JoinRequestButton';
+import Footer from '@/components/ui/Footer';
 import styles from './page.module.css';
 import { Trainer } from '@/generated/prisma/client';
 
@@ -17,7 +19,7 @@ export default function TrainersClient({
   const publishedCourses = courses.filter((c) => c.isPublished);
 
   return (
-    <>
+    <PageTransition>
       <Navbar />
       <main className={styles.main}>
         {/* ── HERO — untouched ── */}
@@ -33,6 +35,13 @@ export default function TrainersClient({
                 Learn from the best in the industry. Our trainers bring real-world
                 experience and passion to every course.
               </p>
+              <div style={{ marginTop: '2rem' }}>
+                <JoinRequestButton 
+                  type="TRAINER_APPLICATION" 
+                  label="Join as Trainer" 
+                  className="btn btn-primary btn-lg" 
+                />
+              </div>
             </FadeInUp>
           </div>
         </section>
@@ -63,7 +72,8 @@ export default function TrainersClient({
             )}
           </div>
         </section>
+        <Footer />
       </main>
-    </>
+    </PageTransition>
   );
 }

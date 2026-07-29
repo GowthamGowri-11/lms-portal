@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import GalaxyBackground from "@/components/animations/GalaxyBackground";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import AuthModal from "@/components/auth/AuthModal";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -16,9 +18,9 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "GM Training – Premium Learning Management System",
+  title: "ATLYX – Premium Learning Management System",
   description:
-    "Master in-demand skills with expert-led courses. GM Training offers world-class training in Web Development, UI/UX Design, Data Science, and more.",
+    "Master in-demand skills with expert-led courses. ATLYX offers world-class training in Web Development, UI/UX Design, Data Science, and more.",
 };
 
 export default function RootLayout({
@@ -27,11 +29,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <GalaxyBackground />
-        {children}
+        <AuthProvider>
+          <GalaxyBackground />
+          <AuthModal />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
 }
+
+

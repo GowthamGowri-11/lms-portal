@@ -259,7 +259,14 @@ export default function AdminDevelopersClient({
                 {/* Avatar — real photo or placeholder icon */}
                 <div className={styles.avatarContainer}>
                   {dev.avatar ? (
-                    <img src={dev.avatar} alt={dev.name} className={styles.avatarImage} />
+                    <img
+                      src={dev.avatar}
+                      alt={dev.name}
+                      className={styles.avatarImage}
+                      referrerPolicy="no-referrer"
+                      crossOrigin="anonymous"
+                      loading="lazy"
+                    />
                   ) : (
                     <Code size={32} />
                   )}
@@ -381,7 +388,14 @@ export default function AdminDevelopersClient({
                       {/* Avatar preview */}
                       <div className={styles.photoPreview}>
                         {avatarPreview ? (
-                          <img src={avatarPreview} alt="Preview" className={styles.photoPreviewImg} />
+                          <img
+                            src={avatarPreview}
+                            alt="Preview"
+                            className={styles.photoPreviewImg}
+                            referrerPolicy="no-referrer"
+                            crossOrigin="anonymous"
+                            loading="lazy"
+                          />
                         ) : (
                           <Code size={28} style={{ color: 'var(--text-tertiary)' }} />
                         )}

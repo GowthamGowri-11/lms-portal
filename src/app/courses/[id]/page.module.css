@@ -653,7 +653,7 @@
 /* Right Sidebar */
 .sidebarColumn {
   position: sticky;
-  top: 90px;
+  top: 120px;
   z-index: 10;
 }
 

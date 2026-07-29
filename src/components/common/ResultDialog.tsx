@@ -1,14 +1,14 @@
 // src/components/common/ResultDialog.tsx
 "use client";
 
-import { type ReactNode } from "react";
+
 import styles from "./ResultDialog.module.css";
 
 interface ResultDialogProps {
   /** Called when the user closes the dialog */
   onClose: () => void;
   /** Arbitrary result data to display; typically a submission response */
-  result: any;
+  result: unknown;
   /** Optional title for the dialog */
   title?: string;
 }

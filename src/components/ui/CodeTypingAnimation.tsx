@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 
 type Token = { text: string; color?: string };
 type Line = Token[];
@@ -79,19 +78,18 @@ export default function CodeTypingAnimation() {
       // Type next character
       timeout = setTimeout(() => {
         setDisplayedChars((prev) => prev + 1);
-      }, Math.random() * 40 + 15); // Slightly slower typing speed (~0.75x)
+      }, Math.random() * 50 + 60); // Noticeably slower typing speed
     } else if (isTyping && displayedChars === totalChars) {
       // Pause at the end, then start deleting
       timeout = setTimeout(() => {
         setIsTyping(false);
       }, 4000);
     } else if (!isTyping && displayedChars > 0) {
-      // Delete characters (fast)
+      // Delete characters
       timeout = setTimeout(() => {
-        setDisplayedChars((prev) => prev - 2); // Delete 2 chars at a time
-      }, 15); // Slightly slower deletion speed too
-    } else if (!isTyping && displayedChars <= 0) {
-      setDisplayedChars(0);
+        setDisplayedChars((prev) => Math.max(0, prev - 1)); // Delete 1 char at a time for smoother, slower erasing
+      }, 15); // Effectively half the original speed
+    } else if (!isTyping && displayedChars === 0) {
       // Pause briefly before restarting
       timeout = setTimeout(() => {
         setIsTyping(true);
@@ -123,53 +121,25 @@ export default function CodeTypingAnimation() {
           charsRemaining = 0;
         }
 
-        // Render each character with a 3D pop animation
-        const charElements = renderText.split('').map((char, charIdx) => {
-          const isSpace = char === ' ';
-          return (
-            <motion.span
-              key={`${i}-${j}-${charIdx}`}
-              initial={{ opacity: 0, scale: 0.3, y: 15, rotateX: -90 }}
-              animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 15 }}
-              style={{ display: 'inline-block', whiteSpace: 'pre' }}
-            >
-              {isSpace ? ' ' : char}
-            </motion.span>
-          );
-        });
-
         visibleTokens.push(
-          <span key={j} style={{ color: token.color }}>
-            {charElements}
+          <span key={j} style={{ color: token.color, display: 'inline', whiteSpace: 'pre' }}>
+            {renderText}
           </span>
         );
       }
 
       if (visibleTokens.length > 0 || (line.length === 0 && charsRemaining > 0)) {
         result.push(
-          <div key={i} style={{ whiteSpace: 'nowrap' }}>
+          <div key={i} style={{ whiteSpace: 'nowrap', minHeight: '24px' }}>
             {visibleTokens}
             {/* Show blinking cursor on the active line */}
             {charsRemaining === 0 && (
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-                style={{
-                  display: 'inline-block',
-                  width: '8px',
-                  height: '16px',
-                  background: 'var(--accent-primary)',
-                  marginLeft: '4px',
-                  verticalAlign: 'middle',
-                }}
-              />
+              <span className="typing-cursor" />
             )}
           </div>
         );
       } else {
-        // Empty lines to maintain layout height (optional, but good for stability)
+        // Empty lines to maintain layout height
         result.push(<div key={i} style={{ height: '24px' }}></div>);
       }
     }
@@ -183,21 +153,9 @@ export default function CodeTypingAnimation() {
     if (displayedChars === 0) {
         result[0] = (
           <div key="0" style={{ whiteSpace: 'nowrap', height: '24px' }}>
-            <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-                style={{
-                  display: 'inline-block',
-                  width: '8px',
-                  height: '16px',
-                  background: 'var(--accent-primary)',
-                  marginLeft: '4px',
-                  verticalAlign: 'middle',
-                }}
-              />
+            <span className="typing-cursor" />
           </div>
-        )
+        );
     }
 
     return result;
@@ -206,6 +164,21 @@ export default function CodeTypingAnimation() {
   return (
     <div style={{ perspective: '1000px', fontSize: '0.9rem' }}>
       {renderLines()}
+      <style>{`
+        .typing-cursor {
+          display: inline-block;
+          width: 8px;
+          height: 16px;
+          background: var(--accent-primary);
+          margin-left: 4px;
+          vertical-align: middle;
+          animation: blink-cursor 0.8s infinite step-end;
+        }
+        @keyframes blink-cursor {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      `}</style>
     </div>
   );
 }

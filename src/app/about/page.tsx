@@ -5,6 +5,7 @@ import { FadeInUp, ScrollReveal } from '@/components/animations/MotionWrappers';
 import TiltCard from '@/components/animations/TiltCard';
 import { prisma } from '@/lib/prisma';
 import ViewResumeButton from '@/components/ui/ViewResumeButton';
+import Footer from '@/components/ui/Footer';
 import styles from './page.module.css';
 
 export default async function AboutPage() {
@@ -35,7 +36,7 @@ export default async function AboutPage() {
                 Empowering the Next Generation of <span className={styles.accentText}>Tech Leaders</span>
               </h1>
               <p className={styles.heroSubtitle}>
-                GM Training is a premium learning platform dedicated to providing 
+                ATLYX is a premium learning platform dedicated to providing 
                 world-class education in technology, design, and business.
               </p>
             </FadeInUp>
@@ -123,7 +124,7 @@ export default async function AboutPage() {
                 <div className={styles.sectionHeaderCenter}>
                   <span className={styles.heroTag} style={{ marginBottom: '1rem' }}>The Creators</span>
                   <h2 className={styles.sectionTitle}>Meet the Developers</h2>
-                  <p className={styles.sectionSubtitleCenter}>The team behind GM Training platform.</p>
+                  <p className={styles.sectionSubtitleCenter}>The team behind ATLYX platform.</p>
                 </div>
               </ScrollReveal>
 
@@ -135,7 +136,15 @@ export default async function AboutPage() {
                       <TiltCard className={styles.devCard}>
                         <div className={styles.devAvatar} style={{ borderColor: color, transform: 'translateZ(30px)' }}>
                           {dev.avatar ? (
-                            <img src={dev.avatar} alt={dev.name} className={styles.avatarImage} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                            <img
+                              src={dev.avatar}
+                              alt={dev.name}
+                              className={styles.avatarImage}
+                              style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                              referrerPolicy="no-referrer"
+                              crossOrigin="anonymous"
+                              loading="lazy"
+                            />
                           ) : (
                             <div className={styles.avatarPlaceholder}>{dev.name.charAt(0)}</div>
                           )}
@@ -185,19 +194,7 @@ export default async function AboutPage() {
         </section>
 
         {/* FOOTER */}
-        <footer className={styles.footer}>
-          <div className="container">
-            <div className={styles.footerContent}>
-              <div className={styles.footerBrand}>
-                <h3>GM <span className={styles.accentText}>Training</span></h3>
-                <p>Empowering learners worldwide.</p>
-              </div>
-              <div className={styles.footerCopyright}>
-                <span>© {new Date().getFullYear()} GM Training. All rights reserved.</span>
-              </div>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </main>
     </>
   );

@@ -34,7 +34,7 @@ export default function ResultPanel({
   runResult,
   submitResult,
   status,
-  testCasesCount,
+  testCasesCount: _testCasesCount,
   maxScore,
 }: ResultPanelProps) {
   if (status === "running") {

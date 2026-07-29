@@ -63,7 +63,7 @@ export default function AdminStudentsClient({
                       return (
                         <div key={enrollment.id} className={styles.enrolledItem}>
                           <span>
-                            <img src={course?.logo} alt="" style={{ width: '1em', height: '1em', objectFit: 'contain', verticalAlign: 'middle', marginRight: '4px' }} /> {course?.title}
+                            <img src={course?.logo || 'https://via.placeholder.com/150'} alt="" style={{ width: '1em', height: '1em', objectFit: 'cover', borderRadius: '50%', verticalAlign: 'middle', marginRight: '4px' }} /> {course?.title}
                           </span>
                           <div className={styles.progressBar}>
                             <motion.div

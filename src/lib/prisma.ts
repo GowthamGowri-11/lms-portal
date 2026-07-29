@@ -1,23 +1,34 @@
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import { PrismaClient } from '@/generated/prisma/client';
-import path from 'path';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-// Resolve the SQLite file path relative to the project root
-// DATABASE_URL is "file:./dev.db" — strip the "file:" prefix
-const dbUrl = (process.env.DATABASE_URL ?? 'file:./prisma/dev.db').replace(/^file:/, '');
-const dbPath = path.isAbsolute(dbUrl)
-  ? dbUrl
-  : path.resolve(process.cwd(), dbUrl);
-
-const adapter = new PrismaBetterSqlite3({ url: dbPath });
+// Parse DATABASE_URL manually to bypass pg-connection-string SSL deprecation warning
+function createPool() {
+  const url = new URL(process.env.DATABASE_URL!);
+  return new Pool({
+    host: url.hostname,
+    port: parseInt(url.port || '5432'),
+    user: url.username,
+    password: url.password,
+    database: url.pathname.slice(1), // remove leading /
+    ssl: { rejectUnauthorized: false },
+    max: 10,
+  });
+}
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
+  pool: Pool | undefined;
 };
 
-export const prisma =
-  globalForPrisma.prisma ?? new PrismaClient({ adapter });
+const pool = globalForPrisma.pool ?? createPool();
+const adapter = new PrismaPg(pool);
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+  globalForPrisma.pool = pool;
+}
 
 export default prisma;

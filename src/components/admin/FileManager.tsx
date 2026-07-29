@@ -325,7 +325,7 @@ export default function FileManager({
                 <span className={styles.fileInfo}>
                   <span className={styles.fileType}>{f.fileType.toUpperCase()}</span>
                   <span>{formatSize(f.fileSize)}</span>
-                  <span>{new Date(f.uploadedAt).toLocaleDateString()}</span>
+                  <span>{new Date(f.uploadedAt).toLocaleDateString('en-US')}</span>
                 </span>
               </div>
               <div className={styles.fileActions}>

@@ -50,8 +50,8 @@ export default function GalaxyBackground() {
       isBright: boolean;
     }[] = [];
     
-    // Increased star count to 3500
-    for (let i = 0; i < 3500; i++) {
+    // Optimized star count for high performance (180 stars)
+    for (let i = 0; i < 180; i++) {
       const isBright = Math.random() > 0.95; // 5% of stars are bright with lens flares
       stars.push({
         x: Math.random() * width,
@@ -135,15 +135,24 @@ export default function GalaxyBackground() {
       ctx.fill();
     };
 
-    const render = () => {
+    let lastTime = 0;
+    const render = (time: number) => {
+      if (!lastTime) lastTime = time;
+      const dt = time - lastTime;
+      lastTime = time;
+      
+      // Calculate timeScale based on 60fps (16.66ms per frame)
+      // Cap at 3 to prevent huge jumps when switching tabs
+      const timeScale = Math.min(dt / 16.66, 3);
+
       // Very dark background
       ctx.fillStyle = '#010205';
       ctx.fillRect(0, 0, width, height);
 
       // Draw Nebulas (Milky way clouds)
       nebulas.forEach(neb => {
-        neb.x += neb.dx;
-        neb.y += neb.dy;
+        neb.x += neb.dx * timeScale;
+        neb.y += neb.dy * timeScale;
         
         // bounce off rough edges
         if (neb.x < -width || neb.x > width * 2) neb.dx *= -1;
@@ -153,7 +162,9 @@ export default function GalaxyBackground() {
         grad.addColorStop(0, neb.color);
         grad.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, width, height);
+        ctx.beginPath();
+        ctx.arc(neb.x, neb.y, neb.r, 0, Math.PI * 2);
+        ctx.fill();
       });
 
       // Draw Stars with Parallax
@@ -162,11 +173,11 @@ export default function GalaxyBackground() {
 
       stars.forEach(star => {
         // Twinkle
-        star.alpha += star.speedAlpha;
+        star.alpha += star.speedAlpha * timeScale;
         if (star.alpha <= 0.3 || star.alpha >= 1) star.speedAlpha *= -1; // keep baseline brightness high
         
         // Move towards viewer (z decreases)
-        star.z -= 1.25; // Faster majestic motion 
+        star.z -= 1.25 * timeScale; // Faster majestic motion 
         if (star.z <= 0) {
           star.z = width;
           star.x = Math.random() * width;
@@ -201,13 +212,13 @@ export default function GalaxyBackground() {
       // Draw Comets
       for (let i = comets.length - 1; i >= 0; i--) {
         const c = comets[i];
-        c.x += c.speedX;
-        c.y += c.speedY;
+        c.x += c.speedX * timeScale;
+        c.y += c.speedY * timeScale;
         
         // Fade in and out
-        if (c.life > 0.5 && c.opacity < 1) c.opacity += 0.05;
-        if (c.life < 0.5) c.opacity -= 0.02;
-        c.life -= 0.005;
+        if (c.life > 0.5 && c.opacity < 1) c.opacity += 0.05 * timeScale;
+        if (c.life < 0.5) c.opacity -= 0.02 * timeScale;
+        c.life -= 0.005 * timeScale;
 
         if (c.opacity <= 0) {
           comets.splice(i, 1);
@@ -241,13 +252,13 @@ export default function GalaxyBackground() {
       animationFrameId = requestAnimationFrame(render);
     };
 
-    render();
+    animationFrameId = requestAnimationFrame(render);
 
     return () => {
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [pathname]);
 
   if (pathname?.startsWith('/admin')) return null;
 

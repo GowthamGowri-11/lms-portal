@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
         student = await prisma.student.create({
           data: {
             name: "Sample Student",
-            email: "student@gmtraining.com",
+            email: "student@atlyx.com",
           },
         });
       }

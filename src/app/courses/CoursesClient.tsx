@@ -7,6 +7,7 @@ import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import TiltCard from '@/components/animations/TiltCard';
 import TechIllustration from '@/components/ui/TechIllustration';
+import Footer from '@/components/ui/Footer';
 import styles from './page.module.css';
 import { CourseWithArrays } from '@/lib/utils';
 import { Trainer } from '@/generated/prisma/client';
@@ -208,6 +209,7 @@ export default function CoursesClient({ courses, trainers }: { courses: CourseWi
             </div>
           </div>
         </section>
+        <Footer />
       </main>
     </>
   );

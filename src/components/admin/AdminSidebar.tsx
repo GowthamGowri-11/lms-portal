@@ -19,6 +19,7 @@ import {
   PlayCircle,
   HelpCircle,
   UserCircle,
+  MessageSquare,
 } from 'lucide-react';
 import styles from './AdminSidebar.module.css';
 
@@ -31,6 +32,8 @@ const menuItems = [
   { href: '/admin/trainers', label: 'Trainers', icon: Users },
   { href: '/admin/students', label: 'Students', icon: GraduationCap },
   { href: '/admin/developers', label: 'Developers', icon: UserCircle },
+  { href: '/admin/requests', label: 'Requests', icon: Users },
+  { href: '/admin/queries', label: 'Student Queries', icon: MessageSquare },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
@@ -60,7 +63,7 @@ export default function AdminSidebar() {
                 exit={{ opacity: 0, width: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                GM Admin
+                ATLYX Admin
               </motion.span>
             )}
           </AnimatePresence>

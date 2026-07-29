@@ -7,22 +7,25 @@
   margin: 0 auto;
   height: 70px;
   border-radius: 100px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-  z-index: 50;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #070912;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navbar.scrolled {
-  top: 1rem;
-  background: rgba(10, 10, 15, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  top: 0;
+  left: 0;
+  right: 0;
+  max-width: 100%;
+  border-radius: 0;
+  background: #060810;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.85);
 }
 
 .container {
@@ -145,7 +148,7 @@
   gap: 4px;
   padding: 16px 2rem;
   overflow: hidden;
-  background: var(--bg-secondary);
+  background: #070912;
   border-bottom: 1px solid var(--glass-border);
 }
 
@@ -188,6 +191,14 @@
     left: 0.5rem;
     right: 0.5rem;
     width: auto;
-    border-radius: 12px;
+    border-radius: 16px;
+  }
+
+  .navbar.scrolled {
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 0;
   }
 }

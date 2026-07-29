@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft, ChevronRight, Clock, CheckCircle, XCircle,
-  Award, RotateCcw, ArrowLeft, AlertCircle,
+  Award, ArrowLeft, AlertCircle, Shield, Lock, Send,
 } from 'lucide-react';
 import { Course, Quiz, QuizQuestion } from '@/generated/prisma/client';
 import styles from './quiz.module.css';
@@ -18,11 +18,17 @@ export default function QuizClient({
   course,
   student,
   attempts = [],
+  hasAttempted = false,
+  canRetake = false,
+  retakeRequestStatus = null,
 }: {
   quiz: QuizWithQuestions;
   course: Course;
   student: any;
   attempts?: any[];
+  hasAttempted?: boolean;
+  canRetake?: boolean;
+  retakeRequestStatus?: string | null;
 }) {
   const router = useRouter();
   
@@ -34,9 +40,16 @@ export default function QuizClient({
   const [skipped, setSkipped] = useState<Set<number>>(new Set());
   const [flagged, setFlagged] = useState<Set<number>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [retakeStatus, setRetakeStatus] = useState<string | null>(retakeRequestStatus);
+  const [isRequestingRetake, setIsRequestingRetake] = useState(false);
+  const [securityViolation, setSecurityViolation] = useState<string | null>(null);
+  const hasSubmittedRef = useRef(false);
 
   const questions = quiz.questions;
   const current = questions[currentIdx];
+
+  // Determine if student is allowed to start the quiz
+  const isBlocked = hasAttempted && !canRetake;
 
   const getOptions = (q: QuizQuestion): string[] => {
     try { return JSON.parse(q.options); } catch { return []; }
@@ -66,9 +79,17 @@ export default function QuizClient({
     return correct;
   }, [answers, questions]);
 
-  const handleSubmit = useCallback(async () => {
-    if (isSubmitting) return;
+  const handleSubmit = useCallback(async (violation?: string) => {
+    if (isSubmitting || hasSubmittedRef.current) return;
+    hasSubmittedRef.current = true;
     setIsSubmitting(true);
+    
+    if (violation) setSecurityViolation(violation);
+
+    // Exit fullscreen
+    if (document.fullscreenElement) {
+      try { await document.exitFullscreen(); } catch {}
+    }
     
     const correctCount = calculateScore();
     const totalCount = questions.length;
@@ -95,7 +116,8 @@ export default function QuizClient({
         setPhase('result');
         router.refresh();
       } else {
-        alert('Failed to submit quiz');
+        const data = await res.json();
+        alert(data.error || 'Failed to submit quiz');
       }
     } catch (err) {
       console.error(err);
@@ -105,11 +127,164 @@ export default function QuizClient({
     }
   }, [student.id, quiz.id, quiz.passMark, answers, timeTaken, calculateScore, questions.length, router, isSubmitting]);
 
-  // Timer
+  // ═══════════════════════════════════════════════
+  // ANTI-CHEATING SECURITY — ACTIVE DURING QUIZ
+  // ═══════════════════════════════════════════════
+
+  // Enter fullscreen when quiz starts
   useEffect(() => {
     if (phase !== 'quiz') return;
-    if (quiz.timeLimit > 0 && timeLeft <= 0) {
-      handleSubmit();
+    
+    const enterFullscreen = async () => {
+      try {
+        await document.documentElement.requestFullscreen();
+      } catch {
+        // Fullscreen blocked by browser — submit immediately
+        handleSubmit('Fullscreen is required to take this quiz.');
+      }
+    };
+    
+    enterFullscreen();
+  }, [phase]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Detect fullscreen exit → auto-submit
+  useEffect(() => {
+    if (phase !== 'quiz') return;
+    
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement && phase === 'quiz' && !hasSubmittedRef.current) {
+        handleSubmit('You exited fullscreen. Quiz auto-submitted.');
+      }
+    };
+
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, [phase, handleSubmit]);
+
+  // Tab switch / window blur → auto-submit
+  useEffect(() => {
+    if (phase !== 'quiz') return;
+
+    const onVisibilityChange = () => {
+      if (document.hidden && !hasSubmittedRef.current) {
+        handleSubmit('You switched tabs. Quiz auto-submitted.');
+      }
+    };
+
+    const onBlur = () => {
+      if (!hasSubmittedRef.current) {
+        handleSubmit('You left the quiz window. Quiz auto-submitted.');
+      }
+    };
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('blur', onBlur);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('blur', onBlur);
+    };
+  }, [phase, handleSubmit]);
+
+  // Block keyboard shortcuts (copy, paste, devtools, PrintScreen)
+  useEffect(() => {
+    if (phase !== 'quiz') return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      // Block PrintScreen
+      if (e.key === 'PrintScreen') {
+        e.preventDefault();
+        navigator.clipboard.writeText('').catch(() => {});
+        return;
+      }
+      // Block F11 (fullscreen toggle)
+      if (e.key === 'F11') {
+        e.preventDefault();
+        return;
+      }
+      // Block F12 (devtools)
+      if (e.key === 'F12') {
+        e.preventDefault();
+        return;
+      }
+      // Block Ctrl+C, Ctrl+A, Ctrl+V, Ctrl+X, Ctrl+P, Ctrl+S
+      if (e.ctrlKey && ['c', 'a', 'v', 'x', 'p', 's', 'u'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+        return;
+      }
+      // Block Ctrl+Shift+I/J/C (devtools)
+      if (e.ctrlKey && e.shiftKey && ['i', 'j', 'c'].includes(e.key.toLowerCase())) {
+        e.preventDefault();
+        return;
+      }
+      // Block Win+Shift+S (Windows screenshot)
+      if (e.metaKey && e.shiftKey && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        return;
+      }
+      // Block Escape (would exit fullscreen)
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        return;
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => document.removeEventListener('keydown', onKeyDown, true);
+  }, [phase]);
+
+  // Block right-click context menu
+  useEffect(() => {
+    if (phase !== 'quiz') return;
+
+    const onContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+    };
+
+    document.addEventListener('contextmenu', onContextMenu);
+    return () => document.removeEventListener('contextmenu', onContextMenu);
+  }, [phase]);
+
+  // Block clipboard events
+  useEffect(() => {
+    if (phase !== 'quiz') return;
+
+    const blockClipboard = (e: ClipboardEvent) => {
+      e.preventDefault();
+    };
+
+    document.addEventListener('copy', blockClipboard);
+    document.addEventListener('cut', blockClipboard);
+    document.addEventListener('paste', blockClipboard);
+    return () => {
+      document.removeEventListener('copy', blockClipboard);
+      document.removeEventListener('cut', blockClipboard);
+      document.removeEventListener('paste', blockClipboard);
+    };
+  }, [phase]);
+
+  // Block drag and select
+  useEffect(() => {
+    if (phase !== 'quiz') return;
+
+    const onDragStart = (e: DragEvent) => { e.preventDefault(); };
+    const onSelectStart = (e: Event) => { e.preventDefault(); };
+
+    document.addEventListener('dragstart', onDragStart);
+    document.addEventListener('selectstart', onSelectStart);
+    return () => {
+      document.removeEventListener('dragstart', onDragStart);
+      document.removeEventListener('selectstart', onSelectStart);
+    };
+  }, [phase]);
+
+  // ═══════════════════════════════════════════════
+  // TIMER
+  // ═══════════════════════════════════════════════
+
+  useEffect(() => {
+    if (phase !== 'quiz') return;
+    if (timeLeft <= 0) {
+      handleSubmit('Time expired. Quiz auto-submitted.');
       return;
     }
     const t = setInterval(() => {
@@ -117,7 +292,7 @@ export default function QuizClient({
       setTimeTaken((p) => p + 1);
     }, 1000);
     return () => clearInterval(t);
-  }, [phase, timeLeft, quiz.timeLimit, handleSubmit]);
+  }, [phase, timeLeft, handleSubmit]);
 
   const formatTime = (s: number) => {
     const m = Math.floor(Math.abs(s) / 60);
@@ -129,21 +304,47 @@ export default function QuizClient({
     const q = questions.find((x) => x.id === qId)!;
     if (q.type === 'multiple') {
       const prev = (answers[qId] as string[]) ?? [];
-      setAnswers((a) => ({
-        ...a,
-        [qId]: prev.includes(val) ? prev.filter((x) => x !== val) : [...prev, val],
-      }));
+      const next = prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val];
+      setAnswers({ ...answers, [qId]: next });
     } else {
-      setAnswers((a) => ({ ...a, [qId]: val }));
+      setAnswers({ ...answers, [qId]: val });
     }
   };
 
   const isAnswered = (qId: string) => {
     const a = answers[qId];
-    if (!a) return false;
-    if (Array.isArray(a)) return a.length > 0;
-    return a !== '';
+    return a !== undefined && (Array.isArray(a) ? a.length > 0 : a !== '');
   };
+
+  // ═══════════════════════════════════════════════
+  // RETAKE REQUEST HANDLER
+  // ═══════════════════════════════════════════════
+
+  const handleRequestRetake = async () => {
+    setIsRequestingRetake(true);
+    try {
+      const res = await fetch('/api/quizzes/retake-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentId: student.id, quizId: quiz.id }),
+      });
+      if (res.ok) {
+        setRetakeStatus('PENDING');
+        router.refresh();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to send retake request');
+      }
+    } catch {
+      alert('Error sending retake request');
+    } finally {
+      setIsRequestingRetake(false);
+    }
+  };
+
+  // ═══════════════════════════════════════════════
+  // INTRO PHASE
+  // ═══════════════════════════════════════════════
 
   if (phase === 'intro') {
     return (
@@ -160,12 +361,10 @@ export default function QuizClient({
               <AlertCircle size={16} />
               <span>{questions.length} Questions</span>
             </div>
-            {quiz.timeLimit > 0 && (
-              <div className={styles.quizMetaItem}>
-                <Clock size={16} />
-                <span>{quiz.timeLimit} Minutes</span>
-              </div>
-            )}
+            <div className={styles.quizMetaItem}>
+              <Clock size={16} />
+              <span>{quiz.timeLimit} Minutes</span>
+            </div>
             <div className={styles.quizMetaItem}>
               <Award size={16} />
               <span>Pass Mark: {quiz.passMark}%</span>
@@ -186,19 +385,62 @@ export default function QuizClient({
             </div>
           )}
 
-          <ul className={styles.quizRules}>
-            <li>Read each question carefully before answering.</li>
-            <li>You can navigate between questions freely.</li>
-            {quiz.timeLimit > 0 && <li>Timer starts when you begin the quiz.</li>}
-            <li>You can review flagged questions before submitting.</li>
-          </ul>
-          <button className="btn btn-primary btn-lg" onClick={() => setPhase('quiz')}>
-            Start Quiz
-          </button>
+          {/* Security Rules */}
+          <div style={{ margin: '1rem 0', padding: '1rem 1.25rem', background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)', borderRadius: 12, textAlign: 'left' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <Shield size={18} style={{ color: '#f87171' }} />
+              <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#f87171' }}>Exam Security Rules</span>
+            </div>
+            <ul className={styles.quizRules} style={{ margin: 0 }}>
+              <li>The quiz runs in <strong>fullscreen mode only</strong>. Exiting fullscreen will auto-submit.</li>
+              <li>Timer starts when you begin. The quiz will <strong>auto-close</strong> when time runs out.</li>
+              <li><strong>Switching tabs</strong> or leaving the window will immediately end your quiz.</li>
+              <li>Copy, paste, right-click, and screenshots are <strong>disabled</strong>.</li>
+              <li>You can only attempt this quiz <strong>once</strong>. Retakes require approval.</li>
+            </ul>
+          </div>
+
+          {/* Blocked — Already Attempted */}
+          {isBlocked ? (
+            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              <div style={{ padding: '1rem 1.5rem', background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.3)', borderRadius: 12, marginBottom: '1rem' }}>
+                <Lock size={20} style={{ color: '#fbbf24', marginBottom: 6 }} />
+                <p style={{ fontWeight: 600, color: '#fbbf24', marginBottom: 4 }}>Quiz Already Attempted</p>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                  You have already taken this quiz. To retake, request approval from your trainer or admin.
+                </p>
+              </div>
+
+              {retakeStatus === 'PENDING' ? (
+                <div style={{ padding: '10px 20px', background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#818cf8', fontWeight: 600, fontSize: '0.9rem' }}>
+                  <Clock size={16} />
+                  Retake Request Pending — Waiting for Approval
+                </div>
+              ) : retakeStatus !== 'APPROVED' ? (
+                <button
+                  className="btn btn-primary"
+                  onClick={handleRequestRetake}
+                  disabled={isRequestingRetake}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                >
+                  <Send size={16} />
+                  {isRequestingRetake ? 'Sending Request...' : 'Request Retake'}
+                </button>
+              ) : null}
+            </div>
+          ) : (
+            <button className="btn btn-primary btn-lg" onClick={() => { hasSubmittedRef.current = false; setPhase('quiz'); }} style={{ marginTop: '1rem' }}>
+              <Shield size={18} /> Start Secure Quiz
+            </button>
+          )}
         </motion.div>
       </div>
     );
   }
+
+  // ═══════════════════════════════════════════════
+  // RESULT PHASE
+  // ═══════════════════════════════════════════════
 
   if (phase === 'result') {
     const correct = calculateScore();
@@ -208,6 +450,15 @@ export default function QuizClient({
 
     return (
       <div className={styles.page}>
+        {securityViolation && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ padding: '12px 20px', background: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.3)', borderRadius: 10, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px', color: '#f87171', fontWeight: 600, fontSize: '0.88rem' }}
+          >
+            <Shield size={18} /> {securityViolation}
+          </motion.div>
+        )}
         <motion.div className={styles.resultCard} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
           <motion.div
             className={`${styles.resultIcon} ${passed ? styles.resultPass : styles.resultFail}`}
@@ -295,9 +546,6 @@ export default function QuizClient({
           </div>
 
           <div className={styles.resultActions}>
-            <button className="btn btn-secondary" onClick={() => { setPhase('intro'); setAnswers({}); setCurrentIdx(0); setTimeLeft(quiz.timeLimit * 60); setTimeTaken(0); }}>
-              <RotateCcw size={16} /> Retry Quiz
-            </button>
             <Link href={`/courses/${course.id}`} className="btn btn-primary">
               Back to Course
             </Link>
@@ -307,12 +555,15 @@ export default function QuizClient({
     );
   }
 
-  // Quiz phase
+  // ═══════════════════════════════════════════════
+  // QUIZ PHASE — SECURE EXAM MODE
+  // ═══════════════════════════════════════════════
+
   const options = getOptions(current);
   const answered = questions.filter((q) => isAnswered(q.id)).length;
 
   return (
-    <div className={styles.quizLayout}>
+    <div className={styles.quizLayout} style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
       {/* Header */}
       <div className={styles.quizHeader}>
         <div className={styles.quizProgress}>
@@ -324,13 +575,16 @@ export default function QuizClient({
             />
           </div>
         </div>
-        {quiz.timeLimit > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 10px', borderRadius: '6px', background: 'rgba(248,113,113,0.1)', color: '#f87171', fontSize: '0.75rem', fontWeight: 600 }}>
+            <Shield size={12} /> SECURE
+          </div>
           <div className={`${styles.timer} ${timeLeft < 60 ? styles.timerWarning : ''}`}>
             <Clock size={16} />
             {formatTime(timeLeft)}
           </div>
-        )}
-        <button className="btn btn-danger btn-sm" onClick={handleSubmit} disabled={isSubmitting}>
+        </div>
+        <button className="btn btn-danger btn-sm" onClick={() => handleSubmit()} disabled={isSubmitting}>
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
       </div>

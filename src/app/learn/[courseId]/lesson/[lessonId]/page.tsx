@@ -1,8 +1,46 @@
 import { prisma } from '@/lib/prisma';
 import { DEVELOPMENT_MODE } from '@/lib/config';
 import { notFound, redirect } from 'next/navigation';
+import { unstable_cache } from 'next/cache';
 import LessonClient from './LessonClient';
 import { getCourseProgression } from '@/lib/progression';
+
+const getCachedCourse = unstable_cache(
+  async (id: string) => prisma.course.findUnique({ where: { id } }),
+  ['course-by-id'],
+  { revalidate: 3600 }
+);
+
+const getCachedLesson = unstable_cache(
+  async (id: string) => prisma.lesson.findUnique({ where: { id } }),
+  ['lesson-by-id'],
+  { revalidate: 3600 }
+);
+
+const getCachedLessonData = unstable_cache(
+  async (lessonId: string) => {
+    return {
+      notes: await prisma.lessonNote.findMany({
+        where: { lessonId, visibility: { not: 'Private' } },
+        orderBy: { createdAt: 'desc' },
+      }),
+      resources: await prisma.lessonResource.findMany({
+        where: { lessonId },
+        orderBy: { createdAt: 'asc' },
+      }),
+      assignments: await prisma.lessonAssignment.findMany({
+        where: { lessonId },
+        orderBy: { createdAt: 'asc' },
+      }),
+      practiceFiles: await prisma.lessonPracticeFile.findMany({
+        where: { lessonId },
+        orderBy: { createdAt: 'asc' },
+      }),
+    };
+  },
+  ['lesson-data-by-id'],
+  { revalidate: 3600 }
+);
 
 export default async function LessonPage({
   params,
@@ -11,10 +49,10 @@ export default async function LessonPage({
 }) {
   const { courseId, lessonId } = await params;
 
-  const course = await prisma.course.findUnique({ where: { id: courseId } });
+  const course = await getCachedCourse(courseId);
   if (!course) notFound();
 
-  const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
+  const lesson = await getCachedLesson(lessonId);
   if (!lesson) notFound();
 
   // Get student (demo user)
@@ -23,7 +61,7 @@ export default async function LessonPage({
     student = await prisma.student.create({
       data: {
         name: 'Sample Student',
-        email: 'student@gmtraining.com',
+        email: 'student@atlyx.com',
       },
     });
   }
@@ -54,7 +92,7 @@ export default async function LessonPage({
     },
   });
 
-    // Ensure lesson progress record exists
+  // Ensure lesson progress record exists
   await prisma.lessonProgress.upsert({
     where: {
       studentId_lessonId: {
@@ -75,6 +113,8 @@ export default async function LessonPage({
   const prevItem = currentIdx > 0 ? items[currentIdx - 1] : null;
   const nextItem = currentIdx < items.length - 1 ? items[currentIdx + 1] : null;
 
+  const lessonData = await getCachedLessonData(lessonId);
+
   return (
     <LessonClient
       course={course}
@@ -84,22 +124,11 @@ export default async function LessonPage({
       prevItem={prevItem}
       nextItem={nextItem}
       codingProblems={codingProblems.filter((p) => p.lessonId === lessonId)}
-      lessonNotes={await prisma.lessonNote.findMany({
-        where: { lessonId, visibility: { not: 'Private' } },
-        orderBy: { createdAt: 'desc' },
-      })}
-      lessonResources={await prisma.lessonResource.findMany({
-        where: { lessonId },
-        orderBy: { createdAt: 'asc' },
-      })}
-      lessonAssignments={await prisma.lessonAssignment.findMany({
-        where: { lessonId },
-        orderBy: { createdAt: 'asc' },
-      })}
-      lessonPracticeFiles={await prisma.lessonPracticeFile.findMany({
-        where: { lessonId },
-        orderBy: { createdAt: 'asc' },
-      })}
+      lessonNotes={lessonData.notes}
+      lessonResources={lessonData.resources}
+      lessonAssignments={lessonData.assignments}
+      lessonPracticeFiles={lessonData.practiceFiles}
     />
   );
 }
+

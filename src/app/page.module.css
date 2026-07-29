@@ -42,6 +42,25 @@
   text-align: left;
 }
 
+@keyframes heroFadeIn {
+  from { opacity: 0.1; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.heroTag,
+.heroTitle,
+.heroDescription,
+.heroActions,
+.heroStats {
+  animation: heroFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.heroTag { animation-delay: 0.02s; }
+.heroTitle { animation-delay: 0.05s; }
+.heroDescription { animation-delay: 0.1s; }
+.heroActions { animation-delay: 0.15s; }
+.heroStats { animation-delay: 0.2s; }
+
 .heroTag {
   display: inline-flex;
   align-items: center;
@@ -568,12 +587,6 @@
   gap: 1.5rem;
 }
 
-@media (max-width: 768px) {
-  .whyGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .whyCard {
   display: flex;
   align-items: flex-start;
@@ -656,63 +669,73 @@
   justify-content: center;
 }
 
-/* ===== FOOTER ===== */
-.footer {
-  padding: 4rem 0 2rem;
-}
-
-.footerGrid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 3rem;
-  margin-bottom: 3rem;
-}
-
 @media (max-width: 768px) {
-  .footerGrid {
+  .hero {
+    padding: 110px 0 50px 0;
+  }
+  .heroTitle {
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
+  }
+  .heroDescription {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+  .pathCard {
+    padding: 1.25rem 1.15rem;
+    border-radius: var(--radius-sm);
+  }
+  .pathIcon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+  .pathIcon svg {
+    width: 20px;
+    height: 20px;
+  }
+  .pathHeader h3 {
+    font-size: 1.05rem;
+  }
+  .pathDesc {
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+  }
+  .whyGrid {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1rem;
+  }
+  .whyCard {
+    padding: 1.15rem 1rem;
+    gap: 0.85rem;
+    border-radius: var(--radius-sm);
+  }
+  .whyIcon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+  .whyIcon svg {
+    width: 20px;
+    height: 20px;
+  }
+  .whyText h3 {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
+  .whyText p {
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+  .ctaCard {
+    padding: 2rem 1.15rem;
+  }
+  .ctaCard h2 {
+    font-size: 1.5rem;
+  }
+  .ctaCard p {
+    font-size: 0.88rem;
+    margin-bottom: 1.5rem;
   }
 }
 
-.footerBrand h3 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-bottom: 0.75rem;
-}
-
-.footerBrand p {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.7;
-}
-
-.footerLinks {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.footerLinks h4 {
-  font-size: 0.95rem;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.footerLinks a,
-.footerLinks span {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  transition: color 0.3s;
-}
-
-.footerLinks a:hover {
-  color: var(--accent-primary);
-}
-
-.footerBottom {
-  padding-top: 2rem;
-  text-align: center;
-  font-size: 0.85rem;
-  color: var(--text-tertiary);
-}

@@ -2,20 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
-  const { title, description, courseId, moduleId, timeLimit, passMark, questions } = await req.json();
+  const { title, description, courseId, moduleId, afterLessonId, isFinalAssessment, timeLimit, passMark, questions } = await req.json();
   const quiz = await prisma.quiz.create({
     data: {
       title,
       description: description ?? '',
       courseId: courseId || null,
       moduleId: moduleId || null,
+      afterLessonId: afterLessonId || null,
+      isFinalAssessment: Boolean(isFinalAssessment),
       timeLimit: timeLimit ?? 0,
       passMark: passMark ?? 70,
       questions: {
         create: (questions ?? []).map((q: Record<string, unknown>, i: number) => ({
           question: q.question as string,
           type: (q.type as string) ?? 'mcq',
-          options: q.options as string,
+          options: typeof q.options === 'string' ? q.options : JSON.stringify(q.options || []),
           correctAnswer: q.correctAnswer as string,
           explanation: (q.explanation as string) ?? '',
           order: i,
@@ -36,11 +38,13 @@ export async function PATCH(req: NextRequest) {
       ...data,
       courseId: data.courseId || null,
       moduleId: data.moduleId || null,
+      afterLessonId: data.afterLessonId || null,
+      isFinalAssessment: Boolean(data.isFinalAssessment),
       questions: {
         create: (questions ?? []).map((q: Record<string, unknown>, i: number) => ({
           question: q.question as string,
           type: (q.type as string) ?? 'mcq',
-          options: q.options as string,
+          options: typeof q.options === 'string' ? q.options : JSON.stringify(q.options || []),
           correctAnswer: q.correctAnswer as string,
           explanation: (q.explanation as string) ?? '',
           order: i,

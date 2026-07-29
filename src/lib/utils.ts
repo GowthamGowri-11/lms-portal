@@ -29,3 +29,13 @@ export function parseJsonArray(value: string | string[] | null | undefined): str
 export function stringifyArray(arr: string[]): string {
   return JSON.stringify(arr);
 }
+
+export function formatDate(dateInput: string | Date | null | undefined): string {
+  if (!dateInput) return '';
+  const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+  if (isNaN(d.getTime())) return String(dateInput);
+  const day = d.getDate();
+  const month = d.getMonth() + 1;
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+}

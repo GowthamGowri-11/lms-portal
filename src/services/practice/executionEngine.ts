@@ -30,7 +30,7 @@ export abstract class Executor {
     problem: CodingProblem,
     code: string,
     input: string,
-    isStarterCode: boolean
+    _isStarterCode: boolean
   ): Promise<ExecutionResult>;
 }
 
@@ -40,7 +40,7 @@ export class MockExecutor extends Executor {
     problem: CodingProblem,
     code: string,
     input: string,
-    isStarterCode: boolean
+    _isStarterCode: boolean
   ): Promise<ExecutionResult> {
     // 1. Previously, starter code was treated as an error.
     // We now allow execution of starter code to let users test examples.
@@ -145,16 +145,6 @@ export async function judgeSubmission(
   language: string,
   code: string
 ): Promise<SubmissionResult> {
-  // Determine if starter code is unmodified
-  let isStarterCode = false;
-  try {
-    const starterMap = JSON.parse(problem.starterCode as string);
-    const starter = starterMap[language] || "";
-    isStarterCode = code.trim() === starter.trim();
-  } catch {
-    // Ignore
-  }
-
   // Parse hidden and visible test cases
   let hidden: TestCase[] = [];
   let visible: TestCase[] = [];
