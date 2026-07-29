@@ -7,7 +7,7 @@ import { ReactNode } from 'react';
 export function FadeInUp({
   children,
   delay = 0,
-  duration = 0.6,
+  duration = 0.5,
   className = '',
 }: {
   children: ReactNode;
@@ -17,9 +17,9 @@ export function FadeInUp({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}
@@ -63,9 +63,9 @@ export function ScaleIn({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay, ease: [0.34, 1.56, 0.64, 1] }}
+      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}
@@ -85,9 +85,9 @@ export function SlideInLeft({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: -60 }}
+      initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}
@@ -130,16 +130,13 @@ export const staggerContainer: Variants = {
 };
 
 export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  hidden: { opacity: 0, y: 15 },
   show: {
     opacity: 1,
     y: 0,
-    scale: 1,
     transition: { 
-      type: 'spring',
-      stiffness: 100,
-      damping: 15,
-      mass: 1
+      duration: 0.4,
+      ease: [0.22, 1, 0.36, 1]
     },
   },
 };
@@ -237,7 +234,7 @@ export function ModalAnimation({
 // ----- Hover Scale -----
 export function HoverScale({
   children,
-  scale = 1.05,
+  scale = 1.02,
   className = '',
 }: {
   children: ReactNode;
@@ -248,7 +245,7 @@ export function HoverScale({
     <motion.div
       whileHover={{ scale }}
       whileTap={{ scale: 0.98 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       className={className}
     >
       {children}

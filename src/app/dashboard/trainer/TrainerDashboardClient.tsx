@@ -7,7 +7,7 @@ import {
   BookOpen, Users, BarChart3, Settings, LogOut,
   ChevronRight, Edit2, Save, X, Eye, EyeOff,
   Layers, FileText, Clock, CheckCircle,
-  HelpCircle, Plus, Trash2, Edit3, ChevronDown, RotateCcw, Check, XCircle as XCircleIcon
+  HelpCircle, Plus, Trash2, Edit3, ChevronDown, RotateCcw, Check, XCircle as XCircleIcon, GraduationCap
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import styles from './trainer.module.css';
@@ -326,8 +326,10 @@ export default function TrainerDashboardClient({
       {/* Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarBrand}>
-          <div className={styles.brandIcon}>A</div>
-          <span>ATLYX</span>
+          <div className={styles.brandIcon} style={{ background: 'var(--accent-primary)' }}>
+            <GraduationCap size={20} color="white" />
+          </div>
+          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.4rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>ATLYX</span>
         </div>
 
         <div className={styles.sidebarProfile}>
