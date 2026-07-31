@@ -25,6 +25,7 @@ import styles from './AdminSidebar.module.css';
 
 const menuItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/users', label: 'Users Access', icon: Users },
   { href: '/admin/courses', label: 'Courses', icon: BookOpen },
   { href: '/admin/lessons', label: 'Lessons', icon: PlayCircle },
   { href: '/admin/quizzes', label: 'Quizzes', icon: HelpCircle },

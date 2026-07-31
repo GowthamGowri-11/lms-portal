@@ -111,7 +111,7 @@ model Course {
   syllabus         String       @default("[]")
   isPublished      Boolean      @default(false)
   trainerId        String
-  trainer          Trainer      @relation(fields: [trainerId], references: [id])
+  trainer          Trainer      @relation(fields: [trainerId], references: [id], onDelete: Cascade)
   enrollments      Enrollment[]
   modules          Module[]
   quizzes          Quiz[]
@@ -278,7 +278,7 @@ model Student {
 model Enrollment {
   id            String   @id @default(cuid())
   studentId     String
-  student       Student  @relation(fields: [studentId], references: [id])
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   courseId      String
   course        Course   @relation(fields: [courseId], references: [id])
   paymentStatus String   @default("pending")
@@ -308,7 +308,7 @@ model LessonProgress {
 model CourseProgress {
   id                String   @id @default(cuid())
   studentId         String
-  student           Student  @relation(fields: [studentId], references: [id])
+  student           Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   courseId          String
   completedLessons  Int      @default(0)
   totalLessons      Int      @default(0)
@@ -350,7 +350,7 @@ model CodingProblem {
 model CodingSubmission {
   id           String        @id @default(cuid())
   studentId    String
-  student      Student       @relation(fields: [studentId], references: [id])
+  student      Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
   problemId    String
   problem      CodingProblem @relation(fields: [problemId], references: [id])
   language     String        @default("python")
@@ -402,7 +402,7 @@ model QuizQuestion {
 model QuizAttempt {
   id          String   @id @default(cuid())
   studentId   String
-  student     Student  @relation(fields: [studentId], references: [id])
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   quizId      String
   quiz        Quiz     @relation(fields: [quizId], references: [id])
   answers     String   @default("{}")
@@ -418,7 +418,7 @@ model QuizAttempt {
 model QuizRetakeRequest {
   id          String    @id @default(cuid())
   studentId   String
-  student     Student   @relation(fields: [studentId], references: [id])
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
   quizId      String
   quiz        Quiz      @relation(fields: [quizId], references: [id])
   status      String    @default("PENDING") // PENDING | APPROVED | REJECTED
@@ -431,7 +431,7 @@ model QuizRetakeRequest {
 model Certificate {
   id            String   @id @default(cuid())
   studentId     String
-  student       Student  @relation(fields: [studentId], references: [id])
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   courseId      String
   course        Course   @relation(fields: [courseId], references: [id])
   certificateId String   @unique @default(cuid())
