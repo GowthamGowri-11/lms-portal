@@ -145,12 +145,11 @@ export default function GalaxyBackground() {
       // Cap at 3 to prevent huge jumps when switching tabs
       const timeScale = Math.min(dt / 16.66, 3);
 
-      // Brighter flat dark background (Slate 700)
-      ctx.fillStyle = '#334155';
+      // Very dark background
+      ctx.fillStyle = '#010205';
       ctx.fillRect(0, 0, width, height);
 
-      // Nebulas disabled to keep the background a solid, flat color without gradient effects
-      /*
+      // Draw Nebulas (Milky way clouds)
       nebulas.forEach(neb => {
         neb.x += neb.dx * timeScale;
         neb.y += neb.dy * timeScale;
@@ -167,7 +166,6 @@ export default function GalaxyBackground() {
         ctx.arc(neb.x, neb.y, neb.r, 0, Math.PI * 2);
         ctx.fill();
       });
-      */
 
       // Draw Stars with Parallax
       const cx = width / 2;
