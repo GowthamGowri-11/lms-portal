@@ -24,21 +24,21 @@ export default function HeroAuthButtons() {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
       <motion.button
+        className="btn-hero-primary"
         initial="initial"
         whileHover="hover"
         whileTap="tap"
         variants={{
-          initial: { scale: 1, boxShadow: '0 10px 25px -5px rgba(99, 102, 241, 0.5)' },
-          hover: { scale: 1.04, boxShadow: '0 0 30px rgba(99, 102, 241, 0.6)' },
-          tap: { scale: 0.97 }
+          initial: { scale: 1, y: 0, boxShadow: '0 4px 14px rgba(37, 99, 235, 0.25)' },
+          hover: { scale: 1.03, y: -4, boxShadow: '0 12px 24px -6px rgba(37, 99, 235, 0.4)' },
+          tap: { scale: 0.97, y: 1, boxShadow: '0 2px 8px rgba(37, 99, 235, 0.2)' }
         }}
         onClick={handlePrimaryClick}
         style={{
           padding: '16px 32px',
-          borderRadius: '16px',
-          background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899)',
-          backgroundSize: '200% 200%',
-          color: '#fff',
+          borderRadius: '100px',
+          background: 'var(--accent-primary)',
+          color: '#ffffff',
           fontWeight: 700,
           fontSize: '1.1rem',
           border: 'none',
@@ -46,29 +46,29 @@ export default function HeroAuthButtons() {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 10px 25px -5px rgba(99, 102, 241, 0.5)',
           position: 'relative',
           overflow: 'hidden',
-          transition: 'all 0.3s ease',
+          transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          zIndex: 1,
         }}
       >
         <motion.div
           variants={{
-            initial: { left: '-150%' },
-            hover: { left: '150%' }
+            initial: { left: '-101%' },
+            hover: { left: '0%' }
           }}
-          transition={{ duration: 1.0, ease: 'easeInOut' }}
+          transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
           style={{
             position: 'absolute',
             top: 0,
-            left: '-150%',
-            width: '150%',
-            height: '100%',
-            background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2) 25%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.2) 75%, transparent)',
-            pointerEvents: 'none',
-            zIndex: 1
+            bottom: 0,
+            width: '100%',
+            background: '#0f172a',
+            zIndex: -1,
+            borderRadius: '100px',
           }}
         />
+        
         <div style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: '12px' }}>
           {status === 'loading' ? (
             <span>Loading...</span>
@@ -81,7 +81,7 @@ export default function HeroAuthButtons() {
           ) : (
             <>
               <Sparkles size={20} />
-              <span>Start Learning Now</span>
+              <span>Start Learning with ATLYX</span>
               <ArrowRight size={18} />
             </>
           )}
@@ -90,4 +90,3 @@ export default function HeroAuthButtons() {
     </div>
   );
 }
-

@@ -1,15 +1,32 @@
 .adminLayout {
+  /* High Quality Light Theme Variables */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-glass: #ffffff;
+  --border-color: #e2e8f0;
+  --glass-border: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
+  --text-muted: #94a3b8;
+  --accent-primary: #2563eb;
+  --accent-primary-light: #3b82f6;
+  
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background-color: #0B0F17;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .adminMain {
   flex: 1;
   margin-left: 280px;
   padding: 2rem;
-  background-color: #0B0F17;
+  background-color: #f9fafb;
   height: 100vh;
   overflow-y: auto;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
