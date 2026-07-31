@@ -77,7 +77,7 @@ html {
 
 body {
   font-family: var(--font-body);
-  background-color: #334155; /* Flat brighter fallback for the canvas */
+  background-color: #010205; /* Darker fallback for the canvas */
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
