@@ -41,7 +41,7 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  role          String    @default("GUEST") // GUEST, STUDENT, TRAINER, ADMIN
+  role          String    @default("STUDENT") // STUDENT, TRAINER, ADMIN
   phone         String?   @default("")
   age           Int?
   education     String?   @default("") // School Student | Undergraduate | Postgraduate | Professional | Trainer
@@ -280,7 +280,7 @@ model Enrollment {
   studentId     String
   student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   courseId      String
-  course        Course   @relation(fields: [courseId], references: [id])
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   paymentStatus String   @default("pending")
   progress      Int      @default(0)
   enrolledAt    DateTime @default(now())
@@ -293,7 +293,7 @@ model Enrollment {
 model LessonProgress {
   id          String   @id @default(cuid())
   studentId   String
-  student     Student  @relation(fields: [studentId], references: [id])
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   lessonId    String
   lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   completed   Boolean  @default(false)
@@ -370,7 +370,7 @@ model Quiz {
   title             String
   description       String        @default("")
   courseId          String?
-  course            Course?       @relation(fields: [courseId], references: [id])
+  course            Course?       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   moduleId          String?
   module            Module?       @relation(fields: [moduleId], references: [id])
   afterLessonId     String?       // Place quiz dynamically right after this lesson ID
@@ -433,7 +433,7 @@ model Certificate {
   studentId     String
   student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   courseId      String
-  course        Course   @relation(fields: [courseId], references: [id])
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   certificateId String   @unique @default(cuid())
   issuedAt      DateTime @default(now())
 }

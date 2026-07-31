@@ -8,12 +8,12 @@ export async function PATCH(
   context: any
 ) {
   try {
-    const params = await context.params;
+    const params = await Promise.resolve(context.params);
     const session = await getServerSession(authOptions);
     const currentUser = session?.user as any;
 
     if (!currentUser || currentUser.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Admin access required' }, { status: 401 });
     }
 
     const { id } = params;
@@ -24,8 +24,24 @@ export async function PATCH(
     const body = await req.json();
     const { role } = body;
 
-    if (!role || !['GUEST', 'STUDENT', 'TRAINER', 'DEVELOPER', 'ADMIN'].includes(role)) {
+    if (!role || !['STUDENT', 'TRAINER', 'DEVELOPER', 'ADMIN'].includes(role)) {
       return NextResponse.json({ error: 'Invalid role provided' }, { status: 400 });
+    }
+
+    // Get the current user to see their old role
+    const existingUser = await prisma.user.findUnique({ where: { id } });
+    if (!existingUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    const oldRole = existingUser.role;
+
+    // Remove old specific profiles if they are being switched away from that role
+    if (oldRole === 'STUDENT' && role !== 'STUDENT') {
+      await prisma.student.deleteMany({ where: { userId: id } });
+    }
+    if (oldRole === 'TRAINER' && role !== 'TRAINER') {
+      await prisma.trainer.deleteMany({ where: { userId: id } });
     }
 
     // Update the User role in DB
@@ -33,14 +49,10 @@ export async function PATCH(
       where: { id },
       data: { role },
     });
-
-    // If changing to TRAINER and they don't have a Trainer record, we should probably create one
-    // But since the Trainer onboarding process might require specific details, 
-    // it's safer to just let the app handle the missing Trainer record when they visit the dashboard.
     
     return NextResponse.json({ success: true, user: updatedUser });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Update User Role Error:', error);
-    return NextResponse.json({ error: 'Failed to update user role' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Failed to update user role' }, { status: 500 });
   }
 }

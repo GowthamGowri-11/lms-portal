@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {
   BookOpen, CheckCircle, Clock, Trophy, User, MessageSquare,
   Edit2, Save, X, ChevronRight, BarChart3, LogOut, Send, AlertCircle,
-  HelpCircle, GraduationCap
+  CircleHelp, GraduationCap
 } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
 import { formatDate } from '@/lib/utils';
@@ -72,10 +72,8 @@ type Props = {
 };
 
 const tabs = [
-  { id: 'overview', label: 'Overview', icon: BarChart3 },
+  { id: 'profile', label: 'My Profile', icon: User },
   { id: 'courses', label: 'My Courses', icon: BookOpen },
-  { id: 'quizzes', label: 'My Quizzes & Tests', icon: HelpCircle },
-  { id: 'profile', label: 'Profile', icon: User },
   { id: 'queries', label: 'Support', icon: MessageSquare },
 ];
 
@@ -89,7 +87,7 @@ export default function StudentDashboardClient({
   retakeRequests = [],
 }: Props) {
   const { data: session } = useSession();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('profile');
   const [student, setStudent] = useState(initialStudent);
   const [queries, setQueries] = useState(initialQueries);
   const [retakes, setRetakes] = useState<any[]>(retakeRequests);
@@ -235,197 +233,7 @@ export default function StudentDashboardClient({
 
       {/* Main Content */}
       <main className={styles.main}>
-        <AnimatePresence mode="wait">
-          {/* OVERVIEW TAB */}
-          {activeTab === 'overview' && (
-            <motion.div key="overview" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
-              {/* Welcome Section */}
-              <div className={styles.pageHeader} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-                <div>
-                  <h1 className={styles.pageTitle}>Welcome back, {student.name.split(' ')[0]}! 👋</h1>
-                  <p className={styles.pageSubtitle}>Ready to continue your learning journey today?</p>
-                </div>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '16px', padding: '10px 18px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ fontSize: '1.4rem' }}>🔥</span>
-                    <div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 700 }}>Current Streak</div>
-                      <div style={{ fontSize: '1rem', fontWeight: 800, color: '#f59e0b' }}>7 Days</div>
-                    </div>
-                  </div>
-                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '16px', padding: '10px 18px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ fontSize: '1.4rem' }}>🎯</span>
-                    <div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 700 }}>Today's Goal</div>
-                      <div style={{ fontSize: '1rem', fontWeight: 800, color: '#4ade80' }}>2 / 3 Done</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Stats Cards */}
-              <div className={styles.statsGrid}>
-                {stats.map((s, i) => {
-                  const Icon = s.icon;
-                  return (
-                    <motion.div
-                      key={i}
-                      className={styles.statCard}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      whileHover={{ y: -4 }}
-                    >
-                      <div className={styles.statHeader}>
-                        <div className={styles.statIcon} style={{ background: s.bg, color: s.color }}>
-                          <Icon size={24} />
-                        </div>
-                        <div className={`${styles.trendBadge} ${styles.trendUp}`}>+12%</div>
-                      </div>
-                      <div className={styles.statValue}>{s.value}</div>
-                      <div className={styles.statLabel}>{s.label}</div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-
-              {/* Two Column Layout: Main Learning + Right Sidebar Widgets */}
-              <div className={styles.twoColGrid}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-                  {/* Continue Learning */}
-                  <div className={styles.section}>
-                    <div className={styles.sectionHeader}>
-                      <h2>Continue Learning</h2>
-                      <button className={styles.seeAll} onClick={() => setActiveTab('courses')}>See all →</button>
-                    </div>
-                    <div className={styles.courseGrid}>
-                      {enrollments.slice(0, 3).map((e, i) => {
-                        const prog = getProgress(e.courseId);
-                        const pct = prog?.percentage ?? e.progress ?? 0;
-                        const totalLessons = e.course.modules.reduce((s, m) => s + m.lessons.length, 0);
-                        return (
-                          <motion.div
-                            key={e.id}
-                            className={styles.courseCard}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            whileHover={{ y: -4 }}
-                          >
-                            <div className={styles.courseCardHeader}>
-                              <div className={styles.courseLogo}>
-                                {e.course.logo
-                                  ? <img src={e.course.logo} alt="" referrerPolicy="no-referrer" crossOrigin="anonymous" loading="lazy" />
-                                  : <BookOpen size={28} />}
-                              </div>
-                              <div className={styles.courseLevel}>{e.course.level}</div>
-                            </div>
-                            <div className={styles.courseCardBody}>
-                              <h3 className={styles.courseTitle}>{e.course.title}</h3>
-                              <p className={styles.courseTrainer}>{e.course.trainer?.name}</p>
-                              <div className={styles.progressRow}>
-                                <div className={styles.progressBar}>
-                                  <motion.div
-                                    className={styles.progressFill}
-                                    initial={{ width: 0 }}
-                                    animate={{ width: `${pct}%` }}
-                                    transition={{ duration: 1, delay: 0.5 }}
-                                  />
-                                </div>
-                                <span className={styles.progressPct}>{Math.round(pct)}%</span>
-                              </div>
-                              <div className={styles.lessonsCount}>
-                                <Clock size={12} /> {totalLessons} lessons
-                              </div>
-                            </div>
-                            <Link href={`/courses/${e.courseId}`} className={styles.courseAction}>
-                              Continue Learning <ChevronRight size={16} />
-                            </Link>
-                          </motion.div>
-                        );
-                      })}
-                      {enrollments.length === 0 && (
-                        <div className={styles.emptyState}>
-                          <BookOpen size={48} color="#818cf8" />
-                          <h3>No Enrolled Courses Yet</h3>
-                          <p>Explore our catalog of expert-led courses to start learning.</p>
-                          <Link href="/courses" className={styles.browseCta}>Go to Courses</Link>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Achievements */}
-                  <div className={styles.section}>
-                    <div className={styles.sectionHeader}>
-                      <h2>Badges & Achievements</h2>
-                    </div>
-                    <div className={styles.achievementsGrid}>
-                      <div className={styles.achievementCard}>
-                        <div className={styles.achievementBadge} style={{ background: 'rgba(99, 102, 241, 0.2)' }}>🚀</div>
-                        <div className={styles.achievementTitle}>First Step</div>
-                        <div className={styles.achievementDesc}>Enrolled in 1st Course</div>
-                      </div>
-                      <div className={styles.achievementCard}>
-                        <div className={styles.achievementBadge} style={{ background: 'rgba(245, 158, 11, 0.2)' }}>🔥</div>
-                        <div className={styles.achievementTitle}>7-Day Streak</div>
-                        <div className={styles.achievementDesc}>Learned 7 Days Straight</div>
-                      </div>
-                      <div className={styles.achievementCard}>
-                        <div className={styles.achievementBadge} style={{ background: 'rgba(34, 197, 94, 0.2)' }}>⚡</div>
-                        <div className={styles.achievementTitle}>Quiz Master</div>
-                        <div className={styles.achievementDesc}>Scored 100% on a Quiz</div>
-                      </div>
-                      <div className={styles.achievementCard}>
-                        <div className={styles.achievementBadge} style={{ background: 'rgba(236, 72, 153, 0.2)' }}>🎓</div>
-                        <div className={styles.achievementTitle}>Certified</div>
-                        <div className={styles.achievementDesc}>Earned 1st Certificate</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Widgets Column */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  {/* Daily Goals Checklist */}
-                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '24px', padding: '24px' }}>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 16px', color: 'var(--text-primary)' }}>Daily Learning Goals</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', padding: '12px 14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
-                        <CheckCircle size={18} color="#4ade80" />
-                        <span style={{ fontSize: '0.88rem', textDecoration: 'line-through', color: 'var(--text-tertiary)' }}>Complete 2 Lessons</span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', padding: '12px 14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
-                        <CheckCircle size={18} color="#4ade80" />
-                        <span style={{ fontSize: '0.88rem', textDecoration: 'line-through', color: 'var(--text-tertiary)' }}>Solve 3 Practice Problems</span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', padding: '12px 14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
-                        <Clock size={18} color="#f59e0b" />
-                        <span style={{ fontSize: '0.88rem', color: 'var(--text-primary)' }}>Finish Python Checkpoint Quiz</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Upcoming Schedule */}
-                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '24px', padding: '24px' }}>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 16px', color: 'var(--text-primary)' }}>Upcoming Deadlines</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                      <div style={{ borderLeft: '3px solid #6366f1', paddingLeft: '14px' }}>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>React Final Project Submission</div>
-                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Tomorrow at 11:59 PM</div>
-                      </div>
-                      <div style={{ borderLeft: '3px solid #ec4899', paddingLeft: '14px' }}>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>Live Q&A Session with Trainer</div>
-                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Saturday, 4:00 PM</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* MY COURSES TAB */}
+        <AnimatePresence mode="wait">          {/* MY COURSES TAB */}
           {activeTab === 'courses' && (
             <motion.div key="courses" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
               <div className={styles.pageHeader}>
@@ -494,140 +302,7 @@ export default function StudentDashboardClient({
             </motion.div>
           )}
 
-          {/* QUIZZES TAB */}
-          {activeTab === 'quizzes' && (
-            <motion.div key="quizzes" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
-              <div className={styles.pageHeader}>
-                <h1 className={styles.pageTitle}>My Quizzes & Assessments</h1>
-                <p className={styles.pageSubtitle}>View your marks and test results. Passing course quizzes is mandatory to complete a course!</p>
-              </div>
 
-              {(quizAttempts || []).length === 0 ? (
-                <div className={styles.emptyState}>
-                  <HelpCircle size={48} />
-                  <h3>No quizzes attempted yet</h3>
-                  <p>As you progress through your courses, complete the quiz checkpoints and final assessments to earn your certificates.</p>
-                  <button onClick={() => setActiveTab('courses')} className={styles.browseCta} style={{ border: 'none', cursor: 'pointer' }}>Go to My Courses</button>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {(quizAttempts || []).map((qa: any, idx: number) => {
-                    const isPassed = qa.passed;
-                    const pct = qa.percentage ?? (qa.totalMarks > 0 ? Math.round((qa.score / qa.totalMarks) * 100) : 0);
-                    const courseTitle = qa.quiz?.course?.title || 'General Course';
-                    const courseLogo = qa.quiz?.course?.logo;
-                    const courseId = qa.quiz?.courseId;
-                    const quizTitle = qa.quiz?.title || 'Course Assessment';
-
-                    return (
-                      <motion.div
-                        key={qa.id || idx}
-                        style={{
-                          background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '16px', padding: '1.25rem 1.5rem',
-                          display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem'
-                        }}
-                        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: '240px' }}>
-                          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
-                            {courseLogo ? <img src={courseLogo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} referrerPolicy="no-referrer" crossOrigin="anonymous" loading="lazy" /> : <HelpCircle size={24} color="#818cf8" />}
-                          </div>
-                          <div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                              {courseTitle}
-                            </div>
-                            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '2px 0 6px', color: 'var(--text-primary)' }}>
-                              {quizTitle}
-                            </h3>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', display: 'flex', gap: '14px', alignItems: 'center' }}>
-                              <span>Attended: {qa.completedAt ? formatDate(qa.completedAt) : 'Recently'}</span>
-                              <span>Time spent: {qa.timeSpent ? `${Math.ceil(qa.timeSpent / 60)} mins` : 'N/A'}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
-                          <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 600 }}>Marks Scored</div>
-                            <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                              {qa.score} <span style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', fontWeight: 600 }}>/ {qa.totalMarks || 100}</span>
-                            </div>
-                          </div>
-
-                          <div style={{ textAlign: 'center', minWidth: '70px' }}>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 600 }}>Percentage</div>
-                            <div style={{ fontSize: '1.25rem', fontWeight: 800, color: isPassed ? '#34d399' : '#f87171' }}>
-                              {pct}%
-                            </div>
-                          </div>
-
-                          <div>
-                            <span style={{
-                              padding: '6px 14px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '6px',
-                              background: isPassed ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                              color: isPassed ? '#34d399' : '#f87171', border: `1px solid ${isPassed ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`
-                            }}>
-                              {isPassed ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
-                              {isPassed ? 'PASSED' : 'FAILED'}
-                            </span>
-                          </div>
-
-                          {courseId && qa.quizId && (() => {
-                            const req = retakes.find((r) => r.quizId === qa.quizId && (r.status === 'PENDING' || r.status === 'APPROVED'));
-                            if (req?.status === 'PENDING') {
-                              return (
-                                <span style={{ padding: '8px 14px', borderRadius: '10px', background: 'rgba(245, 158, 11, 0.15)', border: '1px solid rgba(245, 158, 11, 0.3)', color: '#fbbf24', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                  <Clock size={16} /> Retake Requested (Pending Approval)
-                                </span>
-                              );
-                            }
-                            if (req?.status === 'APPROVED') {
-                              return (
-                                <Link
-                                  href={`/learn/${courseId}/quiz/${qa.quizId}`}
-                                  style={{
-                                    padding: '8px 16px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px',
-                                    background: 'var(--accent-success)', color: '#fff', textDecoration: 'none', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)'
-                                  }}
-                                >
-                                  Start Approved Retake <ChevronRight size={16} />
-                                </Link>
-                              );
-                            }
-                            return (
-                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-                                {isPassed && (
-                                  <Link
-                                    href={`/learn/${courseId}/quiz/${qa.quizId}`}
-                                    style={{
-                                      padding: '8px 16px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px',
-                                      background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', color: 'var(--text-primary)', textDecoration: 'none'
-                                    }}
-                                  >
-                                    Review <ChevronRight size={16} />
-                                  </Link>
-                                )}
-                                <button
-                                  onClick={() => handleRequestRetake(qa.quizId)}
-                                  disabled={requestingQuizId === qa.quizId}
-                                  style={{
-                                    padding: '8px 16px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px',
-                                    background: 'rgba(99, 102, 241, 0.15)', border: '1px solid rgba(99, 102, 241, 0.3)', color: '#818cf8', cursor: requestingQuizId === qa.quizId ? 'not-allowed' : 'pointer', opacity: requestingQuizId === qa.quizId ? 0.7 : 1
-                                  }}
-                                >
-                                  <Clock size={16} /> {requestingQuizId === qa.quizId ? 'Requesting...' : 'Request Retake'}
-                                </button>
-                              </div>
-                            );
-                          })()}
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              )}
-            </motion.div>
-          )}
 
           {/* PROFILE TAB */}
           {activeTab === 'profile' && (
@@ -681,7 +356,7 @@ export default function StudentDashboardClient({
                   </div>
                 </div>
 
-                <div className={styles.profileStats}>
+                <div className={styles.profileStats} style={{ marginBottom: '2rem' }}>
                   <div className={styles.profileStat}>
                     <strong>{enrollments.length}</strong>
                     <span>Courses Enrolled</span>
@@ -697,6 +372,70 @@ export default function StudentDashboardClient({
                   <div className={styles.profileStat}>
                     <strong>{avgProgress}%</strong>
                     <span>Avg Progress</span>
+                  </div>
+                </div>
+
+                {/* Enrolled Courses Status Area in Profile */}
+                <div style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                  <h3 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <BookOpen size={20} color="var(--accent-primary)" /> Enrolled Courses & Status
+                  </h3>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {enrollments.map((e, i) => {
+                      const prog = getProgress(e.courseId);
+                      const pct = prog?.percentage ?? e.progress ?? 0;
+                      const isComplete = prog?.isCompleted ?? false;
+                      const totalLessons = e.course.modules.reduce((s, m) => s + m.lessons.length, 0);
+
+                      return (
+                        <div key={e.id} style={{ 
+                          background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', 
+                          borderRadius: '16px', padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap'
+                        }}>
+                          <div style={{ width: '56px', height: '56px', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                            {e.course.logo ? <img src={e.course.logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} referrerPolicy="no-referrer" /> : <BookOpen size={24} />}
+                          </div>
+                          
+                          <div style={{ flex: '1 1 200px' }}>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase' }}>{e.course.level}</div>
+                            <h4 style={{ fontSize: '1.1rem', margin: '4px 0', color: 'var(--text-primary)' }}>{e.course.title}</h4>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)' }}>by {e.course.trainer?.name}</div>
+                          </div>
+
+                          <div style={{ flex: '1 1 150px' }}>
+                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '6px' }}>
+                               <span style={{ color: 'var(--text-secondary)' }}>Status:</span>
+                               <span style={{ fontWeight: 600, color: isComplete ? '#34d399' : '#60a5fa' }}>{isComplete ? 'Completed' : 'In Progress'}</span>
+                             </div>
+                             <div style={{ height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+                               <div style={{ height: '100%', width: `${pct}%`, background: isComplete ? '#34d399' : '#60a5fa', borderRadius: '3px' }} />
+                             </div>
+                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginTop: '6px', color: 'var(--text-tertiary)' }}>
+                               <span>{prog?.completedLessons ?? 0} / {totalLessons} lessons</span>
+                               <span>{Math.round(pct)}%</span>
+                             </div>
+                          </div>
+
+                          <div style={{ flexShrink: 0 }}>
+                            <Link href={`/courses/${e.courseId}`} style={{
+                              display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', 
+                              borderRadius: '8px', background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', 
+                              fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-primary)', textDecoration: 'none'
+                            }}>
+                              {isComplete ? 'Review' : 'Continue'} <ChevronRight size={16} />
+                            </Link>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    
+                    {enrollments.length === 0 && (
+                      <div style={{ padding: '2rem', textAlign: 'center', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', color: 'var(--text-tertiary)' }}>
+                        <BookOpen size={40} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+                        <p>You haven't enrolled in any courses yet.</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

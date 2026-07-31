@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Trash2, Edit3, User, ShieldAlert, X, RefreshCw } from 'lucide-react';
+import { Search, Trash2, Edit3, User, ShieldAlert, X, RefreshCw, Eye, BookOpen, GraduationCap, Phone, Clock } from 'lucide-react';
 import { FadeInUp, PageTransition } from '@/components/animations/MotionWrappers';
 import { User as PrismaUser } from '@/generated/prisma/client';
 
@@ -22,7 +22,7 @@ export default function AdminUsersClient({
   courses
 }: { 
   initialUsers: PrismaUser[];
-  courses: { id: string; title: string }[];
+  courses: { id: string; title: string; logo?: string }[];
 }) {
   const [users, setUsers] = useState<PrismaUser[]>(initialUsers);
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,6 +32,7 @@ export default function AdminUsersClient({
   const [filterCourse, setFilterCourse] = useState('ALL');
   
   // Modals state
+  const [viewUser, setViewUser] = useState<PrismaUser | null>(null);
   const [editUser, setEditUser] = useState<PrismaUser | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<PrismaUser | null>(null);
   
@@ -73,13 +74,16 @@ export default function AdminUsersClient({
         body: JSON.stringify({ role: selectedRole })
       });
       
-      if (!res.ok) throw new Error('Failed to update role');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to update role');
+      }
       
       setUsers(users.map(u => u.id === editUser.id ? { ...u, role: selectedRole } : u));
       setEditUser(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Error updating user role.');
+      alert(err.message || 'Error updating user role.');
     } finally {
       setIsSaving(false);
     }
@@ -149,7 +153,6 @@ export default function AdminUsersClient({
                 }}
               >
                 <option value="ALL">All Roles</option>
-                <option value="GUEST">Guest</option>
                 <option value="STUDENT">Student</option>
                 <option value="TRAINER">Trainer</option>
                 <option value="DEVELOPER">Developer</option>
@@ -190,9 +193,13 @@ export default function AdminUsersClient({
               </thead>
               <tbody>
                 {filteredUsers.map((user) => (
-                  <tr key={user.id}>
+                  <tr key={user.id} className="hover-row">
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div 
+                        style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+                        onClick={() => setViewUser(user)}
+                        title="View Full Overview"
+                      >
                         <div style={{
                           width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)'
@@ -200,7 +207,7 @@ export default function AdminUsersClient({
                           {user.image ? <img src={user.image} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : <User size={20} />}
                         </div>
                         <div>
-                          <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{user.name || 'No Name'}</div>
+                          <div style={{ fontWeight: 600, color: 'var(--text-primary)', transition: 'color 0.2s' }} className="user-name-hover">{user.name || 'No Name'}</div>
                           <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{user.email}</div>
                         </div>
                       </div>
@@ -219,9 +226,17 @@ export default function AdminUsersClient({
                     <td style={{ textAlign: 'right' }}>
                       <button 
                         className="btn btn-ghost btn-sm" 
+                        onClick={() => setViewUser(user)}
+                        title="View Overview"
+                        style={{ padding: '0.4rem', marginRight: '0.2rem', color: 'var(--text-secondary)' }}
+                      >
+                        <Eye size={16} />
+                      </button>
+                      <button 
+                        className="btn btn-ghost btn-sm" 
                         onClick={() => handleOpenEdit(user)}
                         title="Change Role"
-                        style={{ padding: '0.4rem', marginRight: '0.5rem' }}
+                        style={{ padding: '0.4rem', marginRight: '0.2rem' }}
                       >
                         <Edit3 size={16} />
                       </button>
@@ -247,6 +262,178 @@ export default function AdminUsersClient({
             </table>
           </div>
         </FadeInUp>
+
+        {/* View User Overview Modal */}
+        <AnimatePresence>
+          {viewUser && (
+            <motion.div
+              className="modal-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setViewUser(null)}
+              style={{ 
+                padding: '1rem', 
+                alignItems: 'center', 
+                display: 'flex', 
+                justifyContent: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)'
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
+                onClick={(e) => e.stopPropagation()}
+                style={{ 
+                  width: '100%', maxWidth: '650px', maxHeight: '90vh', overflowY: 'auto', 
+                  padding: 0, borderRadius: '24px', position: 'relative',
+                  background: '#ffffff',
+                  border: '1px solid rgba(0, 0, 0, 0.05)', 
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+                  color: '#111827' // Dark text for light theme
+                }}
+              >
+                {/* Decorative header background */}
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '140px', background: 'linear-gradient(135deg, #f0fdf4 0%, #f8fafc 100%)', zIndex: 0, borderTopLeftRadius: '24px', borderTopRightRadius: '24px', pointerEvents: 'none', borderBottom: '1px solid rgba(0,0,0,0.03)' }} />
+
+                {/* Header Profile Section */}
+                <div style={{ padding: '2.5rem 2.5rem 2rem', borderBottom: '1px solid rgba(0,0,0,0.06)', display: 'flex', gap: '1.5rem', alignItems: 'center', position: 'relative', zIndex: 1 }}>
+                  <button onClick={() => setViewUser(null)} style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'rgba(0,0,0,0.05)', border: 'none', color: '#6b7280', padding: '8px', borderRadius: '50%', cursor: 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.1)'; e.currentTarget.style.color = '#111827' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0,0,0,0.05)'; e.currentTarget.style.color = '#6b7280' }}>
+                    <X size={20} />
+                  </button>
+                  
+                  <div style={{
+                    width: '90px', height: '90px', borderRadius: '50%', background: '#f3f4f6',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', flexShrink: 0,
+                    border: '4px solid #ffffff', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
+                  }}>
+                    {viewUser.image ? <img src={viewUser.image} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : <User size={40} />}
+                  </div>
+                  
+                  <div style={{ flex: 1 }}>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: 800, margin: '0 0 0.25rem 0', letterSpacing: '-0.02em', color: '#111827' }}>{viewUser.name || 'No Name'}</h2>
+                    <div style={{ color: '#6b7280', marginBottom: '0.85rem', fontSize: '0.95rem' }}>{viewUser.email}</div>
+                    <span className={`badge ${getRoleBadgeColor(viewUser.role)}`} style={{
+                        background: viewUser.role === 'DEVELOPER' ? '#eff6ff' : undefined,
+                        color: viewUser.role === 'DEVELOPER' ? '#2563eb' : undefined,
+                        display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', fontSize: '0.75rem', fontWeight: 700, borderRadius: '20px', letterSpacing: '0.05em'
+                    }}>
+                      <ShieldAlert size={14} /> {viewUser.role}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{ padding: '2.5rem', position: 'relative', zIndex: 1 }}>
+                  {/* Details Section */}
+                  <div style={{ marginBottom: '3rem' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#111827' }}>
+                      <User size={18} style={{ color: '#10b981' }} /> Profile Data
+                    </h3>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1.25rem' }}>
+                      <div style={{ background: '#f9fafb', padding: '1.25rem', borderRadius: '16px', border: '1px solid rgba(0,0,0,0.03)' }}>
+                        <div style={{ color: '#6b7280', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, marginBottom: '0.4rem' }}>Phone</div>
+                        <div style={{ fontSize: '1rem', fontWeight: 600, color: '#111827' }}>{viewUser.phone || <span style={{ color: '#9ca3af', fontWeight: 400 }}>Not provided</span>}</div>
+                      </div>
+                      <div style={{ background: '#f9fafb', padding: '1.25rem', borderRadius: '16px', border: '1px solid rgba(0,0,0,0.03)' }}>
+                        <div style={{ color: '#6b7280', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, marginBottom: '0.4rem' }}>Age</div>
+                        <div style={{ fontSize: '1rem', fontWeight: 600, color: '#111827' }}>{viewUser.age || <span style={{ color: '#9ca3af', fontWeight: 400 }}>Not provided</span>}</div>
+                      </div>
+                      <div style={{ background: '#f9fafb', padding: '1.25rem', borderRadius: '16px', border: '1px solid rgba(0,0,0,0.03)' }}>
+                        <div style={{ color: '#6b7280', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, marginBottom: '0.4rem' }}>Education</div>
+                        <div style={{ fontSize: '1rem', fontWeight: 600, color: '#111827' }}>{viewUser.education || <span style={{ color: '#9ca3af', fontWeight: 400 }}>Not provided</span>}</div>
+                      </div>
+                      <div style={{ background: '#f9fafb', padding: '1.25rem', borderRadius: '16px', border: '1px solid rgba(0,0,0,0.03)' }}>
+                        <div style={{ color: '#6b7280', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, marginBottom: '0.4rem' }}>Joined Date</div>
+                        <div style={{ fontSize: '1rem', fontWeight: 600, color: '#111827' }}>{new Date(viewUser.createdAt).toLocaleDateString()}</div>
+                      </div>
+                      <div style={{ background: '#f9fafb', padding: '1.25rem', borderRadius: '16px', border: '1px solid rgba(0,0,0,0.03)' }}>
+                        <div style={{ color: '#6b7280', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, marginBottom: '0.4rem' }}>Onboarded</div>
+                        <div style={{ fontSize: '1rem', fontWeight: 600, color: viewUser.isOnboarded ? '#10b981' : '#9ca3af' }}>{viewUser.isOnboarded ? 'Yes' : 'No'}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Enrollments Section */}
+                  <div>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#111827' }}>
+                      <BookOpen size={18} style={{ color: '#10b981' }} /> Courses Enrolled
+                    </h3>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {((viewUser as any).student?.enrollments || []).length > 0 ? (
+                        ((viewUser as any).student.enrollments).map((enrollment: any, idx: number) => {
+                          const course = courses.find(c => c.id === enrollment.courseId);
+                          return (
+                            <motion.div 
+                              key={enrollment.id}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: idx * 0.1 }}
+                              style={{ 
+                                background: '#ffffff', 
+                                border: '1px solid rgba(0,0,0,0.06)',
+                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02)',
+                                borderRadius: '16px',
+                                padding: '1.25rem 1.5rem',
+                                display: 'flex',
+                                gap: '1.5rem',
+                                alignItems: 'center',
+                                flexWrap: 'wrap'
+                              }}
+                            >
+                              <div style={{ width: '56px', height: '56px', borderRadius: '12px', overflow: 'hidden', background: '#f3f4f6', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(0,0,0,0.05)' }}>
+                                {course?.logo ? (
+                                  <img src={course.logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                  <BookOpen size={24} style={{ color: '#9ca3af' }} />
+                                )}
+                              </div>
+                              
+                              <div style={{ flex: '1 1 200px' }}>
+                                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#111827', marginBottom: '0.25rem' }}>{course?.title || 'Unknown Course'}</div>
+                                <div style={{ fontSize: '0.85rem', color: '#6b7280', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <Clock size={12} /> {new Date(enrollment.enrolledAt).toLocaleDateString()}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div style={{ flex: '1 1 150px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '8px' }}>
+                                  <span style={{ color: '#6b7280' }}>Status: <strong style={{ color: enrollment.paymentStatus === 'completed' ? '#10b981' : enrollment.paymentStatus === 'pending' ? '#f59e0b' : '#ef4444', textTransform: 'capitalize' }}>{enrollment.paymentStatus}</strong></span>
+                                  <span style={{ fontWeight: 700, color: '#111827' }}>{enrollment.progress}%</span>
+                                </div>
+                                
+                                <div style={{ height: '6px', background: '#e5e7eb', borderRadius: '3px', overflow: 'hidden' }}>
+                                  <motion.div 
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${enrollment.progress}%` }}
+                                    transition={{ duration: 1, ease: "easeOut", delay: 0.2 + (idx * 0.1) }}
+                                    style={{ height: '100%', background: 'linear-gradient(90deg, #10b981, #34d399)' }}
+                                  />
+                                </div>
+                              </div>
+                            </motion.div>
+                          );
+                        })
+                      ) : (
+                        <div style={{ padding: '2rem', textAlign: 'center', background: '#f9fafb', borderRadius: '16px', border: '1px dashed #d1d5db', color: '#6b7280' }}>
+                          <BookOpen size={40} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
+                          <p>This user has not enrolled in any courses yet.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Edit Role Modal */}
         <AnimatePresence>
@@ -285,7 +472,6 @@ export default function AdminUsersClient({
                         onChange={(e) => setSelectedRole(e.target.value)}
                         disabled={isSaving}
                       >
-                        <option value="GUEST">Guest (Unonboarded)</option>
                         <option value="STUDENT">Student</option>
                         <option value="TRAINER">Trainer</option>
                         <option value="DEVELOPER">Developer</option>

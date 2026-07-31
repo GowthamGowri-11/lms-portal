@@ -14,7 +14,7 @@ export default async function AdminUsersPage() {
   });
 
   const courses = await prisma.course.findMany({
-    select: { id: true, title: true },
+    select: { id: true, title: true, logo: true },
   });
   
   return <AdminUsersClient initialUsers={users} courses={courses} />;
