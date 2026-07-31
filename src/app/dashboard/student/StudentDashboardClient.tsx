@@ -239,11 +239,31 @@ export default function StudentDashboardClient({
           {/* OVERVIEW TAB */}
           {activeTab === 'overview' && (
             <motion.div key="overview" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
-              <div className={styles.pageHeader}>
-                <h1 className={styles.pageTitle}>Welcome back, {student.name.split(' ')[0]}! 👋</h1>
-                <p className={styles.pageSubtitle}>Here's your learning summary</p>
+              {/* Welcome Section */}
+              <div className={styles.pageHeader} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                <div>
+                  <h1 className={styles.pageTitle}>Welcome back, {student.name.split(' ')[0]}! 👋</h1>
+                  <p className={styles.pageSubtitle}>Ready to continue your learning journey today?</p>
+                </div>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '16px', padding: '10px 18px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '1.4rem' }}>🔥</span>
+                    <div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 700 }}>Current Streak</div>
+                      <div style={{ fontSize: '1rem', fontWeight: 800, color: '#f59e0b' }}>7 Days</div>
+                    </div>
+                  </div>
+                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '16px', padding: '10px 18px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '1.4rem' }}>🎯</span>
+                    <div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 700 }}>Today's Goal</div>
+                      <div style={{ fontSize: '1rem', fontWeight: 800, color: '#4ade80' }}>2 / 3 Done</div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
+              {/* Stats Cards */}
               <div className={styles.statsGrid}>
                 {stats.map((s, i) => {
                   const Icon = s.icon;
@@ -256,8 +276,11 @@ export default function StudentDashboardClient({
                       transition={{ delay: i * 0.1 }}
                       whileHover={{ y: -4 }}
                     >
-                      <div className={styles.statIcon} style={{ background: s.bg, color: s.color }}>
-                        <Icon size={22} />
+                      <div className={styles.statHeader}>
+                        <div className={styles.statIcon} style={{ background: s.bg, color: s.color }}>
+                          <Icon size={24} />
+                        </div>
+                        <div className={`${styles.trendBadge} ${styles.trendUp}`}>+12%</div>
                       </div>
                       <div className={styles.statValue}>{s.value}</div>
                       <div className={styles.statLabel}>{s.label}</div>
@@ -266,64 +289,137 @@ export default function StudentDashboardClient({
                 })}
               </div>
 
-              {/* Current courses */}
-              <div className={styles.section}>
-                <div className={styles.sectionHeader}>
-                  <h2>Continue Learning</h2>
-                  <button className={styles.seeAll} onClick={() => setActiveTab('courses')}>See all →</button>
-                </div>
-                <div className={styles.courseGrid}>
-                  {enrollments.slice(0, 3).map((e, i) => {
-                    const prog = getProgress(e.courseId);
-                    const pct = prog?.percentage ?? e.progress ?? 0;
-                    const totalLessons = e.course.modules.reduce((s, m) => s + m.lessons.length, 0);
-                    return (
-                      <motion.div
-                        key={e.id}
-                        className={styles.courseCard}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        whileHover={{ y: -4 }}
-                      >
-                        <div className={styles.courseCardHeader}>
-                          <div className={styles.courseLogo}>
-                            {e.course.logo
-                              ? <img src={e.course.logo} alt="" referrerPolicy="no-referrer" crossOrigin="anonymous" loading="lazy" />
-                              : <BookOpen size={28} />}
-                          </div>
-                          <div className={styles.courseLevel}>{e.course.level}</div>
-                        </div>
-                        <div className={styles.courseCardBody}>
-                          <h3 className={styles.courseTitle}>{e.course.title}</h3>
-                          <p className={styles.courseTrainer}>{e.course.trainer?.name}</p>
-                          <div className={styles.progressRow}>
-                            <div className={styles.progressBar}>
-                              <motion.div
-                                className={styles.progressFill}
-                                initial={{ width: 0 }}
-                                animate={{ width: `${pct}%` }}
-                                transition={{ duration: 1, delay: 0.5 }}
-                              />
-                            </div>
-                            <span className={styles.progressPct}>{Math.round(pct)}%</span>
-                          </div>
-                          <div className={styles.lessonsCount}>
-                            <Clock size={12} /> {totalLessons} lessons
-                          </div>
-                        </div>
-                        <Link href={`/courses/${e.courseId}`} className={styles.courseAction}>
-                          Continue <ChevronRight size={16} />
-                        </Link>
-                      </motion.div>
-                    );
-                  })}
-                  {enrollments.length === 0 && (
-                    <div className={styles.emptyState}>
-                      <BookOpen size={40} />
-                      <p>No courses yet. <Link href="/courses">Browse courses</Link></p>
+              {/* Two Column Layout: Main Learning + Right Sidebar Widgets */}
+              <div className={styles.twoColGrid}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+                  {/* Continue Learning */}
+                  <div className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                      <h2>Continue Learning</h2>
+                      <button className={styles.seeAll} onClick={() => setActiveTab('courses')}>See all →</button>
                     </div>
-                  )}
+                    <div className={styles.courseGrid}>
+                      {enrollments.slice(0, 3).map((e, i) => {
+                        const prog = getProgress(e.courseId);
+                        const pct = prog?.percentage ?? e.progress ?? 0;
+                        const totalLessons = e.course.modules.reduce((s, m) => s + m.lessons.length, 0);
+                        return (
+                          <motion.div
+                            key={e.id}
+                            className={styles.courseCard}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.1 }}
+                            whileHover={{ y: -4 }}
+                          >
+                            <div className={styles.courseCardHeader}>
+                              <div className={styles.courseLogo}>
+                                {e.course.logo
+                                  ? <img src={e.course.logo} alt="" referrerPolicy="no-referrer" crossOrigin="anonymous" loading="lazy" />
+                                  : <BookOpen size={28} />}
+                              </div>
+                              <div className={styles.courseLevel}>{e.course.level}</div>
+                            </div>
+                            <div className={styles.courseCardBody}>
+                              <h3 className={styles.courseTitle}>{e.course.title}</h3>
+                              <p className={styles.courseTrainer}>{e.course.trainer?.name}</p>
+                              <div className={styles.progressRow}>
+                                <div className={styles.progressBar}>
+                                  <motion.div
+                                    className={styles.progressFill}
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${pct}%` }}
+                                    transition={{ duration: 1, delay: 0.5 }}
+                                  />
+                                </div>
+                                <span className={styles.progressPct}>{Math.round(pct)}%</span>
+                              </div>
+                              <div className={styles.lessonsCount}>
+                                <Clock size={12} /> {totalLessons} lessons
+                              </div>
+                            </div>
+                            <Link href={`/courses/${e.courseId}`} className={styles.courseAction}>
+                              Continue Learning <ChevronRight size={16} />
+                            </Link>
+                          </motion.div>
+                        );
+                      })}
+                      {enrollments.length === 0 && (
+                        <div className={styles.emptyState}>
+                          <BookOpen size={48} color="#818cf8" />
+                          <h3>No Enrolled Courses Yet</h3>
+                          <p>Explore our catalog of expert-led courses to start learning.</p>
+                          <Link href="/courses" className={styles.browseCta}>Go to Courses</Link>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Achievements */}
+                  <div className={styles.section}>
+                    <div className={styles.sectionHeader}>
+                      <h2>Badges & Achievements</h2>
+                    </div>
+                    <div className={styles.achievementsGrid}>
+                      <div className={styles.achievementCard}>
+                        <div className={styles.achievementBadge} style={{ background: 'rgba(99, 102, 241, 0.2)' }}>🚀</div>
+                        <div className={styles.achievementTitle}>First Step</div>
+                        <div className={styles.achievementDesc}>Enrolled in 1st Course</div>
+                      </div>
+                      <div className={styles.achievementCard}>
+                        <div className={styles.achievementBadge} style={{ background: 'rgba(245, 158, 11, 0.2)' }}>🔥</div>
+                        <div className={styles.achievementTitle}>7-Day Streak</div>
+                        <div className={styles.achievementDesc}>Learned 7 Days Straight</div>
+                      </div>
+                      <div className={styles.achievementCard}>
+                        <div className={styles.achievementBadge} style={{ background: 'rgba(34, 197, 94, 0.2)' }}>⚡</div>
+                        <div className={styles.achievementTitle}>Quiz Master</div>
+                        <div className={styles.achievementDesc}>Scored 100% on a Quiz</div>
+                      </div>
+                      <div className={styles.achievementCard}>
+                        <div className={styles.achievementBadge} style={{ background: 'rgba(236, 72, 153, 0.2)' }}>🎓</div>
+                        <div className={styles.achievementTitle}>Certified</div>
+                        <div className={styles.achievementDesc}>Earned 1st Certificate</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Widgets Column */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  {/* Daily Goals Checklist */}
+                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '24px', padding: '24px' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 16px', color: 'var(--text-primary)' }}>Daily Learning Goals</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', padding: '12px 14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
+                        <CheckCircle size={18} color="#4ade80" />
+                        <span style={{ fontSize: '0.88rem', textDecoration: 'line-through', color: 'var(--text-tertiary)' }}>Complete 2 Lessons</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', padding: '12px 14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
+                        <CheckCircle size={18} color="#4ade80" />
+                        <span style={{ fontSize: '0.88rem', textDecoration: 'line-through', color: 'var(--text-tertiary)' }}>Solve 3 Practice Problems</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.03)', padding: '12px 14px', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
+                        <Clock size={18} color="#f59e0b" />
+                        <span style={{ fontSize: '0.88rem', color: 'var(--text-primary)' }}>Finish Python Checkpoint Quiz</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Upcoming Schedule */}
+                  <div style={{ background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: '24px', padding: '24px' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 16px', color: 'var(--text-primary)' }}>Upcoming Deadlines</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      <div style={{ borderLeft: '3px solid #6366f1', paddingLeft: '14px' }}>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>React Final Project Submission</div>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Tomorrow at 11:59 PM</div>
+                      </div>
+                      <div style={{ borderLeft: '3px solid #ec4899', paddingLeft: '14px' }}>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>Live Q&A Session with Trainer</div>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Saturday, 4:00 PM</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -391,7 +487,7 @@ export default function StudentDashboardClient({
                     <BookOpen size={48} />
                     <h3>No courses yet</h3>
                     <p>Enroll in a course to start your learning journey</p>
-                    <Link href="/courses" className={styles.browseCta}>Browse Courses</Link>
+                    <Link href="/courses" className={styles.browseCta}>Go to Courses</Link>
                   </div>
                 )}
               </div>
