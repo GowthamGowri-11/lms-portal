@@ -65,7 +65,11 @@ export default function JoinRequestButton({
       const data = await res.json();
       if (res.ok) {
         setIsError(false);
-        setMessage("Request sent! Waiting for admin approval.");
+        setMessage(
+          type === "COURSE_ENROLLMENT"
+            ? "Request sent! Waiting for admin approval."
+            : "Application submitted! Waiting for admin approval."
+        );
         setShowToast(true);
       } else {
         setIsError(true);

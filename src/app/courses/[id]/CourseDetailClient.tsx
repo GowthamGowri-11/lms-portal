@@ -23,14 +23,19 @@ export default function CourseDetailClient({
   trainer,
   modules = [],
   enrollmentStatus = 'NONE',
+  activeEnrollmentCount = 0,
 }: {
   course: CourseWithArrays;
   trainer: Trainer | null;
   modules?: ModuleWithLessons[];
   enrollmentStatus?: string;
+  activeEnrollmentCount?: number;
 }) {
   const [showEnrollModal, setShowEnrollModal] = useState(false);
   const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set([modules[0]?.id ?? '']));
+  const [directEnrollLoading, setDirectEnrollLoading] = useState(false);
+  const [directEnrollDone, setDirectEnrollDone] = useState(false);
+  const [directEnrollError, setDirectEnrollError] = useState('');
 
   const totalLessons = modules.reduce((t, m) => t + m.lessons.length, 0);
 
@@ -329,7 +334,7 @@ export default function CourseDetailClient({
                     </div>
                     <div className={styles.ctaContainer}>
                       <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                        {enrollmentStatus === 'ENROLLED' ? (
+                        {enrollmentStatus === 'ENROLLED' || directEnrollDone ? (
                           firstLesson ? (
                             <Link
                               href={`/learn/${course.id}/lesson/${firstLesson.id}`}
@@ -345,13 +350,54 @@ export default function CourseDetailClient({
                           )
                         ) : enrollmentStatus === 'PENDING' ? (
                           <button className="btn btn-secondary btn-lg" disabled>
-                            Pending Approval
+                            ⏳ Pending Approval
                           </button>
+                        ) : enrollmentStatus === 'REJECTED' ? (
+                          <button className="btn btn-secondary btn-lg" disabled>
+                            ✗ Request Rejected
+                          </button>
+                        ) : activeEnrollmentCount === 0 ? (
+                          // ── First course: instant direct enrollment ──
+                          <>
+                            <button
+                              className="btn btn-primary btn-lg"
+                              style={{ width: '100%', justifyContent: 'center' }}
+                              disabled={directEnrollLoading}
+                              onClick={async () => {
+                                setDirectEnrollLoading(true);
+                                setDirectEnrollError('');
+                                try {
+                                  const res = await fetch(`/api/courses/${course.id}/enroll`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                  });
+                                  const data = await res.json();
+                                  if (res.ok) {
+                                    setDirectEnrollDone(true);
+                                  } else {
+                                    setDirectEnrollError(data.error || 'Enrollment failed. Please try again.');
+                                  }
+                                } catch {
+                                  setDirectEnrollError('An error occurred. Please try again.');
+                                } finally {
+                                  setDirectEnrollLoading(false);
+                                }
+                              }}
+                            >
+                              {directEnrollLoading ? 'Enrolling...' : '🚀 Enroll Now'}
+                            </button>
+                            {directEnrollError && (
+                              <p style={{ color: '#ef4444', fontSize: '0.82rem', marginTop: '8px', textAlign: 'center' }}>
+                                {directEnrollError}
+                              </p>
+                            )}
+                          </>
                         ) : (
-                          <JoinRequestButton 
-                            type="COURSE_ENROLLMENT" 
-                            targetId={course.id} 
-                            label="Enroll Now" 
+                          // ── Subsequent courses: admin approval required ──
+                          <JoinRequestButton
+                            type="COURSE_ENROLLMENT"
+                            targetId={course.id}
+                            label="Request Enrollment"
                             className="btn btn-primary btn-lg"
                           />
                         )}

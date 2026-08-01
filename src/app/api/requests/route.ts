@@ -35,6 +35,7 @@ export async function POST(req: Request) {
         where: { userId: session.user.id },
       });
       if (student) {
+        // Prevent duplicate enrollment
         const enrollment = await prisma.enrollment.findUnique({
           where: {
             studentId_courseId: {
@@ -45,6 +46,18 @@ export async function POST(req: Request) {
         });
         if (enrollment) {
           return NextResponse.json({ error: 'You are already enrolled in this course.' }, { status: 400 });
+        }
+
+        // Enforce gating: requests are only for students who already have ≥1 active enrollments.
+        // Students with 0 enrollments must use the direct-enroll endpoint instead.
+        const activeCount = await prisma.enrollment.count({
+          where: { studentId: student.id },
+        });
+        if (activeCount === 0) {
+          return NextResponse.json(
+            { error: 'You have no active enrollments. Please use the direct enroll option.' },
+            { status: 400 }
+          );
         }
       }
     }
