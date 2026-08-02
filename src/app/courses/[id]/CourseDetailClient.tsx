@@ -422,8 +422,8 @@ export default function CourseDetailClient({
                               <Play size={18} /> Start Learning <ArrowRight size={16} className={styles.btnArrow} />
                             </Link>
                           ) : (
-                            <button className="btn btn-secondary btn-lg" disabled>
-                              Coming Soon
+                            <button className="btn btn-secondary btn-lg" disabled style={{ width: '100%', justifyContent: 'center', background: 'rgba(45, 212, 191, 0.2)', color: 'var(--accent-secondary)', border: '1px solid var(--accent-secondary)' }}>
+                              <CheckCircle size={18} style={{ marginRight: '8px' }} /> Enrolled (No lessons yet)
                             </button>
                           )
                         ) : enrollmentStatus === 'PENDING' ? (

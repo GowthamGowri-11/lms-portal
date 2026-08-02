@@ -255,14 +255,12 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
         {/* Course Selection View */}
         {!selectedCourseId && (
           <>
-            <FadeInUp>
-              <div className={styles.header}>
-                <div>
-                  <h1 className={styles.title}>Manage Course Content</h1>
-                  <p className={styles.subtitle}>Select a course to manage its topics and lessons.</p>
-                </div>
+            <div className={styles.header}>
+              <div>
+                <h1 className={styles.title}>Manage Course Content</h1>
+                <p className={styles.subtitle}>Select a course to manage its topics and lessons.</p>
               </div>
-            </FadeInUp>
+            </div>
 
             <FadeInUp delay={0.1}>
               <div className={styles.searchBar}>
@@ -308,7 +306,7 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
 
         {/* Course Detail View (Topics & Lessons) */}
         {selectedCourseId && selectedCourse && (
-          <FadeInUp>
+          <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
             <div className={styles.header} style={{ marginBottom: '2rem' }}>
               <div>
                 <button 
@@ -465,7 +463,7 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
                 ))}
               </div>
             )}
-          </FadeInUp>
+          </div>
         )}
 
         {/* Lesson Modal */}
