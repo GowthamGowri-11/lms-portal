@@ -17,9 +17,11 @@ import { Award, Users, CheckCircle, Globe } from 'lucide-react';
 export const revalidate = 3600; // Cache this page for 1 hour
 
 export default async function Home() {
-  const studentsCount = await prisma.student.count();
-  const coursesCount = await prisma.course.count();
-  const trainersCount = await prisma.trainer.count();
+  const [studentsCount, coursesCount, trainersCount] = await Promise.all([
+    prisma.student.count(),
+    prisma.course.count(),
+    prisma.trainer.count(),
+  ]);
 
   return (
     <>

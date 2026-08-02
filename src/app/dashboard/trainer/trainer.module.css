@@ -115,11 +115,11 @@
 
 .statCard {
   background: var(--bg-card); border: 1px solid var(--border-color);
-  border-radius: 16px; padding: 20px;
-  display: flex; flex-direction: column; gap: 8px;
+  border-radius: 14px; padding: 16px;
+  display: flex; flex-direction: column; gap: 6px;
 }
-.statIcon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-.statValue { font-size: 1.8rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
+.statIcon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.statValue { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
 .statLabel { font-size: 0.8rem; color: var(--text-secondary); font-weight: 500; }
 
 /* ===== SECTION ===== */

@@ -55,22 +55,26 @@
 }
 
 .collapseBtn {
-  min-width: 32px;
-  width: 32px;
-  height: 32px;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
   color: #6b7280;
-  transition: all 0.2s;
-  background: transparent;
-  border: none;
   cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.mobileCloseBtn {
+  display: none;
 }
 
 .collapseBtn:hover {
-  background: #f3f4f6;
+  background: #f9fafb;
   color: #111827;
 }
 
@@ -159,13 +163,84 @@
   background: #f9fafb;
 }
 
+/* Mobile Header Bar & Slide-Out Backdrop */
+.mobileTopBar {
+  display: none;
+}
+
+.backdrop {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
+  .mobileTopBar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0 1rem;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 90;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
-  .sidebar.open {
+  .hamburgerBtn {
+    background: transparent;
+    border: none;
+    color: #111827;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 95;
+  }
+
+  .sidebar {
+    top: 0;
+    z-index: 100 !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease !important;
+    width: 280px !important;
+  }
+
+  .sidebar.mobileOpen {
     transform: translateX(0);
+  }
+
+  .collapseBtn {
+    display: none;
+  }
+
+  .mobileCloseBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    margin-left: auto;
+  }
+
+  .mobileCloseBtn:hover {
+    background: #f3f4f6;
+    color: #111827;
   }
 }

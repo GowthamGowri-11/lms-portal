@@ -124,16 +124,16 @@
 .header {
   display: flex;
   align-items: flex-start;
-  gap: 1.4rem;
-  padding: 1.75rem 1.75rem 0;
+  gap: 1rem;
+  padding: 1rem 1rem 0;
 }
 
 /* ── 9. AVATAR ── */
 .avatarWrap {
   position: relative;
   flex-shrink: 0;
-  width: 80px;
-  height: 80px;
+  width: 48px;
+  height: 48px;
 }
 
 /* Soft radial glow — indigo only */
@@ -150,19 +150,19 @@
 
 .avatarImg,
 .avatarInitials {
-  width: 80px;
-  height: 80px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.35rem;
   font-weight: 900;
   color: white;
   position: relative;
   z-index: 1;
   transition: transform 0.3s;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
 }
 .avatarImg { object-fit: cover; }
 .card:hover .avatarImg,
@@ -223,7 +223,7 @@
 
 /* Bright white name */
 .name {
-  font-size: 1.18rem;
+  font-size: 0.95rem;
   font-weight: 900;
   color: #ffffff;
   line-height: 1.15;
@@ -241,7 +241,7 @@
 }
 
 .designation {
-  font-size: 0.74rem;
+  font-size: 0.65rem;
   font-weight: 600;
   color: rgba(165, 180, 252, 0.45);
   text-transform: uppercase;
@@ -278,8 +278,8 @@
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 1.4rem 1.75rem 0;
+  gap: 4px;
+  padding: 0.8rem 1rem 0;
 }
 
 .statCard {
@@ -310,7 +310,7 @@
 
 .statVal {
   font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 0.98rem;
+  font-size: 0.85rem;
   font-weight: 900;
   color: #fff;
   line-height: 1;
@@ -339,7 +339,7 @@
 
 /* ── 13. SECTIONS ── */
 .section {
-  padding: 1rem 1.75rem 0;
+  padding: 0.85rem 1rem 0;
 }
 
 /* Brighter section headings */
@@ -460,7 +460,7 @@
 
 /* ── 16. CTA — purple gradient, reduced brightness ── */
 .ctaWrap {
-  padding: 1.4rem 1.75rem 1.75rem;
+  padding: 1rem;
   margin-top: auto;
 }
 
@@ -514,44 +514,55 @@
 /* ===== MOBILE RESPONSIVE SIZING ===== */
 @media (max-width: 768px) {
   .header {
-    padding: 1.25rem 1.15rem 0;
-    gap: 1rem;
+    padding: 0.85rem 0.85rem 0;
+    gap: 0.75rem;
   }
   .avatarWrap,
   .avatarImg,
   .avatarInitials {
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
+    width: 48px;
+    height: 48px;
+    font-size: 1.1rem;
   }
   .name {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
+  }
+  .spec {
+    font-size: 0.7rem;
   }
   .statsGrid {
-    padding: 1rem 1.15rem 0;
-    gap: 6px;
+    padding: 0.65rem 0.85rem 0;
+    gap: 4px;
   }
   .statCard {
-    padding: 8px 4px 7px;
-    border-radius: 10px;
+    padding: 6px 2px 5px;
+    border-radius: 8px;
   }
   .statVal {
-    font-size: 0.88rem;
+    font-size: 0.8rem;
   }
   .statLbl {
-    font-size: 0.58rem;
+    font-size: 0.55rem;
   }
   .gradDivider {
-    margin: 1rem 1.15rem 0;
+    margin: 0.65rem 0.85rem 0;
   }
   .section {
-    padding: 0.85rem 1.15rem 0;
+    padding: 0.5rem 0.85rem 0;
+  }
+  .sectionLabel {
+    font-size: 0.65rem;
+    margin-bottom: 0.25rem;
+  }
+  .bio {
+    font-size: 0.78rem;
+    line-height: 1.35;
   }
   .ctaWrap {
-    padding: 1.15rem 1.15rem 1.25rem;
+    padding: 0.75rem 0.85rem 0.85rem;
   }
   .ctaBtn {
-    padding: 9px 16px;
-    font-size: 0.8rem;
+    padding: 7px 12px;
+    font-size: 0.78rem;
   }
 }

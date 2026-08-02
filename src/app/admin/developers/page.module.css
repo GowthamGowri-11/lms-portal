@@ -148,6 +148,37 @@
   padding-top: 1rem;
 }
 
+@media (max-width: 640px) {
+  .devsGrid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+  .devCard {
+    padding: 1rem;
+    border-radius: 14px;
+  }
+  .avatarContainer {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 0.65rem;
+  }
+  .devName {
+    font-size: 1.05rem;
+  }
+  .devRole {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .devBio {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    margin-bottom: 0.85rem;
+  }
+  .devLinks {
+    padding-top: 0.75rem;
+  }
+}
+
 .linkIcon {
   color: var(--text-tertiary);
   transition: color 0.2s;

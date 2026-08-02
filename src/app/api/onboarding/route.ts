@@ -12,10 +12,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized. Please log in first.' }, { status: 401 });
     }
 
-    const { phone, age, education, intendedRole } = await req.json();
+    const { phone, age, education, intendedRole, username } = await req.json();
 
     if (!phone || !age || !education || !intendedRole) {
       return NextResponse.json({ error: 'All fields (phone, age, education, intended role) are required.' }, { status: 400 });
+    }
+
+    if (username) {
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          name: { equals: username, mode: 'insensitive' },
+          NOT: { id: user.id },
+        },
+      });
+
+      if (existingUser) {
+        return NextResponse.json({ error: 'Username is already taken. Please choose a fresh, unique username.' }, { status: 400 });
+      }
     }
 
     const numericAge = parseInt(age, 10);
@@ -29,6 +42,7 @@ export async function POST(req: Request) {
     await prisma.user.update({
       where: { id: user.id },
       data: {
+        ...(username && { name: username }),
         phone,
         age: numericAge,
         education,

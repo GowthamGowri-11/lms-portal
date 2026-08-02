@@ -275,19 +275,19 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
               </div>
             </FadeInUp>
 
-            <StaggerContainer className={styles.modulesList} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+            <StaggerContainer className={styles.modulesList} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '0.75rem' }}>
               {filteredCourses.map((course) => (
                 <StaggerItem key={course.id}>
                   <div 
                     className={styles.moduleCard} 
-                    style={{ padding: '1.5rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '1rem', height: '100%' }}
+                    style={{ padding: '1rem 1.25rem', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
                     onClick={() => setSelectedCourseId(course.id)}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                       <CourseLogo logo={course.logo} title={course.title} />
                       <div>
-                        <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>{course.title}</h3>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+                        <h3 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>{course.title}</h3>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginTop: '2px' }}>
                           {course.modules.length} Topics &bull; {course.modules.reduce((acc, m) => acc + m.lessons.length, 0)} Lessons
                         </p>
                       </div>

@@ -26,8 +26,8 @@
 /* ── GRID: 2 columns desktop, 1 mobile ── */
 .trainersGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
 }
 
 @media (max-width: 900px) {

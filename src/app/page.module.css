@@ -43,16 +43,16 @@
 }
 
 @keyframes heroFadeIn {
-  from { opacity: 0.1; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0.1; }
+  to { opacity: 1; }
 }
 
 .heroTag,
-.heroTitle,
 .heroDescription,
 .heroActions,
 .heroStats {
-  animation: heroFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity;
+  animation: heroFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .heroTag { animation-delay: 0.02s; }

@@ -8,6 +8,26 @@ import styles from './page.module.css';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
+import { Metadata } from 'next';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const course = await prisma.course.findUnique({ where: { id } });
+  if (!course) return { title: 'Course Not Found – ATLYX' };
+
+  return {
+    title: `${course.title} – ATLYX`,
+    description: course.shortDescription || course.description || `Learn ${course.title} on ATLYX.`,
+    alternates: {
+      canonical: `https://lms-portal-ruby.vercel.app/courses/${id}`,
+    },
+  };
+}
+
 export default async function CourseDetailPage({
   params,
 }: {
@@ -84,13 +104,31 @@ export default async function CourseDetailPage({
     }
   }
 
+  const courseJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: course.title,
+    description: course.shortDescription || course.description,
+    provider: {
+      '@type': 'Organization',
+      name: 'ATLYX',
+      sameAs: 'https://lms-portal-ruby.vercel.app',
+    },
+  };
+
   return (
-    <CourseDetailClient
-      course={course}
-      trainer={trainer}
-      modules={modules}
-      enrollmentStatus={enrollmentStatus}
-      activeEnrollmentCount={activeEnrollmentCount}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }}
+      />
+      <CourseDetailClient
+        course={course}
+        trainer={trainer}
+        modules={modules}
+        enrollmentStatus={enrollmentStatus}
+        activeEnrollmentCount={activeEnrollmentCount}
+      />
+    </>
   );
 }

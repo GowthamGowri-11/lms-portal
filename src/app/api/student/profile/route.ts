@@ -37,6 +37,22 @@ export async function PATCH(req: Request) {
     const body = await req.json();
     const { name, avatar } = body;
 
+    if (name) {
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          name: { equals: name, mode: 'insensitive' },
+          NOT: { id: session.user.id },
+        },
+      });
+
+      if (existingUser) {
+        return NextResponse.json(
+          { error: 'Username already exists. Please enter a fresh, unique username.' },
+          { status: 400 }
+        );
+      }
+    }
+
     const student = await prisma.student.findUnique({ where: { userId: session.user.id } });
     if (!student) return NextResponse.json({ error: 'Student not found' }, { status: 404 });
 

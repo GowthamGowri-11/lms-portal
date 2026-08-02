@@ -29,8 +29,6 @@ export default function AdminDashboardClient({
     {
       label: 'Total Courses',
       value: courses.length,
-      change: '+12%',
-      positive: true,
       icon: <BookOpen size={24} />,
       color: '#6366f1',
       bg: 'rgba(99, 102, 241, 0.12)',
@@ -38,8 +36,6 @@ export default function AdminDashboardClient({
     {
       label: 'Total Trainers',
       value: trainers.length,
-      change: '+5%',
-      positive: true,
       icon: <Users size={24} />,
       color: '#3b82f6',
       bg: 'rgba(59, 130, 246, 0.12)',
@@ -47,8 +43,6 @@ export default function AdminDashboardClient({
     {
       label: 'Total Students',
       value: students.length,
-      change: '+18%',
-      positive: true,
       icon: <GraduationCap size={24} />,
       color: '#8b5cf6',
       bg: 'rgba(139, 92, 246, 0.12)',
@@ -56,8 +50,6 @@ export default function AdminDashboardClient({
     {
       label: 'Total Revenue',
       value: `₹${totalRevenue.toLocaleString()}`,
-      change: '+24%',
-      positive: true,
       icon: <DollarSign size={24} />,
       color: '#10b981',
       bg: 'rgba(16, 185, 129, 0.12)',
@@ -91,10 +83,6 @@ export default function AdminDashboardClient({
                 <div className={styles.statTop}>
                   <div className={styles.statIcon} style={{ background: stat.bg, color: stat.color }}>
                     {stat.icon}
-                  </div>
-                  <div className={`${styles.statChange} ${stat.positive ? styles.positive : styles.negative}`}>
-                    {stat.positive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-                    {stat.change}
                   </div>
                 </div>
                 <div className={styles.statValue}>{stat.value}</div>
@@ -200,8 +188,11 @@ export default function AdminDashboardClient({
               <div className={styles.quickList}>
                 {trainers.length === 0 && <p style={{ color: 'var(--text-secondary)' }}>No trainers found.</p>}
                 {trainers
-                  // We map to add a mock "studentsCount" for now to mimic the top trainers view
-                  .map(t => ({ ...t, studentsCount: (t.name.charCodeAt(0) * 47) % 500 + 50 }))
+                  .map(t => {
+                    const trainerCourses = courses.filter(c => c.trainerId === t.id);
+                    const studentsCount = trainerCourses.reduce((sum, c) => sum + (c.studentsEnrolled || 0), 0);
+                    return { ...t, studentsCount };
+                  })
                   .sort((a, b) => b.studentsCount - a.studentsCount)
                   .slice(0, 4)
                   .map((trainer, i) => (

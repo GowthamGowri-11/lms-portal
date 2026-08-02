@@ -208,6 +208,7 @@ export default function AuthModal() {
         {!(status === 'authenticated' && session?.user && !(session.user as any).isOnboarded && (session.user as any).role !== 'ADMIN') && (
           <button
             onClick={() => setIsOpen(false)}
+            aria-label="Close authentication modal"
             style={{
               position: 'absolute',
               top: '20px',
@@ -247,7 +248,7 @@ export default function AuthModal() {
             <GraduationCap size={28} color="#fff" />
           </div>
 
-          <h2 style={{ fontSize: '1.6rem', fontWeight: 700, margin: '0 0 6px', letterSpacing: '-0.01em', background: 'linear-gradient(135deg, #ffffff, #a5b4fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          <h2 id="auth-modal-title" style={{ fontSize: '1.6rem', fontWeight: 700, margin: '0 0 6px', letterSpacing: '-0.01em', background: 'linear-gradient(135deg, #ffffff, #a5b4fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             {mode === 'signin' ? 'Welcome Back' : 'Join ATLYX'}
           </h2>
           <p style={{ color: 'rgba(255, 255, 255, 0.65)', fontSize: '0.92rem', margin: 0, lineHeight: 1.5 }}>

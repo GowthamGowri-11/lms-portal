@@ -305,6 +305,9 @@ export default function CourseDetailClient({
                             <button
                               className={styles.moduleHeader}
                               onClick={() => toggleModule(mod.id)}
+                              aria-expanded={expandedModules.has(mod.id)}
+                              aria-controls={`module-content-${mod.id}`}
+                              aria-label={`Toggle ${mod.title} section`}
                             >
                               <div className={styles.moduleHeaderLeft}>
                                 {expandedModules.has(mod.id)
@@ -320,6 +323,7 @@ export default function CourseDetailClient({
                             <AnimatePresence>
                               {expandedModules.has(mod.id) && (
                                 <motion.div
+                                  id={`module-content-${mod.id}`}
                                   className={styles.lessonsContainer}
                                   initial={{ height: 0, opacity: 0 }}
                                   animate={{ height: 'auto', opacity: 1 }}

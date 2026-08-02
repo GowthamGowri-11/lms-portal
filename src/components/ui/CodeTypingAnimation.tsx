@@ -162,7 +162,7 @@ export default function CodeTypingAnimation() {
   };
 
   return (
-    <div style={{ perspective: '1000px', fontSize: '0.9rem' }}>
+    <div style={{ perspective: '1000px', fontSize: '0.9rem', minHeight: '285px' }}>
       {renderLines()}
       <style>{`
         .typing-cursor {
