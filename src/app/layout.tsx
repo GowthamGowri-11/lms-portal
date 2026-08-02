@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
-import GalaxyBackground from "@/components/animations/GalaxyBackground";
+import dynamic from 'next/dynamic';
+
+const GalaxyBackground = dynamic(
+  () => import('@/components/animations/GalaxyBackground')
+);
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import AuthModal from "@/components/auth/AuthModal";
 

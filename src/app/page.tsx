@@ -1,24 +1,18 @@
-import Link from 'next/link';
-import {
-  Award,
-  Users,
-  CheckCircle,
-  Globe,
-} from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Navbar from '@/components/ui/Navbar';
-import {
-  FadeInUp,
-  ScrollReveal,
-} from '@/components/animations/MotionWrappers';
-import CodeTypingAnimation from '@/components/ui/CodeTypingAnimation';
-import SuccessRoadmap from '@/components/ui/SuccessRoadmap';
-import TrendingBento from '@/components/ui/TrendingBento';
-import CallToAction from '@/components/ui/CallToAction';
-import Footer from '@/components/ui/Footer';
-import TiltCard from '@/components/animations/TiltCard';
 import HeroAuthButtons from '@/components/auth/HeroAuthButtons';
 import { prisma } from '@/lib/prisma';
 import styles from './page.module.css';
+
+const CodeTypingAnimation = dynamic(() => import('@/components/ui/CodeTypingAnimation'));
+const SuccessRoadmap = dynamic(() => import('@/components/ui/SuccessRoadmap'));
+const TrendingBento = dynamic(() => import('@/components/ui/TrendingBento'));
+const CallToAction = dynamic(() => import('@/components/ui/CallToAction'));
+const Footer = dynamic(() => import('@/components/ui/Footer'));
+const TiltCard = dynamic(() => import('@/components/animations/TiltCard'));
+const ScrollReveal = dynamic(() => import('@/components/animations/MotionWrappers').then(m => m.ScrollReveal));
+
+import { Award, Users, CheckCircle, Globe } from 'lucide-react';
 
 export const revalidate = 3600; // Cache this page for 1 hour
 

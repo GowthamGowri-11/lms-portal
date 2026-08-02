@@ -136,117 +136,109 @@ export default function GalaxyBackground() {
     };
 
     let lastTime = 0;
+    const targetInterval = 1000 / 30; // Cap background animation at ~30 FPS to reduce CPU/GPU load & main thread contention
+
     const render = (time: number) => {
       if (!lastTime) lastTime = time;
       const dt = time - lastTime;
-      lastTime = time;
-      
-      // Calculate timeScale based on 60fps (16.66ms per frame)
-      // Cap at 3 to prevent huge jumps when switching tabs
-      const timeScale = Math.min(dt / 16.66, 3);
 
-      // Very dark background
-      ctx.fillStyle = '#010205';
-      ctx.fillRect(0, 0, width, height);
+      if (dt >= targetInterval) {
+        lastTime = time - (dt % targetInterval);
+        const timeScale = Math.min(dt / 16.66, 3);
 
-      // Draw Nebulas (Milky way clouds)
-      nebulas.forEach(neb => {
-        neb.x += neb.dx * timeScale;
-        neb.y += neb.dy * timeScale;
-        
-        // bounce off rough edges
-        if (neb.x < -width || neb.x > width * 2) neb.dx *= -1;
-        if (neb.y < -height || neb.y > height * 2) neb.dy *= -1;
+        // Very dark background
+        ctx.fillStyle = '#010205';
+        ctx.fillRect(0, 0, width, height);
 
-        const grad = ctx.createRadialGradient(neb.x, neb.y, 0, neb.x, neb.y, neb.r);
-        grad.addColorStop(0, neb.color);
-        grad.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(neb.x, neb.y, neb.r, 0, Math.PI * 2);
-        ctx.fill();
-      });
+        // Draw Nebulas (Milky way clouds)
+        nebulas.forEach(neb => {
+          neb.x += neb.dx * timeScale;
+          neb.y += neb.dy * timeScale;
+          
+          if (neb.x < -width || neb.x > width * 2) neb.dx *= -1;
+          if (neb.y < -height || neb.y > height * 2) neb.dy *= -1;
 
-      // Draw Stars with Parallax
-      const cx = width / 2;
-      const cy = height / 2;
+          const grad = ctx.createRadialGradient(neb.x, neb.y, 0, neb.x, neb.y, neb.r);
+          grad.addColorStop(0, neb.color);
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(neb.x, neb.y, neb.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
 
-      stars.forEach(star => {
-        // Twinkle
-        star.alpha += star.speedAlpha * timeScale;
-        if (star.alpha <= 0.3 || star.alpha >= 1) star.speedAlpha *= -1; // keep baseline brightness high
-        
-        // Move towards viewer (z decreases)
-        star.z -= 1.25 * timeScale; // Faster majestic motion 
-        if (star.z <= 0) {
-          star.z = width;
-          star.x = Math.random() * width;
-          star.y = Math.random() * height;
-        }
+        // Draw Stars with Parallax
+        const cx = width / 2;
+        const cy = height / 2;
 
-        // Calculate 2D position based on depth
-        // This gives the feeling of flying through the galaxy slowly
-        const x = (star.x - cx) * (width / star.z) + cx;
-        const y = (star.y - cy) * (width / star.z) + cy;
-        const r = Math.max(0.1, star.radius * (width / star.z) * 0.5);
-
-        if (x >= 0 && x <= width && y >= 0 && y <= height) {
-          if (star.isBright && r > 0.8) {
-            // Draw real star structure (lens flare) for bright stars that are close enough
-            drawStarStructure(ctx, x, y, r, star.baseColor, star.alpha);
-          } else {
-            // Standard small round star
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2);
-            ctx.fillStyle = `${star.baseColor} ${Math.max(0, star.alpha)})`;
-            ctx.fill();
+        stars.forEach(star => {
+          star.alpha += star.speedAlpha * timeScale;
+          if (star.alpha <= 0.3 || star.alpha >= 1) star.speedAlpha *= -1;
+          
+          star.z -= 1.25 * timeScale; 
+          if (star.z <= 0) {
+            star.z = width;
+            star.x = Math.random() * width;
+            star.y = Math.random() * height;
           }
-        }
-      });
 
-      // Spawn comets occasionally
-      if (Math.random() < 0.005 && comets.length < 3) {
-        createComet();
-      }
+          const x = (star.x - cx) * (width / star.z) + cx;
+          const y = (star.y - cy) * (width / star.z) + cy;
+          const r = Math.max(0.1, star.radius * (width / star.z) * 0.5);
 
-      // Draw Comets
-      for (let i = comets.length - 1; i >= 0; i--) {
-        const c = comets[i];
-        c.x += c.speedX * timeScale;
-        c.y += c.speedY * timeScale;
-        
-        // Fade in and out
-        if (c.life > 0.5 && c.opacity < 1) c.opacity += 0.05 * timeScale;
-        if (c.life < 0.5) c.opacity -= 0.02 * timeScale;
-        c.life -= 0.005 * timeScale;
+          if (x >= 0 && x <= width && y >= 0 && y <= height) {
+            if (star.isBright && r > 0.8) {
+              drawStarStructure(ctx, x, y, r, star.baseColor, star.alpha);
+            } else {
+              ctx.beginPath();
+              ctx.arc(x, y, r, 0, Math.PI * 2);
+              ctx.fillStyle = `${star.baseColor} ${Math.max(0, star.alpha)})`;
+              ctx.fill();
+            }
+          }
+        });
 
-        if (c.opacity <= 0) {
-          comets.splice(i, 1);
-          continue;
+        // Spawn comets occasionally
+        if (Math.random() < 0.005 && comets.length < 3) {
+          createComet();
         }
 
-        // Draw comet tail (gradient)
-        const tailX = c.x - (c.speedX / Math.abs(c.speedX)) * c.length;
-        const tailY = c.y - (c.speedY / Math.abs(c.speedY)) * c.length;
+        // Draw Comets
+        for (let i = comets.length - 1; i >= 0; i--) {
+          const c = comets[i];
+          c.x += c.speedX * timeScale;
+          c.y += c.speedY * timeScale;
+          
+          if (c.life > 0.5 && c.opacity < 1) c.opacity += 0.05 * timeScale;
+          if (c.life < 0.5) c.opacity -= 0.02 * timeScale;
+          c.life -= 0.005 * timeScale;
 
-        const grad = ctx.createLinearGradient(c.x, c.y, tailX, tailY);
-        grad.addColorStop(0, `rgba(255, 255, 255, ${c.opacity})`);
-        grad.addColorStop(0.1, `rgba(150, 200, 255, ${c.opacity * 0.8})`);
-        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          if (c.opacity <= 0) {
+            comets.splice(i, 1);
+            continue;
+          }
 
-        ctx.beginPath();
-        ctx.moveTo(c.x, c.y);
-        ctx.lineTo(tailX, tailY);
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.stroke();
+          const tailX = c.x - (c.speedX / Math.abs(c.speedX)) * c.length;
+          const tailY = c.y - (c.speedY / Math.abs(c.speedY)) * c.length;
 
-        // Draw comet head
-        ctx.beginPath();
-        ctx.arc(c.x, c.y, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${c.opacity})`;
-        ctx.fill();
+          const grad = ctx.createLinearGradient(c.x, c.y, tailX, tailY);
+          grad.addColorStop(0, `rgba(255, 255, 255, ${c.opacity})`);
+          grad.addColorStop(0.1, `rgba(150, 200, 255, ${c.opacity * 0.8})`);
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+          ctx.beginPath();
+          ctx.moveTo(c.x, c.y);
+          ctx.lineTo(tailX, tailY);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 2;
+          ctx.lineCap = 'round';
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(c.x, c.y, 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${c.opacity})`;
+          ctx.fill();
+        }
       }
 
       animationFrameId = requestAnimationFrame(render);
