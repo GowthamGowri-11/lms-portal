@@ -74,13 +74,47 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
           });
         }
 
-        // Create enrollment for the specific course
+        // Create enrollment for the specific course (guard against duplicates)
         if (request.targetId) {
-          await tx.enrollment.create({
-            data: {
+          const existingEnrollment = await tx.enrollment.findUnique({
+            where: {
+              studentId_courseId: {
+                studentId: student.id,
+                courseId: request.targetId,
+              },
+            },
+          });
+
+          if (!existingEnrollment) {
+            await tx.enrollment.create({
+              data: {
+                studentId: student.id,
+                courseId: request.targetId,
+                paymentStatus: 'completed',
+              },
+            });
+          }
+
+          // Also initialise/update CourseProgress (mirrors the direct-enroll path)
+          const lessons = await prisma.lesson.findMany({
+            where: { module: { courseId: request.targetId } },
+          });
+
+          await tx.courseProgress.upsert({
+            where: {
+              studentId_courseId: {
+                studentId: student.id,
+                courseId: request.targetId,
+              },
+            },
+            update: { totalLessons: lessons.length },
+            create: {
               studentId: student.id,
               courseId: request.targetId,
-              paymentStatus: 'completed', // Or whatever logic you want here
+              completedLessons: 0,
+              totalLessons: lessons.length,
+              percentage: 0,
+              isCompleted: false,
             },
           });
         }

@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft, ChevronRight, CheckCircle, Play, Lock,
   BookOpen, Code, ChevronDown, X,
-  GraduationCap, Clock, HelpCircle,
+  GraduationCap, Clock, CircleHelp,
 } from 'lucide-react';
 import type { Course, Module, Lesson, Quiz, CodingProblem } from '@/generated/prisma/client';
 import { useLearn } from '@/app/learn/[courseId]/LearnContext';
@@ -204,9 +204,9 @@ export default function CourseSidebar({
                 {isQDone ? (
                   <CheckCircle size={14} className={styles.doneIcon} />
                 ) : isQActive ? (
-                  <HelpCircle size={13} className={styles.activeIcon} />
+                  <CircleHelp size={13} className={styles.activeIcon} />
                 ) : (
-                  <HelpCircle size={13} className={styles.pendingIcon} />
+                  <CircleHelp size={13} className={styles.pendingIcon} />
                 )}
               </div>
               <span className={styles.sidebarLessonTitle}>{lesQuiz.title || 'Lesson Quiz'}</span>
@@ -284,9 +284,9 @@ export default function CourseSidebar({
               {isDone ? (
                 <CheckCircle size={14} className={styles.doneIcon} />
               ) : isActive ? (
-                <HelpCircle size={13} className={styles.activeIcon} />
+                <CircleHelp size={13} className={styles.activeIcon} />
               ) : (
-                <HelpCircle size={13} className={styles.pendingIcon} />
+                <CircleHelp size={13} className={styles.pendingIcon} />
               )}
             </div>
             <span className={styles.sidebarLessonTitle}>{modQuiz.title || 'Module Quiz'}</span>
@@ -401,9 +401,9 @@ export default function CourseSidebar({
                             {isDone ? (
                               <CheckCircle size={14} className={styles.doneIcon} />
                             ) : isActive ? (
-                              <HelpCircle size={13} className={styles.activeIcon} />
+                              <CircleHelp size={13} className={styles.activeIcon} />
                             ) : (
-                              <HelpCircle size={13} className={styles.pendingIcon} />
+                              <CircleHelp size={13} className={styles.pendingIcon} />
                             )}
                           </div>
                           <span className={styles.sidebarLessonTitle}>{fq.title || 'Course Assessment'}</span>

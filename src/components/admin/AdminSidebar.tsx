@@ -17,7 +17,7 @@ import {
   Code,
   LogOut,
   PlayCircle,
-  HelpCircle,
+  CircleHelp,
   UserCircle,
   MessageSquare,
 } from 'lucide-react';
@@ -25,9 +25,10 @@ import styles from './AdminSidebar.module.css';
 
 const menuItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/users', label: 'Users Access', icon: Users },
   { href: '/admin/courses', label: 'Courses', icon: BookOpen },
   { href: '/admin/lessons', label: 'Lessons', icon: PlayCircle },
-  { href: '/admin/quizzes', label: 'Quizzes', icon: HelpCircle },
+  { href: '/admin/quizzes', label: 'Quizzes', icon: CircleHelp },
   { href: '/admin/problems', label: 'Coding Problems', icon: Code },
   { href: '/admin/trainers', label: 'Trainers', icon: Users },
   { href: '/admin/students', label: 'Students', icon: GraduationCap },

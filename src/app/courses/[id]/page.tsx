@@ -44,12 +44,20 @@ export default async function CourseDetailPage({
     },
   });
 
-  let enrollmentStatus = 'NONE'; // NONE, PENDING, ENROLLED
+  let enrollmentStatus = 'NONE'; // NONE, PENDING, ENROLLED, REJECTED
+  let activeEnrollmentCount = 0;
 
   if (session?.user?.id) {
-    // Check if enrolled
+    // Find or resolve student profile
     const student = await prisma.student.findUnique({ where: { userId: session.user.id } });
+
     if (student) {
+      // Count all active enrollments for this student
+      activeEnrollmentCount = await prisma.enrollment.count({
+        where: { studentId: student.id },
+      });
+
+      // Check if already enrolled in THIS course
       const enrollment = await prisma.enrollment.findUnique({
         where: {
           studentId_courseId: {
@@ -61,7 +69,7 @@ export default async function CourseDetailPage({
       if (enrollment) enrollmentStatus = 'ENROLLED';
     }
 
-    // If not enrolled, check request status
+    // If not enrolled, check request status for THIS course
     if (enrollmentStatus === 'NONE') {
       const request = await prisma.joinRequest.findFirst({
         where: {
@@ -71,11 +79,18 @@ export default async function CourseDetailPage({
         },
         orderBy: { createdAt: 'desc' },
       });
-      if (request?.status === 'PENDING') {
-        enrollmentStatus = 'PENDING';
-      }
+      if (request?.status === 'PENDING') enrollmentStatus = 'PENDING';
+      else if (request?.status === 'REJECTED') enrollmentStatus = 'REJECTED';
     }
   }
 
-  return <CourseDetailClient course={course} trainer={trainer} modules={modules} enrollmentStatus={enrollmentStatus} />;
+  return (
+    <CourseDetailClient
+      course={course}
+      trainer={trainer}
+      modules={modules}
+      enrollmentStatus={enrollmentStatus}
+      activeEnrollmentCount={activeEnrollmentCount}
+    />
+  );
 }
