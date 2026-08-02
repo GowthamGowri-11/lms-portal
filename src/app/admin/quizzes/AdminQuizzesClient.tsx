@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Plus, Edit3, Trash2, X, HelpCircle, ChevronDown,
+  Plus, Edit3, Trash2, X, CircleHelp, ChevronDown,
   ChevronRight, Search, PlusCircle,
 } from 'lucide-react';
 import { FadeInUp, PageTransition } from '@/components/animations/MotionWrappers';
@@ -218,7 +218,7 @@ export default function AdminQuizzesClient({
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
                     {expanded.has(quiz.id) ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                     <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(67,56,202,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)' }}>
-                      <HelpCircle size={18} />
+                      <CircleHelp size={18} />
                     </div>
                     <div>
                       <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{quiz.title}</div>

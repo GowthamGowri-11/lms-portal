@@ -86,8 +86,9 @@ export default function AuthModal() {
           localStorage.removeItem('atlyx_pending_onboarding');
         }
       } else if (!user.isOnboarded && user.role !== 'ADMIN' && !pathname?.startsWith('/admin')) {
-        // If user logged in without onboarding data, prompt only when explicitly required
+        // Force the user to complete their profile
         setMode('signup');
+        setIsOpen(true);
       }
     }
   }, [session, status, pathname, router, update]);
@@ -203,30 +204,32 @@ export default function AuthModal() {
           pointerEvents: 'none',
         }} />
 
-        {/* Close Button */}
-        <button
-          onClick={() => setIsOpen(false)}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: 'rgba(255, 255, 255, 0.08)',
-            border: 'none',
-            color: 'rgba(255, 255, 255, 0.7)',
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-          }}
-          onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)')}
-          onMouseOut={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)')}
-        >
-          <X size={18} />
-        </button>
+        {/* Close Button - hide if user is logged in but forced to onboard */}
+        {!(status === 'authenticated' && session?.user && !(session.user as any).isOnboarded && (session.user as any).role !== 'ADMIN') && (
+          <button
+            onClick={() => setIsOpen(false)}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: 'none',
+              color: 'rgba(255, 255, 255, 0.7)',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)')}
+            onMouseOut={(e) => (e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)')}
+          >
+            <X size={18} />
+          </button>
+        )}
 
         {/* Header & Logo */}
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>

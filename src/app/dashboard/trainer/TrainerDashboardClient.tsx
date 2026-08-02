@@ -7,7 +7,7 @@ import {
   BookOpen, Users, BarChart3, Settings, LogOut,
   ChevronRight, Edit2, Save, X, Eye, EyeOff,
   Layers, FileText, Clock, CheckCircle,
-  HelpCircle, Plus, Trash2, Edit3, ChevronDown, RotateCcw, Check, XCircle as XCircleIcon, GraduationCap
+  CircleHelp, Plus, Trash2, Edit3, ChevronDown, RotateCcw, Check, XCircle as XCircleIcon, GraduationCap
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import styles from './trainer.module.css';
@@ -60,7 +60,7 @@ const tabs = [
   { id: 'overview', label: 'Overview', icon: BarChart3 },
   { id: 'courses', label: 'My Courses', icon: BookOpen },
   { id: 'editor', label: 'Course Editor', icon: Edit2 },
-  { id: 'quizzes', label: 'Set Course Quizzes', icon: HelpCircle },
+  { id: 'quizzes', label: 'Set Course Quizzes', icon: CircleHelp },
   { id: 'retakes', label: 'Retake Requests', icon: RotateCcw },
 ];
 
@@ -745,7 +745,7 @@ export default function TrainerDashboardClient({
                           display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s',
                         }}
                       >
-                        <HelpCircle size={16} />
+                        <CircleHelp size={16} />
                         {c.title} ({(c as any).quizzes?.length || 0})
                       </button>
                     ))}
@@ -773,7 +773,7 @@ export default function TrainerDashboardClient({
 
                         {courseQuizzes.length === 0 ? (
                           <div style={{ textAlign: 'center', padding: '3rem 1rem', background: 'var(--bg-secondary)', borderRadius: '12px', color: 'var(--text-secondary)' }}>
-                            <HelpCircle size={40} style={{ margin: '0 auto 10px', opacity: 0.5 }} />
+                            <CircleHelp size={40} style={{ margin: '0 auto 10px', opacity: 0.5 }} />
                             <p style={{ fontWeight: 600 }}>No quizzes added to this course yet.</p>
                             <p style={{ fontSize: '0.8rem', marginTop: '4px' }}>Click "Add Quiz Test" to create questions and set lesson placement.</p>
                           </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { BookOpen, Users, GraduationCap, DollarSign, Activity, ArrowUpRight, ArrowDownRight, HelpCircle, Bell, User } from 'lucide-react';
+import { BookOpen, Users, GraduationCap, DollarSign, Activity, ArrowUpRight, ArrowDownRight, CircleHelp, Bell, User } from 'lucide-react';
 import { FadeInUp, StaggerContainer, StaggerItem, PageTransition } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
 import { CourseWithArrays, formatDate } from '@/lib/utils';
