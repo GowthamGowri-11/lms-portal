@@ -23,7 +23,7 @@
     "framer-motion": "^12.40.0",
     "lottie-react": "^2.4.1",
     "lucide-react": "^1.17.0",
-    "next": "16.2.7",
+    "next": "^16.3.0",
     "next-auth": "^4.24.15",
     "pg": "^8.22.0",
     "prisma": "^7.8.0",
@@ -31,6 +31,9 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-markdown": "^10.1.0"
+  },
+  "overrides": {
+    "dompurify": "^3.2.4"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
