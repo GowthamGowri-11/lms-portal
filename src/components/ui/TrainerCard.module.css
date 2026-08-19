@@ -1,91 +1,113 @@
 /* ===================================================================
-   PREMIUM TRAINER CARD — Purple/Blue Design System
-   All colours stay within the indigo-violet-blue family.
-   Layout, spacing, and animations are untouched.
+   PREMIUM TRAINER CARD — ATLYX Dark Theme Design System
+   Matches high-end SaaS/LMS profile card aesthetic.
+   Scope: Trainer Card component ONLY.
    =================================================================== */
 
-/* ── 1. CARD SHELL ─────────────────────────────────────────────── */
+/* ── 1. CARD CONTAINER ── */
 .card {
   position: relative;
-  background: linear-gradient(160deg, #0d0d1f 0%, #0e0e1a 60%, #0a0a18 100%);
-  border: 1px solid rgba(99, 102, 241, 0.14);
+  background: linear-gradient(165deg, #0b0d1a 0%, #0e1126 50%, #070814 100%);
+  border: 1px solid rgba(99, 102, 241, 0.18);
   border-radius: 24px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100%;
-  transition: border-color 0.32s, box-shadow 0.32s;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 
+    0 12px 32px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(99, 102, 241, 0.05),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
 }
 
 .card:hover {
-  border-color: rgba(99, 102, 241, 0.35);
+  border-color: rgba(99, 102, 241, 0.45);
   box-shadow:
-    0 28px 56px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(99, 102, 241, 0.2),
-    0 0 28px rgba(99, 102, 241, 0.07) inset;
+    0 20px 40px rgba(0, 0, 0, 0.55),
+    0 0 30px rgba(99, 102, 241, 0.18),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
 }
 
-/* ── 2. MESH BG — deep navy / dark-purple tones only ── */
+/* ── 2. MESH & BACKGROUND LIGHTING ── */
 .meshBg {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 18% 0%,   rgba(79, 70, 229, 0.09) 0%, transparent 55%),
-    radial-gradient(ellipse at 82% 100%, rgba(56, 189, 248, 0.04) 0%, transparent 55%);
+    radial-gradient(ellipse at 20% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(56, 189, 248, 0.08) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* ── 3. GRID TEXTURE — 3-4% opacity ── */
 .gridPattern {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(99, 102, 241, 0.032) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.032) 1px, transparent 1px);
-  background-size: 32px 32px;
+    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
   pointer-events: none;
   z-index: 0;
 }
 
-/* ── 4. TOP STRIPE — driven by inline gradient from TSX ── */
-.topStripe {
-  height: 3px;
-  width: 100%;
-  opacity: 0.85;
-  flex-shrink: 0;
-  position: relative;
+.innerHighlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  pointer-events: none;
   z-index: 1;
 }
 
-/* ── 5. FEATURED BADGE — purple glass ── */
-.featuredBadge {
+/* ── 3. TOP STRIPE ── */
+.topStripe {
+  height: 3px;
+  width: 100%;
+  opacity: 0.9;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── 4. BADGES & ADMIN ACTIONS ── */
+.topBadgesRow {
   position: absolute;
   top: 14px;
+  left: 14px;
   right: 14px;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(99, 102, 241, 0.28);
-  background: rgba(79, 70, 229, 0.14);
-  backdrop-filter: blur(8px);
-  font-size: 0.67rem;
-  font-weight: 700;
-  color: rgba(165, 180, 252, 0.9);
-  letter-spacing: 0.03em;
+  justify-content: space-between;
+  pointer-events: none;
   z-index: 10;
 }
 
-/* ── 6. ADMIN ACTIONS ── */
+.featuredBadge {
+  pointer-events: auto;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  background: rgba(79, 70, 229, 0.18);
+  backdrop-filter: blur(12px);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #c7d2fe;
+  letter-spacing: 0.03em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
 .adminActions {
-  position: absolute;
-  top: 14px;
-  right: 14px;
+  pointer-events: auto;
   display: flex;
   gap: 6px;
-  z-index: 20;
 }
 
 .adminBtn {
@@ -95,23 +117,25 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  color: rgba(255, 255, 255, 0.42);
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
   transition: all 0.2s;
+  cursor: pointer;
 }
 .adminBtn:hover {
-  background: rgba(99, 102, 241, 0.14);
-  border-color: rgba(99, 102, 241, 0.3);
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.4);
   color: #a5b4fc;
 }
 .adminDanger:hover {
-  background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.22);
-  color: #ef4444;
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #f87171;
 }
 
-/* ── 7. INNER WRAPPER ── */
+/* ── 5. INNER CONTENT ── */
 .inner {
   position: relative;
   z-index: 1;
@@ -120,99 +144,94 @@
   flex: 1;
 }
 
-/* ── 8. HEADER ── */
+/* ── 6. HEADER & AVATAR ── */
 .header {
   display: flex;
-  align-items: flex-start;
-  gap: 1.4rem;
+  align-items: center;
+  gap: 1.25rem;
   padding: 1.75rem 1.75rem 0;
 }
 
-/* ── 9. AVATAR ── */
 .avatarWrap {
   position: relative;
   flex-shrink: 0;
-  width: 80px;
-  height: 80px;
+  width: 76px;
+  height: 76px;
 }
 
-/* Soft radial glow — indigo only */
 .avatarGlow {
   position: absolute;
-  inset: -14px;
+  inset: -12px;
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
   opacity: 0.5;
   transition: opacity 0.32s;
 }
-.card:hover .avatarGlow { opacity: 0.85; }
+.card:hover .avatarGlow {
+  opacity: 0.9;
+}
 
 .avatarImg,
 .avatarInitials {
-  width: 80px;
-  height: 80px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
-  font-weight: 900;
+  font-size: 1.85rem;
+  font-weight: 800;
   color: white;
   position: relative;
   z-index: 1;
-  transition: transform 0.3s;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
 }
-.avatarImg { object-fit: cover; }
-.card:hover .avatarImg,
-.card:hover .avatarInitials { transform: scale(1.06); }
-
-/* Verified dot — pure indigo */
-.avatarWrap::after {
-  content: '✓';
-  position: absolute;
-  bottom: 1px;
-  right: 1px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #4f46e5, #818cf8);
-  border: 2px solid #0d0d1f;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.6rem;
-  font-weight: 900;
-  color: white;
-  z-index: 3;
-  line-height: 16px;
-  text-align: center;
+.avatarImg {
+  object-fit: cover;
 }
 
-/* Ring — purple-blue, no pink */
 .avatarRing {
   position: absolute;
   inset: -3px;
   border-radius: 50%;
-  border: 1.5px solid rgba(99, 102, 241, 0.45);
+  border: 2px solid rgba(99, 102, 241, 0.5);
   z-index: 2;
-  opacity: 0.55;
-  transition: opacity 0.32s, border-color 0.32s;
+  opacity: 0.75;
+  transition: opacity 0.3s, border-color 0.3s;
 }
 .card:hover .avatarRing {
   opacity: 1;
-  border-color: rgba(99, 102, 241, 0.85);
+  border-color: rgba(99, 102, 241, 0.9);
 }
 
-/* ── 10. NAME BLOCK ── */
+.verifiedCheckOverlay {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  border: 2.5px solid #0b0d1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #ffffff;
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* ── 7. NAME BLOCK ── */
 .nameBlock {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding-top: 6px;
+  gap: 3px;
 }
 
 .nameRow {
@@ -221,99 +240,109 @@
   gap: 6px;
 }
 
-/* Bright white name */
 .name {
-  font-size: 1.18rem;
-  font-weight: 900;
+  font-size: 1.25rem;
+  font-weight: 800;
   color: #ffffff;
-  line-height: 1.15;
+  line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   letter-spacing: -0.01em;
 }
 
-/* Verified badge — indigo */
 .verifiedIcon {
-  color: #818cf8;
+  color: #60a5fa;
   flex-shrink: 0;
-  filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.55));
+  filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.6));
 }
 
 .designation {
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: rgba(165, 180, 252, 0.45);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #818cf8;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Trust badges — purple glass */
-.trustRow {
+/* Metadata row */
+.metaRow {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 4px;
+  gap: 6px;
+  margin-top: 5px;
 }
 
-.trustBadge {
+.metaItem {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 2px 8px;
-  background: rgba(79, 70, 229, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.18);
-  border-radius: 6px;
-  font-size: 0.62rem;
+  gap: 4px;
+  font-size: 0.68rem;
   font-weight: 600;
-  color: rgba(165, 180, 252, 0.8);
-  letter-spacing: 0.03em;
-  white-space: nowrap;
+  color: #cbd5e1;
 }
 
-/* ── 11. STAT CARDS — same dark glass, purple border ── */
+.metaIcon {
+  flex-shrink: 0;
+}
+
+.metaDot {
+  color: rgba(148, 163, 184, 0.4);
+  font-size: 0.65rem;
+}
+
+/* ── 8. COMPACT STAT TILES (4 GRID) ── */
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  padding: 1.4rem 1.75rem 0;
+  padding: 1.25rem 1.75rem 0;
 }
 
 .statCard {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 10px 6px 9px;
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(99, 102, 241, 0.1);
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 6px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 14px;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
   cursor: default;
-  transition: background 0.22s, border-color 0.22s, transform 0.22s, box-shadow 0.22s;
-}
-.statCard:hover {
-  background: rgba(79, 70, 229, 0.1);
-  border-color: rgba(99, 102, 241, 0.26);
-  transform: translateY(-3px);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.statIcon {
+.card:hover .statCard {
+  border-color: rgba(99, 102, 241, 0.16);
+}
+
+.statCard:hover {
+  background: rgba(79, 70, 229, 0.12) !important;
+  border-color: rgba(99, 102, 241, 0.35) !important;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.15);
+}
+
+.statIconContainer {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  margin-bottom: 2px;
-  filter: drop-shadow(0 0 4px currentColor);
+  justify-content: center;
+  border: 1px solid transparent;
 }
 
 .statVal {
-  font-family: var(--font-heading, 'Outfit', sans-serif);
-  font-size: 0.98rem;
-  font-weight: 900;
-  color: #fff;
-  line-height: 1;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #f8fafc;
+  line-height: 1.1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -322,49 +351,66 @@
 }
 
 .statLbl {
-  font-size: 0.59rem;
+  font-size: 0.58rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: rgba(165, 180, 252, 0.32);
+  letter-spacing: 0.06em;
+  color: rgba(148, 163, 184, 0.75);
   text-align: center;
 }
 
-/* ── 12. GRADIENT DIVIDER — indigo/blue only ── */
+/* ── 9. SUBTLE DIVIDER ── */
 .gradDivider {
   height: 1px;
   margin: 1.25rem 1.75rem 0;
-  /* background is injected inline from TSX using the trainer's palette */
 }
 
-/* ── 13. SECTIONS ── */
+/* ── 10. SECTIONS ── */
 .section {
-  padding: 1rem 1.75rem 0;
+  padding: 1.1rem 1.75rem 0;
 }
 
-/* Brighter section headings */
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 0.5rem;
+}
+
+.sectionIconBadge {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sectionIcon {
+  color: #818cf8;
+}
+
 .sectionLabel {
-  display: block;
-  font-size: 0.63rem;
+  font-size: 0.65rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: rgba(165, 180, 252, 0.5);
-  margin-bottom: 0.55rem;
+  letter-spacing: 0.1em;
+  color: rgba(148, 163, 184, 0.8);
 }
 
-/* Soft grey bio text */
 .bio {
-  font-size: 0.83rem;
-  color: rgba(203, 213, 225, 0.5);
-  line-height: 1.72;
+  font-size: 0.84rem;
+  color: rgba(203, 213, 225, 0.8);
+  line-height: 1.6;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* ── 14. SKILL CHIPS — purple glass ── */
+/* ── 11. SKILL CHIPS ── */
 .skillChips {
   display: flex;
   flex-wrap: wrap;
@@ -375,32 +421,26 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 12px 5px 9px;
-  background: rgba(79, 70, 229, 0.1);
-  border: 1px solid rgba(99, 102, 241, 0.18);
+  padding: 4px 10px;
+  background: rgba(79, 70, 229, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.22);
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: rgba(165, 180, 252, 0.9);
-  letter-spacing: 0.02em;
-  cursor: default;
-  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  color: #c7d2fe;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
 }
 .skillChip:hover {
-  background: rgba(79, 70, 229, 0.2);
-  border-color: rgba(99, 102, 241, 0.38);
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.18);
-  transform: translateY(-1px);
+  background: rgba(79, 70, 229, 0.25);
+  border-color: rgba(99, 102, 241, 0.45);
 }
 
 .skillIcon {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   line-height: 1;
-  display: flex;
-  align-items: center;
 }
 
-/* ── 15. COURSE CHIPS — dark glass, equal height ── */
+/* ── 12. COURSE CHIPS ── */
 .courseChips {
   display: flex;
   flex-wrap: wrap;
@@ -411,35 +451,34 @@
 .courseChip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   padding: 5px 12px;
   height: 28px;
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(99, 102, 241, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(99, 102, 241, 0.15);
   border-radius: 999px;
   font-size: 0.72rem;
-  font-weight: 500;
-  color: rgba(203, 213, 225, 0.5);
-  max-width: 200px;
+  font-weight: 600;
+  color: rgba(226, 232, 240, 0.85);
+  max-width: 220px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 .courseChip:hover {
-  background: rgba(79, 70, 229, 0.12);
-  border-color: rgba(99, 102, 241, 0.25);
-  color: rgba(165, 180, 252, 0.9);
-  transform: translateY(-1px);
+  background: rgba(79, 70, 229, 0.16);
+  border-color: rgba(99, 102, 241, 0.35);
+  color: #ffffff;
 }
 
 .moreChip {
   display: inline-flex;
   align-items: center;
   height: 28px;
-  padding: 0 12px;
-  background: rgba(79, 70, 229, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.22);
+  padding: 0 10px;
+  background: rgba(79, 70, 229, 0.16);
+  border: 1px solid rgba(99, 102, 241, 0.3);
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 700;
@@ -450,17 +489,18 @@
   display: inline-flex;
   align-items: center;
   height: 28px;
-  padding: 0 12px;
+  padding: 0 14px;
   background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed rgba(99, 102, 241, 0.12);
+  border: 1px dashed rgba(99, 102, 241, 0.22);
   border-radius: 999px;
   font-size: 0.72rem;
-  color: rgba(165, 180, 252, 0.28);
+  font-weight: 600;
+  color: rgba(148, 163, 184, 0.6);
 }
 
-/* ── 16. CTA — purple gradient, reduced brightness ── */
+/* ── 13. EXPLORE COURSES FULL-WIDTH CTA ── */
 .ctaWrap {
-  padding: 1.4rem 1.75rem 1.75rem;
+  padding: 1.5rem 1.75rem 1.75rem;
   margin-top: auto;
 }
 
@@ -471,87 +511,112 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 11px 20px;
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.18), rgba(67, 56, 202, 0.12));
-  border: 1px solid rgba(99, 102, 241, 0.28);
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(99, 102, 241, 0.2));
+  border: 1px solid rgba(99, 102, 241, 0.38);
   border-radius: 14px;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: #c7d2fe;
-  overflow: hidden;
-  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s, color 0.3s;
-}
-.ctaBtn:hover {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(67, 56, 202, 0.22));
-  border-color: rgba(99, 102, 241, 0.5);
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.2), 0 4px 16px rgba(0, 0, 0, 0.28);
   color: #e0e7ff;
+  overflow: hidden;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.15);
+  text-decoration: none;
+}
+
+.ctaBtn:hover {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.45), rgba(99, 102, 241, 0.35));
+  border-color: rgba(99, 102, 241, 0.65);
+  box-shadow: 0 0 28px rgba(99, 102, 241, 0.3), 0 6px 20px rgba(0, 0, 0, 0.35);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.ctaIconLeft {
+  color: #818cf8;
+  flex-shrink: 0;
+}
+
+.ctaText {
+  letter-spacing: 0.01em;
 }
 
 .ctaArrow {
   display: flex;
   align-items: center;
-  transition: transform 0.26s;
+  color: #a5b4fc;
 }
-.ctaBtn:hover .ctaArrow { transform: translateX(4px); }
 
-/* Shimmer sweep — stays within the button */
 .ctaShimmer {
   position: absolute;
   top: 0;
   left: -100%;
-  width: 55%;
+  width: 50%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.055), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   transform: skewX(-20deg);
   pointer-events: none;
 }
 .ctaBtn:hover .ctaShimmer {
   left: 160%;
-  transition: left 0.52s ease;
+  transition: left 0.6s ease;
 }
 
-/* ===== MOBILE RESPONSIVE SIZING ===== */
+/* ── 14. MOBILE & TABLET RESPONSIVE ── */
 @media (max-width: 768px) {
   .header {
-    padding: 1.25rem 1.15rem 0;
+    padding: 1.25rem 1.25rem 0;
     gap: 1rem;
   }
   .avatarWrap,
   .avatarImg,
   .avatarInitials {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     font-size: 1.5rem;
   }
+  .verifiedCheckOverlay {
+    width: 19px;
+    height: 19px;
+    font-size: 0.55rem;
+  }
   .name {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
+  }
+  .designation {
+    font-size: 0.68rem;
+  }
+  .metaRow {
+    gap: 4px;
+    font-size: 0.63rem;
   }
   .statsGrid {
-    padding: 1rem 1.15rem 0;
-    gap: 6px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 1rem 1.25rem 0;
   }
   .statCard {
-    padding: 8px 4px 7px;
-    border-radius: 10px;
+    padding: 8px 6px;
+    border-radius: 12px;
   }
   .statVal {
-    font-size: 0.88rem;
+    font-size: 0.95rem;
   }
   .statLbl {
-    font-size: 0.58rem;
+    font-size: 0.56rem;
   }
   .gradDivider {
-    margin: 1rem 1.15rem 0;
+    margin: 1rem 1.25rem 0;
   }
   .section {
-    padding: 0.85rem 1.15rem 0;
+    padding: 0.9rem 1.25rem 0;
   }
   .ctaWrap {
-    padding: 1.15rem 1.15rem 1.25rem;
+    padding: 1.25rem 1.25rem 1.25rem;
   }
   .ctaBtn {
-    padding: 9px 16px;
-    font-size: 0.8rem;
+    padding: 10px 16px;
+    font-size: 0.82rem;
   }
 }
+
