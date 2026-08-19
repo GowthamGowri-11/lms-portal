@@ -59,6 +59,7 @@ type Trainer = {
 const tabs = [
   { id: 'overview', label: 'Overview', icon: BarChart3 },
   { id: 'courses', label: 'My Courses', icon: BookOpen },
+  { id: 'students', label: 'Enrolled Students', icon: Users },
   { id: 'editor', label: 'Course Editor', icon: Edit2 },
   { id: 'quizzes', label: 'Set Course Quizzes', icon: CircleHelp },
   { id: 'retakes', label: 'Retake Requests', icon: RotateCcw },
@@ -476,6 +477,75 @@ export default function TrainerDashboardClient({
                     </button>
                   </motion.div>
                 ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* ENROLLED STUDENTS */}
+          {activeTab === 'students' && (
+            <motion.div key="students" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
+              <div className={styles.pageHeader}>
+                <h1 className={styles.pageTitle}>Enrolled Students</h1>
+                <p className={styles.pageSubtitle}>Students enrolled in your assigned courses</p>
+              </div>
+
+              <div className={styles.courseListFull}>
+                {courses.map((c) => (
+                  <div key={c.id} className={styles.section} style={{ marginBottom: '2rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
+                      <BookOpen size={20} style={{ color: 'var(--accent-primary)' }} />
+                      <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+                        {c.title}
+                      </h2>
+                      <span className={styles.badge} style={{ background: 'rgba(99,102,241,0.15)', color: '#818cf8' }}>
+                        {c.enrollments ? c.enrollments.length : 0} Enrolled
+                      </span>
+                    </div>
+
+                    {c.enrollments && c.enrollments.length > 0 ? (
+                      <div className={styles.courseGrid}>
+                        {c.enrollments.map((e: any) => (
+                          <div key={e.id || e.studentId} className={styles.courseCard} style={{ padding: '1.25rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '0.75rem' }}>
+                              <div className={styles.profileAvatar} style={{ width: '42px', height: '42px', fontSize: '1.1rem' }}>
+                                {e.student?.avatar ? (
+                                  <img src={e.student.avatar} alt={e.student?.name || 'Student'} />
+                                ) : (
+                                  <span>{(e.student?.name || 'S').charAt(0).toUpperCase()}</span>
+                                )}
+                              </div>
+                              <div>
+                                <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                                  {e.student?.name || 'Student'}
+                                </div>
+                                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                                  {e.student?.email || ''}
+                                </div>
+                              </div>
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem' }}>
+                              <span>Progress: {e.progress || 0}%</span>
+                              <span>Enrolled: {e.enrolledAt ? new Date(e.enrolledAt).toLocaleDateString() : 'Active'}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className={styles.emptyState} style={{ padding: '1.5rem', textAlign: 'center' }}>
+                        <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                          No students enrolled in this course yet.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {courses.length === 0 && (
+                  <div className={styles.emptyState}>
+                    <Users size={40} />
+                    <p>No courses assigned to you yet.</p>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
