@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
-import dynamic from 'next/dynamic';
-
-const GalaxyBackground = dynamic(
-  () => import('@/components/animations/GalaxyBackground')
-);
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import AuthModal from "@/components/auth/AuthModal";
+import ATLYXPageLoader from "@/components/ui/ATLYXPageLoader";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -36,13 +33,13 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <AuthProvider>
-          <GalaxyBackground />
           <AuthModal />
+          <Suspense fallback={null}>
+            <ATLYXPageLoader />
+          </Suspense>
           {children}
         </AuthProvider>
       </body>
     </html>
   );
 }
-
-

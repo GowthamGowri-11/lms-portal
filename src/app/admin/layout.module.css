@@ -1,12 +1,12 @@
 .adminLayout {
-  /* High Quality Light Theme Variables */
-  --bg-primary: #f8fafc;
+  /* Master Premium Light Theme Variables */
+  --bg-primary: #fafbfc;
   --bg-secondary: #ffffff;
   --bg-tertiary: #f1f5f9;
   --bg-card: #ffffff;
   --bg-card-hover: #f8fafc;
   --bg-glass: #ffffff;
-  --border-color: #e2e8f0;
+  --border-color: #eef2f6;
   --glass-border: #e2e8f0;
   --text-primary: #0f172a;
   --text-secondary: #475569;
@@ -24,16 +24,23 @@
 
 .adminMain {
   flex: 1;
-  margin-left: 280px;
-  padding: 2rem;
-  background-color: #f9fafb;
+  margin-left: 270px;
+  padding: 2.25rem 2.5rem;
+  background-color: #f8fafc;
   height: 100vh;
   overflow-y: auto;
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 1024px) {
+  .adminMain {
+    padding: 1.5rem;
+  }
 }
 
 @media (max-width: 768px) {
   .adminMain {
     margin-left: 0;
+    padding: 1.25rem;
   }
 }

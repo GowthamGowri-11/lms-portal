@@ -3,17 +3,18 @@
   top: 0;
   left: 0;
   bottom: 0;
-  width: 280px;
+  width: 270px;
   background: #ffffff;
-  border-right: 1px solid #e5e7eb;
+  border-right: 1px solid #eef2f6;
   display: flex;
   flex-direction: column;
   z-index: 50;
   overflow: hidden;
+  box-shadow: 1px 0 10px rgba(0, 0, 0, 0.02);
 }
 
 .sidebar.collapsed {
-  width: 80px;
+  width: 76px;
 }
 
 /* Header */
@@ -21,66 +22,70 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 16px;
-  border-bottom: 1px solid #e5e7eb;
-  min-height: 72px;
+  padding: 16px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  min-height: 68px;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   overflow: hidden;
   white-space: nowrap;
+  text-decoration: none;
 }
 
-.logoIcon {
-  min-width: 40px;
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: #111827;
+.logoTextWrap {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
+  flex-direction: column;
+  line-height: 1.15;
 }
 
-.logoText {
-  font-family: var(--font-heading);
-  font-size: 1.25rem;
+.brandTitle {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.15rem;
   font-weight: 800;
-  color: #111827;
-  overflow: hidden;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.adminBadge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #2563eb;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .collapseBtn {
-  min-width: 32px;
-  width: 32px;
-  height: 32px;
+  min-width: 28px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  color: #6b7280;
+  color: #64748b;
   transition: all 0.2s;
-  background: transparent;
-  border: none;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   cursor: pointer;
 }
 
 .collapseBtn:hover {
-  background: #f3f4f6;
-  color: #111827;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
 }
 
 /* Navigation */
 .nav {
   flex: 1;
-  padding: 16px 12px;
+  padding: 14px 10px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   overflow-y: auto;
 }
 
@@ -88,37 +93,50 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 10px 14px;
-  border-radius: 8px;
-  color: #4b5563;
-  font-size: 0.9rem;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  color: #475569;
+  font-size: 0.86rem;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: all 0.15s ease;
   white-space: nowrap;
   overflow: hidden;
+  text-decoration: none;
 }
 
 .navItem:hover {
-  color: #111827;
-  background: #f9fafb;
+  color: #0f172a;
+  background: #f8fafc;
 }
 
 .navItem.active {
-  color: #111827;
-  font-weight: 600;
+  color: #0f172a;
+  font-weight: 700;
 }
 
 .activeBg {
   position: absolute;
   inset: 0;
-  background: #f3f4f6;
-  border-radius: 8px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
   z-index: -1;
 }
 
 .navIcon {
-  min-width: 20px;
+  min-width: 18px;
+  flex-shrink: 0;
+  color: #64748b;
+  transition: color 0.15s ease;
+}
+
+.navItem:hover .navIcon {
+  color: #0f172a;
+}
+
+.navItem.active .navIcon {
+  color: #2563eb;
 }
 
 .navLabel {
@@ -128,23 +146,24 @@
 
 /* Footer */
 .footer {
-  padding: 12px;
-  border-top: 1px solid #e5e7eb;
+  padding: 10px;
+  border-top: 1px solid #f1f5f9;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
+  background: #ffffff;
 }
 
 .footerLink {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
-  border-radius: 8px;
-  color: #6b7280;
-  font-size: 0.9rem;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  color: #64748b;
+  font-size: 0.86rem;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: all 0.15s ease;
   white-space: nowrap;
   overflow: hidden;
   width: 100%;
@@ -152,11 +171,17 @@
   border: none;
   cursor: pointer;
   text-align: left;
+  text-decoration: none;
 }
 
 .footerLink:hover {
-  color: #111827;
-  background: #f9fafb;
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+.logoutBtn:hover {
+  color: #dc2626;
+  background: #fef2f2;
 }
 
 @media (max-width: 768px) {

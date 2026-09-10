@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { GraduationCap } from 'lucide-react';
+import BrandLogo from '@/components/ui/BrandLogo';
 import styles from './Footer.module.css';
 
 export default function Footer() {
@@ -13,9 +13,7 @@ export default function Footer() {
           {/* Brand Column */}
           <div className={styles.footerBrand}>
             <Link href="/" className={styles.brandLink}>
-              <div className={styles.logoIcon}>
-                <GraduationCap size={24} />
-              </div>
+              <BrandLogo size={28} />
               <h3>ATLYX</h3>
             </Link>
             <p>

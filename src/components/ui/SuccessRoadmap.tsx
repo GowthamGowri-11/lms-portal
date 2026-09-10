@@ -2,45 +2,50 @@
 
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Flame, Repeat, Target, Zap, Trophy } from 'lucide-react';
+import { Flame, Repeat, Target, Zap, Trophy, Compass } from 'lucide-react';
 import TiltCard from '../animations/TiltCard';
 import styles from './SuccessRoadmap.module.css';
 
 const roadmapSteps = [
   {
     id: 'step1',
-    icon: <Flame size={24} />,
-    title: 'Hunger to Win',
-    desc: 'The journey starts with an intense desire to succeed. Cultivate a mindset that refuses to settle for mediocrity.',
-    color: 'var(--accent-danger)',
+    icon: <Flame size={22} />,
+    title: 'Hunger to Excel',
+    desc: 'Cultivate strong problem-solving fundamentals and a commitment to continuous growth and mastery.',
+    color: '#ef4444',
+    bg: '#fef2f2',
   },
   {
     id: 'step2',
-    icon: <Target size={24} />,
+    icon: <Target size={22} />,
     title: 'Deliberate Practice',
-    desc: 'Turn your ambition into action. Focus on targeted, challenging practice that pushes your boundaries.',
-    color: 'var(--accent-warning)',
+    desc: 'Turn theoretical knowledge into code. Solve structured algorithmic challenges and build architectural patterns.',
+    color: '#d97706',
+    bg: '#fffbeb',
   },
   {
     id: 'step3',
-    icon: <Repeat size={24} />,
-    title: 'Consistency',
-    desc: 'Show up every single day. Small, consistent efforts compound over time into massive results.',
-    color: 'var(--accent-primary)',
+    icon: <Repeat size={22} />,
+    title: 'Consistent Compounding',
+    desc: 'Build daily engineering habits with guided interactive labs and regular faculty milestone evaluations.',
+    color: '#2563eb',
+    bg: '#eff6ff',
   },
   {
     id: 'step4',
-    icon: <Zap size={24} />,
-    title: 'Continuous Learning',
-    desc: 'Stay curious and adaptable. The landscape changes rapidly; your ability to learn new things is your ultimate weapon.',
-    color: 'var(--accent-secondary)',
+    icon: <Zap size={22} />,
+    title: 'Adaptive Learning',
+    desc: 'Stay ahead of the technological curve with modern cloud native tools, AI integration, and frameworks.',
+    color: '#7c3aed',
+    bg: '#f5f3ff',
   },
   {
     id: 'step5',
-    icon: <Trophy size={28} />,
-    title: 'Success',
-    desc: 'Reach your goals, elevate your career, and become a leader in your field. Then, set a new target.',
-    color: 'var(--text-primary)',
+    icon: <Trophy size={22} />,
+    title: 'Career Placement & Leadership',
+    desc: 'Graduate with an accredited portfolio, verified credentials, and comprehensive interview preparation.',
+    color: '#059669',
+    bg: '#ecfdf5',
   },
 ];
 
@@ -55,15 +60,17 @@ export default function SuccessRoadmap() {
 
   return (
     <section className={`section ${styles.roadmapSection}`} ref={containerRef}>
-      <div className={styles.dotGrid} />
       <div className="container">
         <div className={styles.sectionHeaderCenter}>
-          <span className={styles.sectionTag}>The Blueprint</span>
+          <span className={styles.sectionTag}>
+            <Compass size={13} style={{ display: 'inline', marginRight: 5, verticalAlign: -1 }} />
+            Academic Path
+          </span>
           <h2 className={styles.sectionTitle}>
-            Roadmap to <span className={styles.accentText}>Success</span>
+            Roadmap to <span className={styles.accentText}>Engineering Success</span>
           </h2>
           <p className={styles.sectionSubtitleCenter}>
-            Mastery isn&apos;t just about what you learn, it&apos;s about how you approach the journey.
+            A structured five-phase progressive framework engineered for measurable academic and industry success.
           </p>
         </div>
 
@@ -74,19 +81,18 @@ export default function SuccessRoadmap() {
               <motion.path
                 d="M 500,20 C 500,100 200,100 200,200 C 200,300 800,300 800,400 C 800,500 500,500 500,580"
                 fill="none"
-                stroke="var(--glass-border)"
-                strokeWidth="4"
-                strokeDasharray="8 8"
+                stroke="#e2e8f0"
+                strokeWidth="3"
+                strokeDasharray="6 6"
               />
               <motion.path
                 d="M 500,20 C 500,100 200,100 200,200 C 200,300 800,300 800,400 C 800,500 500,500 500,580"
                 fill="none"
-                stroke="var(--accent-primary)"
-                strokeWidth="6"
+                stroke="#3b82f6"
+                strokeWidth="4"
                 strokeLinecap="round"
-                style={{ 
-                  pathLength, 
-                  filter: 'drop-shadow(0 0 10px var(--accent-primary)) drop-shadow(0 0 20px var(--accent-primary))'
+                style={{
+                  pathLength,
                 }}
               />
             </svg>
@@ -94,7 +100,6 @@ export default function SuccessRoadmap() {
 
           <div className={styles.nodesWrapper}>
             {roadmapSteps.map((step, index) => {
-              // Determine placement based on the SVG curve
               const isLeft = index === 1;
               const isRight = index === 3;
 
@@ -103,39 +108,28 @@ export default function SuccessRoadmap() {
               if (isRight) positionClass = styles.nodeRight;
 
               return (
-                <div key={step.id} className={`${styles.nodeRow} ${positionClass}`} style={{ perspective: '1200px' }}>
+                <div key={step.id} className={`${styles.nodeRow} ${positionClass}`}>
                   <TiltCard
                     className={styles.nodeCard}
-                    initial={{ 
-                      opacity: 0, 
-                      y: 80, 
-                      rotateX: 45, 
-                      rotateY: isLeft ? 30 : isRight ? -30 : 0, 
-                      scale: 0.8,
-                      z: -100
-                    }}
-                    whileInView={{ 
-                      opacity: 1, 
-                      y: 0, 
-                      rotateX: 0, 
-                      rotateY: 0, 
-                      scale: 1,
-                      z: 0
-                    }}
-                    whileHover={{ 
-                      scale: 1.05, 
-                      z: 50,
-                      boxShadow: '0 30px 60px rgba(0,0,0,0.6)'
-                    }}
-                    viewport={{ once: true, margin: '-50px' }}
-                    transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
-                    style={{ borderLeftColor: step.color, transformStyle: 'preserve-3d' }}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    whileHover={{ y: -3 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    style={{ borderLeftColor: step.color }}
                   >
-                    <div className={styles.nodeIcon} style={{ color: step.color, background: `${step.color}15`, transform: 'translateZ(30px)' }}>
+                    <div
+                      className={styles.nodeIcon}
+                      style={{ color: step.color, background: step.bg, borderColor: `${step.color}33` }}
+                    >
                       {step.icon}
                     </div>
-                    <div className={styles.nodeContent} style={{ transform: 'translateZ(20px)' }}>
-                      <span className={styles.nodeNumber}>0{index + 1}</span>
+                    <div className={styles.nodeContent}>
+                      <div className={styles.nodeTopMeta}>
+                        <span className={styles.nodeNumber} style={{ color: step.color }}>
+                          Phase 0{index + 1}
+                        </span>
+                      </div>
                       <h3>{step.title}</h3>
                       <p>{step.desc}</p>
                     </div>

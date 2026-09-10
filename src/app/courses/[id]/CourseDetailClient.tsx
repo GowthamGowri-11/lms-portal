@@ -70,8 +70,8 @@ export default function CourseDetailClient({
                 <div className={styles.heroMain}>
                   <FadeInUp delay={0.1}>
                     <div className={styles.heroBadges}>
-                      <span className="badge badge-primary" style={{ background: 'rgba(99,102,241,0.15)', color: 'var(--accent-primary-light)', border: '1px solid rgba(99,102,241,0.3)' }}>{course.level}</span>
-                      <span className="badge badge-success" style={{ background: 'rgba(45,212,191,0.15)', color: 'var(--accent-secondary)', border: '1px solid rgba(45,212,191,0.3)' }}>{course.category}</span>
+                      <span className={styles.badgeLevel}>{course.level}</span>
+                      <span className={styles.badgeCategory}>{course.category}</span>
                     </div>
                   </FadeInUp>
                   
@@ -79,32 +79,21 @@ export default function CourseDetailClient({
                     <h1 className={styles.heroTitle}>{course.title}</h1>
                   </FadeInUp>
 
-                  {/* Subtle Metadata near title */}
+                  {/* Rating & Students metadata */}
                   <FadeInUp delay={0.18}>
                     <div className={styles.premiumMetaRow}>
                       <span className={styles.premiumMetaItem}>
-                        <Star size={13} fill="var(--accent-warning)" stroke="var(--accent-warning)" /> {course.rating} Rating
+                        <Star size={14} className={styles.starIcon} />
+                        <strong>{course.rating}</strong> Rating
                       </span>
                       <span className={styles.premiumMetaDivider}>•</span>
                       <span className={styles.premiumMetaItem}>
-                        👨‍🎓 {course.studentsEnrolled.toLocaleString()} Students
+                        <Users size={14} className={styles.metaIcon} />
+                        <strong>{course.studentsEnrolled.toLocaleString()}</strong> Students Enrolled
                       </span>
                     </div>
                   </FadeInUp>
 
-                  {/* Tiny Premium Details Pills */}
-                  <FadeInUp delay={0.19}>
-                    <div className={styles.premiumDetailPills}>
-                      <span className={styles.detailPill}>📅 Completion: ~4 Weeks</span>
-                      <span className={styles.detailPill}>⏱ Last updated: July 2026</span>
-                      <span className={styles.detailPill}>🌐 Language: English</span>
-                      <span className={styles.detailPill}>💬 Subtitles: English [CC]</span>
-                      <span className={styles.detailPill}>♾ Lifetime Updates</span>
-                      <span className={styles.detailPill}>📁 Downloadable Resources</span>
-                      <span className={styles.detailPill}>💻 Mobile & Desktop Support</span>
-                    </div>
-                  </FadeInUp>
-                  
                   <FadeInUp delay={0.20}>
                     <p className={styles.heroDesc}>{course.shortDescription}</p>
                   </FadeInUp>
@@ -117,35 +106,49 @@ export default function CourseDetailClient({
                         <div className={styles.heroTrainerInfo}>
                           <div className={styles.heroTrainerNameRow}>
                             <span className={styles.heroTrainerName}>{trainer.name}</span>
-                            <span className={styles.verifiedBadge}>✓ Verified Instructor</span>
+                            <span className={styles.verifiedBadge}>✓ Verified Faculty</span>
                           </div>
                           <div className={styles.heroTrainerStats}>
                             <span>{trainer.experience} Experience</span>
                             <span className={styles.bullet}>•</span>
-                            <span>⭐ {trainer.rating} Trainer Rating</span>
+                            <span>⭐ {trainer.rating} Rating</span>
                           </div>
                         </div>
                       </div>
                     </FadeInUp>
                   )}
 
-                  {/* Trust Badges */}
+                  {/* Trust / Feature Badges */}
                   <FadeInUp delay={0.25}>
                     <div className={styles.trustBadgesRow}>
-                      <span className={styles.trustBadge}>✓ Lifetime Access</span>
-                      <span className={styles.trustBadge}>🏆 Certificate Included</span>
-                      <span className={styles.trustBadge}>🚀 {course.level} Friendly</span>
-                      <span className={styles.trustBadge}>💬 Community Support</span>
+                      <span className={styles.trustBadge}>
+                        <Clock size={14} className={styles.trustIcon} /> ~4 Weeks
+                      </span>
+                      <span className={styles.trustBadge}>
+                        <ShieldCheck size={14} className={styles.trustIcon} /> Lifetime Access
+                      </span>
+                      <span className={styles.trustBadge}>
+                        <Award size={14} className={styles.trustIcon} /> Verified Certificate
+                      </span>
+                      <span className={styles.trustBadge}>
+                        <Target size={14} className={styles.trustIcon} /> {course.level} Level
+                      </span>
                     </div>
                   </FadeInUp>
                 </div>
 
-                {/* Right Illustration column */}
+                {/* Right Visual Graphic column */}
                 <FadeInUp delay={0.2} className={styles.heroIllustrationContainer}>
                   <div className={styles.hologramWrapper}>
-                    <div className={styles.hologramCircleFrame} />
-                    <div className={styles.hologramGlow} />
-                    <TechIllustration title={course.title} category={course.category} size={340} />
+                    <div className={styles.heroCardBackdrop} />
+                    <div className={styles.heroCardGraphic}>
+                      <div className={styles.heroCardGraphicInner}>
+                        <TechIllustration title={course.title} category={course.category} size={140} />
+                      </div>
+                      <div className={styles.heroCardBadge}>
+                        <span>{course.category}</span>
+                      </div>
+                    </div>
                   </div>
                 </FadeInUp>
               </div>

@@ -20,7 +20,10 @@ import {
   CircleHelp,
   UserCircle,
   MessageSquare,
+  ShieldAlert,
 } from 'lucide-react';
+import { signOut } from 'next-auth/react';
+import BrandLogo from '@/components/ui/BrandLogo';
 import styles from './AdminSidebar.module.css';
 
 const menuItems = [
@@ -33,7 +36,7 @@ const menuItems = [
   { href: '/admin/trainers', label: 'Trainers', icon: Users },
   { href: '/admin/students', label: 'Students', icon: GraduationCap },
   { href: '/admin/developers', label: 'Developers', icon: UserCircle },
-  { href: '/admin/requests', label: 'Requests', icon: Users },
+  { href: '/admin/requests', label: 'Requests', icon: ShieldAlert },
   { href: '/admin/queries', label: 'Student Queries', icon: MessageSquare },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
@@ -46,26 +49,25 @@ export default function AdminSidebar() {
   return (
     <motion.aside
       className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}
-      animate={{ width: collapsed ? 80 : 280 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      animate={{ width: collapsed ? 76 : 270 }}
+      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
     >
       {/* Header */}
       <div className={styles.header}>
         <Link href="/admin" className={styles.logo}>
-          <div className={styles.logoIcon} style={{ background: 'var(--accent-primary)' }}>
-            <GraduationCap size={24} color="white" />
-          </div>
+          <BrandLogo size={collapsed ? 28 : 30} />
           <AnimatePresence>
             {!collapsed && (
-              <motion.span
-                className={styles.logoText}
+              <motion.div
+                className={styles.logoTextWrap}
                 initial={{ opacity: 0, width: 0 }}
                 animate={{ opacity: 1, width: 'auto' }}
                 exit={{ opacity: 0, width: 0 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.15 }}
               >
-                ATLYX Admin
-              </motion.span>
+                <span className={styles.brandTitle}>ATLYX</span>
+                <span className={styles.adminBadge}>Admin Hub</span>
+              </motion.div>
             )}
           </AnimatePresence>
         </Link>
@@ -74,7 +76,7 @@ export default function AdminSidebar() {
           onClick={() => setCollapsed(!collapsed)}
           aria-label="Toggle sidebar"
         >
-          {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
       </div>
 
@@ -92,15 +94,16 @@ export default function AdminSidebar() {
               key={item.href}
               href={item.href}
               className={`${styles.navItem} ${isActive ? styles.active : ''}`}
+              title={collapsed ? item.label : undefined}
             >
               {isActive && (
                 <motion.div
                   className={styles.activeBg}
                   layoutId="adminActiveNav"
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 32 }}
                 />
               )}
-              <Icon size={20} className={styles.navIcon} />
+              <Icon size={18} className={styles.navIcon} />
               <AnimatePresence>
                 {!collapsed && (
                   <motion.span
@@ -121,8 +124,8 @@ export default function AdminSidebar() {
 
       {/* Footer */}
       <div className={styles.footer}>
-        <Link href="/" className={styles.footerLink}>
-          <Home size={20} />
+        <Link href="/" className={styles.footerLink} title={collapsed ? 'Back to Site' : undefined}>
+          <Home size={18} />
           <AnimatePresence>
             {!collapsed && (
               <motion.span
@@ -135,8 +138,12 @@ export default function AdminSidebar() {
             )}
           </AnimatePresence>
         </Link>
-        <button className={styles.footerLink}>
-          <LogOut size={20} />
+        <button
+          onClick={() => signOut({ callbackUrl: '/' })}
+          className={`${styles.footerLink} ${styles.logoutBtn}`}
+          title={collapsed ? 'Logout' : undefined}
+        >
+          <LogOut size={18} />
           <AnimatePresence>
             {!collapsed && (
               <motion.span

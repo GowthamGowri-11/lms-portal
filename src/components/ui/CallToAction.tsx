@@ -1,75 +1,74 @@
 'use client';
+
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Award, ShieldCheck, Users, Zap } from 'lucide-react';
 import styles from './CallToAction.module.css';
-import TiltCard from '../animations/TiltCard';
 
 export default function CallToAction() {
   return (
     <section className={styles.ctaWrapper}>
       <div className="container">
-        <TiltCard 
+        <motion.div
           className={styles.ctaCard}
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          style={{ perspective: '1200px' }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          {/* Decorative Orbs Removed */}
+          {/* Subtle Background Accent Patterns */}
+          <div className={styles.ambientGlow} />
+          <div className={styles.gridOverlay} />
 
-          <motion.div 
-            className={styles.badge}
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            style={{ transform: 'translateZ(30px)' }}
-          >
-            <Sparkles size={16} className={styles.badgeIcon} />
-            Your Future Starts Here
-          </motion.div>
+          <div className={styles.ctaInner}>
+            {/* Top Pill Tag */}
+            <div className={styles.badge}>
+              <Sparkles size={14} className={styles.badgeIcon} />
+              <span>Transform Your Future</span>
+            </div>
 
-          <motion.h2 
-            className={styles.title}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            style={{ transform: 'translateZ(40px)' }}
-          >
-            Ready to <span className={styles.highlight}>Transform</span> Your Career?
-          </motion.h2>
+            {/* Main Title */}
+            <h2 className={styles.title}>
+              Ready to Accelerate Your <span className={styles.highlight}>Tech Career?</span>
+            </h2>
 
-          <motion.p 
-            className={styles.subtitle}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            style={{ transform: 'translateZ(30px)' }}
-          >
-            Join thousands of professionals who have upgraded their skills. Get unlimited access to premium courses taught by industry elite and start building your legacy today.
-          </motion.p>
+            {/* Subtitle */}
+            <p className={styles.subtitle}>
+              Join thousands of aspiring developers, engineers, and researchers. Master in-demand
+              skills with curated academic roadmaps, expert faculty guidance, and accredited
+              certifications.
+            </p>
 
-          <motion.div 
-            className={styles.actions}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5 }}
-            style={{ transform: 'translateZ(50px)' }}
-          >
-            <Link href="/courses" className={styles.primaryBtn}>
-              Get Started Now <ArrowRight size={20} />
-            </Link>
-            <Link href="/courses" className={styles.secondaryBtn}>
-              Explore Catalog
-            </Link>
-          </motion.div>
+            {/* Trust Highlights Strip */}
+            <div className={styles.trustStrip}>
+              <div className={styles.trustItem}>
+                <Award size={15} className={styles.trustIcon} />
+                <span>Verified Credentials</span>
+              </div>
+              <div className={styles.trustDivider}>•</div>
+              <div className={styles.trustItem}>
+                <Zap size={15} className={styles.trustIcon} />
+                <span>Hands-on Capstones</span>
+              </div>
+              <div className={styles.trustDivider}>•</div>
+              <div className={styles.trustItem}>
+                <Users size={15} className={styles.trustIcon} />
+                <span>1-on-1 Faculty Mentorship</span>
+              </div>
+            </div>
 
-        </TiltCard>
+            {/* Action Buttons */}
+            <div className={styles.actions}>
+              <Link href="/courses" className={styles.primaryBtn}>
+                <span>Explore All Courses</span>
+                <ArrowRight size={18} className={styles.btnArrow} />
+              </Link>
+              <Link href="/trainers" className={styles.secondaryBtn}>
+                <span>Meet Faculty Mentors</span>
+              </Link>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

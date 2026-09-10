@@ -1,0 +1,424 @@
+/* ===================================================================
+   HERO LMS DASHBOARD CARD — CLEAN MINIMALIST SAAS SHOWCASE
+   =================================================================== */
+
+.wrapper {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* ── 1. LMS CARD SHELL ── */
+.lmsCard {
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 16px 36px -12px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── 2. CARD TITLEBAR ── */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: #fafbfc;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dotRed {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #f87171;
+}
+
+.dotYellow {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fbbf24;
+}
+
+.dotGreen {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #34d399;
+}
+
+.platformTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #334155;
+  letter-spacing: -0.01em;
+}
+
+.platformIcon {
+  color: #2563eb;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+}
+
+.liveSessionBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  border-radius: 9999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.pulseDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
+  animation: sessionPulse 2s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+@keyframes sessionPulse {
+  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6); }
+  70% { box-shadow: 0 0 0 5px rgba(22, 163, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+
+/* ── 3. CURRENT COURSE OVERVIEW ── */
+.courseOverview {
+  padding: 16px 18px 14px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.overviewTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.courseMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.trackLabel {
+  font-size: 0.64rem;
+  font-weight: 800;
+  color: #2563eb;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.courseTitle {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.25;
+}
+
+.progressPercentWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.progressPercent {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #2563eb;
+  line-height: 1;
+}
+
+.progressSubLabel {
+  font-size: 0.62rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.progressBar {
+  width: 100%;
+  height: 6px;
+  background: #eef2f6;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb, #06b6d4);
+  border-radius: 999px;
+}
+
+.overviewMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.74rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.metaBlock {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.metaIcon {
+  color: #64748b;
+}
+
+.metaIconBlue {
+  color: #2563eb;
+}
+
+.metaDivider {
+  color: #cbd5e1;
+}
+
+/* ── 4. LEARNING MODULES CHECKLIST ── */
+.modulesSection {
+  padding: 14px 18px;
+  background: #fcfcfd;
+}
+
+.sectionHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.sectionTitle {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+.moduleCountTag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.moduleList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.moduleItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 10px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.moduleItem:hover {
+  border-color: #cbd5e1;
+  transform: translateX(2px);
+}
+
+.moduleItemActive {
+  background: #ffffff;
+  border-color: #93c5fd;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+}
+
+.moduleStatusIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.checkIconCompleted {
+  color: #16a34a;
+}
+
+.inProgressDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #2563eb;
+  background: #eff6ff;
+  position: relative;
+}
+
+.inProgressDot::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2563eb;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.moduleInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.moduleName {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moduleSub {
+  font-size: 0.68rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.moduleAction {
+  flex-shrink: 0;
+}
+
+.completedTag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #16a34a;
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.inProgressTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+/* ── 5. CARD FOOTER ── */
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: #ffffff;
+  border-top: 1px solid #f1f5f9;
+  gap: 12px;
+}
+
+.mentorInfo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.mentorAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mentorText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mentorName {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.mentorRole {
+  font-size: 0.68rem;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.certBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.certIcon {
+  color: #2563eb;
+}

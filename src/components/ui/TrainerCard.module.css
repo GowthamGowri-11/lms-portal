@@ -1,232 +1,185 @@
 /* ===================================================================
-   PREMIUM TRAINER CARD — ATLYX Dark Theme Design System
-   Matches high-end SaaS/LMS profile card aesthetic.
-   Scope: Trainer Card component ONLY.
+   TRAINER CARD — MASTER PREMIUM MINIMALIST EDTECH UI
    =================================================================== */
 
-/* ── 1. CARD CONTAINER ── */
 .card {
   position: relative;
-  background: linear-gradient(165deg, #0b0d1a 0%, #0e1126 50%, #070814 100%);
-  border: 1px solid rgba(99, 102, 241, 0.18);
-  border-radius: 24px;
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 20px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100%;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-  box-shadow: 
-    0 12px 32px rgba(0, 0, 0, 0.4),
-    0 0 20px rgba(99, 102, 241, 0.05),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 6px 18px -4px rgba(15, 23, 42, 0.035);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card:hover {
-  border-color: rgba(99, 102, 241, 0.45);
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.55),
-    0 0 30px rgba(99, 102, 241, 0.18),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  border-color: #cbd5e1;
+  box-shadow: 0 12px 30px -6px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
-/* ── 2. MESH & BACKGROUND LIGHTING ── */
-.meshBg {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 20% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 100%, rgba(56, 189, 248, 0.08) 0%, transparent 60%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.gridPattern {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
-  background-size: 24px 24px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.innerHighlight {
+.topAccentBar {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  height: 2px;
+  background: linear-gradient(90deg, #2563eb, #38bdf8);
+  opacity: 0.85;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
 }
 
-/* ── 3. TOP STRIPE ── */
-.topStripe {
-  height: 3px;
-  width: 100%;
-  opacity: 0.9;
-  flex-shrink: 0;
+/* ── 1. CARD HEADER (FEATURED BADGE & ADMIN CONTROLS) ── */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.4rem 0.25rem;
   position: relative;
   z-index: 2;
 }
 
-/* ── 4. BADGES & ADMIN ACTIONS ── */
-.topBadgesRow {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  right: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  pointer-events: none;
-  z-index: 10;
-}
-
 .featuredBadge {
-  pointer-events: auto;
-  margin-left: auto;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(99, 102, 241, 0.35);
-  background: rgba(79, 70, 229, 0.18);
-  backdrop-filter: blur(12px);
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #c7d2fe;
-  letter-spacing: 0.03em;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  padding: 3px 9px;
+  border-radius: 9999px;
 }
 
-.adminActions {
-  pointer-events: auto;
+.badgeBlue {
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+}
+
+.badgeBlue .badgeText {
+  color: #1d4ed8;
+}
+
+.badgeGold {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+}
+
+.badgeGold .badgeText {
+  color: #b45309;
+}
+
+.badgePurple {
+  background: #f5f3ff;
+  border: 1px solid #ede9fe;
+}
+
+.badgePurple .badgeText {
+  color: #6d28d9;
+}
+
+.badgeIcon {
   display: flex;
+  align-items: center;
+}
+
+.starIconGold {
+  color: #f59e0b;
+  fill: #f59e0b;
+}
+
+.trophyIconBlue {
+  color: #2563eb;
+}
+
+.gradIconPurple {
+  color: #7c3aed;
+}
+
+.badgeText {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.adminControls {
+  display: flex;
+  align-items: center;
   gap: 6px;
+  margin-left: auto;
 }
 
 .adminBtn {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(8px);
-  transition: all 0.2s;
   cursor: pointer;
-}
-.adminBtn:hover {
-  background: rgba(99, 102, 241, 0.2);
-  border-color: rgba(99, 102, 241, 0.4);
-  color: #a5b4fc;
-}
-.adminDanger:hover {
-  background: rgba(239, 68, 68, 0.18);
-  border-color: rgba(239, 68, 68, 0.35);
-  color: #f87171;
+  transition: all 0.15s ease;
 }
 
-/* ── 5. INNER CONTENT ── */
-.inner {
-  position: relative;
-  z-index: 1;
+.adminBtn:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
+}
+
+.adminDangerBtn:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+/* ── 2. CARD BODY ── */
+.cardBody {
   display: flex;
   flex-direction: column;
   flex: 1;
+  padding: 0.75rem 1.4rem 1.4rem;
+  position: relative;
+  z-index: 1;
 }
 
-/* ── 6. HEADER & AVATAR ── */
-.header {
+/* ── 3. PROFILE SECTION ── */
+.profileSection {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  padding: 1.75rem 1.75rem 0;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
 }
 
-.avatarWrap {
+.avatarWrapper {
   position: relative;
   flex-shrink: 0;
-  width: 76px;
-  height: 76px;
-}
-
-.avatarGlow {
-  position: absolute;
-  inset: -12px;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.5;
-  transition: opacity 0.32s;
-}
-.card:hover .avatarGlow {
-  opacity: 0.9;
+  width: 56px;
+  height: 56px;
 }
 
 .avatarImg,
 .avatarInitials {
-  width: 76px;
-  height: 76px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.85rem;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.35rem;
   font-weight: 800;
-  color: white;
-  position: relative;
-  z-index: 1;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s ease;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
 }
+
 .avatarImg {
   object-fit: cover;
 }
 
-.avatarRing {
-  position: absolute;
-  inset: -3px;
-  border-radius: 50%;
-  border: 2px solid rgba(99, 102, 241, 0.5);
-  z-index: 2;
-  opacity: 0.75;
-  transition: opacity 0.3s, border-color 0.3s;
-}
-.card:hover .avatarRing {
-  opacity: 1;
-  border-color: rgba(99, 102, 241, 0.9);
-}
-
-.verifiedCheckOverlay {
-  position: absolute;
-  bottom: -2px;
-  right: -2px;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #6366f1);
-  border: 2.5px solid #0b0d1a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.65rem;
-  font-weight: 900;
-  color: #ffffff;
-  z-index: 5;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-/* ── 7. NAME BLOCK ── */
-.nameBlock {
+.profileDetails {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -240,383 +193,303 @@
   gap: 6px;
 }
 
-.name {
-  font-size: 1.25rem;
+.trainerName {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.12rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
+  letter-spacing: -0.02em;
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  letter-spacing: -0.01em;
 }
 
-.verifiedIcon {
-  color: #60a5fa;
+.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #059669;
+  font-size: 0.65rem;
+  font-weight: 800;
   flex-shrink: 0;
-  filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.6));
 }
 
-.designation {
-  font-size: 0.72rem;
+.specializationPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+  padding: 2px 8px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 6px;
+  margin-top: 2px;
+}
+
+.specDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #2563eb;
+}
+
+.specText {
+  font-size: 0.68rem;
   font-weight: 700;
-  color: #818cf8;
+  color: #1d4ed8;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Metadata row */
-.metaRow {
+/* ── 4. STREAMLINED 4-METRIC STRIP ── */
+.metricsStrip {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 5px;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #eef2f6;
+  border-radius: 12px;
+  margin-bottom: 1.1rem;
 }
 
-.metaItem {
-  display: inline-flex;
+.metricItem {
+  display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: #cbd5e1;
+  flex: 1;
+  justify-content: center;
+  position: relative;
 }
 
-.metaIcon {
-  flex-shrink: 0;
+.metricDivider {
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 1px;
+  background: #e2e8f0;
 }
 
-.metaDot {
-  color: rgba(148, 163, 184, 0.4);
-  font-size: 0.65rem;
-}
-
-/* ── 8. COMPACT STAT TILES (4 GRID) ── */
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 1.25rem 1.75rem 0;
-}
-
-.statCard {
+.metricContent {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 1px;
+}
+
+.metricTop {
+  display: flex;
+  align-items: center;
   gap: 4px;
-  padding: 10px 6px;
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 14px;
-  backdrop-filter: blur(8px);
-  cursor: default;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card:hover .statCard {
-  border-color: rgba(99, 102, 241, 0.16);
-}
-
-.statCard:hover {
-  background: rgba(79, 70, 229, 0.12) !important;
-  border-color: rgba(99, 102, 241, 0.35) !important;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.15);
-}
-
-.statIconContainer {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
+.metricIconWrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid transparent;
 }
 
-.statVal {
-  font-size: 1.05rem;
+.metricStar { color: #d97706; fill: #d97706; }
+.metricUsers { color: #0284c7; }
+.metricCourses { color: #059669; }
+.metricExp { color: #7c3aed; }
+
+.metricNumber {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 0.95rem;
   font-weight: 800;
-  color: #f8fafc;
+  color: #0f172a;
   line-height: 1.1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
-.statLbl {
-  font-size: 0.58rem;
+.metricLabel {
+  font-size: 0.62rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(148, 163, 184, 0.75);
-  text-align: center;
+  letter-spacing: 0.04em;
+  color: #64748b;
 }
 
-/* ── 9. SUBTLE DIVIDER ── */
-.gradDivider {
-  height: 1px;
-  margin: 1.25rem 1.75rem 0;
-}
-
-/* ── 10. SECTIONS ── */
-.section {
-  padding: 1.1rem 1.75rem 0;
+/* ── 5. STRUCTURED INFO SECTIONS ── */
+.infoSection {
+  margin-bottom: 0.95rem;
 }
 
 .sectionHeader {
   display: flex;
   align-items: center;
-  gap: 7px;
-  margin-bottom: 0.5rem;
-}
-
-.sectionIconBadge {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  background: rgba(99, 102, 241, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 6px;
+  margin-bottom: 0.35rem;
 }
 
 .sectionIcon {
-  color: #818cf8;
+  color: #64748b;
+  flex-shrink: 0;
 }
 
-.sectionLabel {
-  font-size: 0.65rem;
-  font-weight: 800;
+.sectionTitle {
+  font-size: 0.68rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(148, 163, 184, 0.8);
+  letter-spacing: 0.04em;
+  color: #64748b;
 }
 
-.bio {
+.bioText {
   font-size: 0.84rem;
-  color: rgba(203, 213, 225, 0.8);
-  line-height: 1.6;
+  color: #475569;
+  line-height: 1.55;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* ── 11. SKILL CHIPS ── */
-.skillChips {
+/* Skills */
+.skillsList {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.skillChip {
+.skillPill {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 4px 10px;
-  background: rgba(79, 70, 229, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.22);
-  border-radius: 999px;
+  padding: 3px 8px;
+  background: #f8fafc;
+  border: 1px solid #eef2f6;
+  border-radius: 6px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: #c7d2fe;
-  transition: background 0.2s, border-color 0.2s, transform 0.2s;
-}
-.skillChip:hover {
-  background: rgba(79, 70, 229, 0.25);
-  border-color: rgba(99, 102, 241, 0.45);
+  color: #334155;
 }
 
-.skillIcon {
-  font-size: 0.85rem;
+.skillEmoji {
+  font-size: 0.78rem;
   line-height: 1;
 }
 
-/* ── 12. COURSE CHIPS ── */
-.courseChips {
+/* Course Tags */
+.courseTagsList {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
 }
 
-.courseChip {
+.courseLinkPill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 999px;
+  gap: 5px;
+  padding: 4px 9px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 6px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: rgba(226, 232, 240, 0.85);
-  max-width: 220px;
+  color: #1d4ed8;
+  text-decoration: none;
+  max-width: 200px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: background 0.2s, border-color 0.2s, color 0.2s;
-}
-.courseChip:hover {
-  background: rgba(79, 70, 229, 0.16);
-  border-color: rgba(99, 102, 241, 0.35);
-  color: #ffffff;
+  transition: all 0.15s ease;
 }
 
-.moreChip {
-  display: inline-flex;
-  align-items: center;
-  height: 28px;
-  padding: 0 10px;
-  background: rgba(79, 70, 229, 0.16);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #a5b4fc;
+.courseLinkPill:hover {
+  background: #dbeafe;
+  color: #1e40af;
 }
 
-.noCourses {
-  display: inline-flex;
-  align-items: center;
-  height: 28px;
-  padding: 0 14px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed rgba(99, 102, 241, 0.22);
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: rgba(148, 163, 184, 0.6);
-}
-
-/* ── 13. EXPLORE COURSES FULL-WIDTH CTA ── */
-.ctaWrap {
-  padding: 1.5rem 1.75rem 1.75rem;
-  margin-top: auto;
-}
-
-.ctaBtn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 12px 20px;
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(99, 102, 241, 0.2));
-  border: 1px solid rgba(99, 102, 241, 0.38);
-  border-radius: 14px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #e0e7ff;
-  overflow: hidden;
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.15);
-  text-decoration: none;
-}
-
-.ctaBtn:hover {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.45), rgba(99, 102, 241, 0.35));
-  border-color: rgba(99, 102, 241, 0.65);
-  box-shadow: 0 0 28px rgba(99, 102, 241, 0.3), 0 6px 20px rgba(0, 0, 0, 0.35);
-  color: #ffffff;
-  transform: translateY(-1px);
-}
-
-.ctaIconLeft {
-  color: #818cf8;
+.courseIcon {
+  color: #2563eb;
   flex-shrink: 0;
 }
 
-.ctaText {
-  letter-spacing: 0.01em;
+.moreCoursesPill {
+  font-size: 0.7rem;
+  color: #64748b;
+  font-weight: 700;
+  padding: 3px 7px;
+  background: #f1f5f9;
+  border-radius: 6px;
 }
 
-.ctaArrow {
-  display: flex;
+.noCoursesPill {
+  display: inline-flex;
   align-items: center;
-  color: #a5b4fc;
+  padding: 3px 9px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #94a3b8;
 }
 
-.ctaShimmer {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transform: skewX(-20deg);
-  pointer-events: none;
-}
-.ctaBtn:hover .ctaShimmer {
-  left: 160%;
-  transition: left 0.6s ease;
+/* ── 6. EXPLORE COURSES BUTTON ── */
+.actionWrapper {
+  margin-top: auto;
+  padding-top: 0.75rem;
 }
 
-/* ── 14. MOBILE & TABLET RESPONSIVE ── */
+.exploreBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 16px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.exploreBtn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  transform: translateY(-1px);
+}
+
+.btnArrow {
+  transition: transform 0.15s ease;
+}
+
+.exploreBtn:hover .btnArrow {
+  transform: translateX(3px);
+}
+
 @media (max-width: 768px) {
-  .header {
-    padding: 1.25rem 1.25rem 0;
-    gap: 1rem;
+  .cardBody {
+    padding: 0.75rem 1.2rem 1.2rem;
   }
-  .avatarWrap,
-  .avatarImg,
-  .avatarInitials {
-    width: 64px;
-    height: 64px;
-    font-size: 1.5rem;
+  .cardHeader {
+    padding: 1rem 1.2rem 0.25rem;
   }
-  .verifiedCheckOverlay {
-    width: 19px;
-    height: 19px;
-    font-size: 0.55rem;
-  }
-  .name {
-    font-size: 1.1rem;
-  }
-  .designation {
-    font-size: 0.68rem;
-  }
-  .metaRow {
-    gap: 4px;
-    font-size: 0.63rem;
-  }
-  .statsGrid {
-    grid-template-columns: repeat(2, 1fr);
+  .metricsStrip {
+    flex-wrap: wrap;
     gap: 8px;
-    padding: 1rem 1.25rem 0;
   }
-  .statCard {
-    padding: 8px 6px;
-    border-radius: 12px;
-  }
-  .statVal {
-    font-size: 0.95rem;
-  }
-  .statLbl {
-    font-size: 0.56rem;
-  }
-  .gradDivider {
-    margin: 1rem 1.25rem 0;
-  }
-  .section {
-    padding: 0.9rem 1.25rem 0;
-  }
-  .ctaWrap {
-    padding: 1.25rem 1.25rem 1.25rem;
-  }
-  .ctaBtn {
-    padding: 10px 16px;
-    font-size: 0.82rem;
+  .metricDivider {
+    display: none;
   }
 }
-

@@ -177,13 +177,47 @@ function getTechConfig(title: string, category: string): TechConfig {
   };
 }
 
-interface TechOrbIconProps {
-  title: string;
-  category: string;
-  size?: number;
-}
-
 export default function TechOrbIcon({ title, category, size = 110 }: TechOrbIconProps) {
+  const t = (title + ' ' + category).toLowerCase();
+  const isCpp = t.includes('c++') || t.includes('cpp');
+
+  if (isCpp) {
+    return (
+      <div
+        style={{
+          width: size,
+          height: size,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+        }}
+      >
+        <img
+          src="/cpp-logo.png"
+          alt="C++ Logo"
+          style={{
+            width: '92%',
+            height: '92%',
+            objectFit: 'contain',
+            filter: 'drop-shadow(0 6px 16px rgba(0, 89, 156, 0.16))',
+            animation: 'floatingOrb 4s ease-in-out infinite',
+          }}
+        />
+        <style jsx global>{`
+          @keyframes floatingOrb {
+            0%, 100% {
+              transform: translateY(0px);
+            }
+            50% {
+              transform: translateY(-6px);
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
   const config = getTechConfig(title, category);
   const cleanId = (title + '-' + category).replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
 
