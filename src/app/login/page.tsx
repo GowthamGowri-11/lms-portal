@@ -1,36 +1,32 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSession, signIn } from 'next-auth/react';
-import { useRouter, usePathname } from 'next/navigation';
-import { createPortal } from 'react-dom';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { 
-  BookOpen, 
-  Presentation, 
+  Eye, 
+  EyeOff, 
+  Check, 
+  AlertCircle, 
+  CheckCircle2, 
+  ArrowRight, 
   Phone, 
   Calendar, 
   School, 
-  ArrowRight, 
-  CheckCircle2, 
-  AlertCircle, 
-  X, 
-  Eye, 
-  EyeOff, 
-  Check
+  BookOpen, 
+  Presentation 
 } from 'lucide-react';
+import Link from 'next/link';
 
-export default function AuthModal() {
-  const { data: session, status, update } = useSession();
+export default function LoginPage() {
+  const { data: session, status } = useSession();
   const router = useRouter();
-  const pathname = usePathname();
 
-  const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-  const [mounted, setMounted] = useState(false);
 
   // Form states
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
@@ -42,80 +38,10 @@ export default function AuthModal() {
   const [education, setEducation] = useState('Undergraduate');
   const [intendedRole, setIntendedRole] = useState<'STUDENT' | 'TRAINER'>('STUDENT');
 
-  useEffect(() => {
-    setMounted(true);
-
-    const handleOpenModal = (e: any) => {
-      setMode(e.detail?.mode || 'signin');
-      setError('');
-      setSuccessMsg('');
-      setIsOpen(true);
-    };
-
-    window.addEventListener('open-auth-modal', handleOpenModal);
-    return () => window.removeEventListener('open-auth-modal', handleOpenModal);
-  }, []);
-
-  // Automatic background onboarding check when OAuth completes and returns to site
-  useEffect(() => {
-    if (status === 'authenticated' && session?.user) {
-      const user = session.user as any;
-      const pendingDataRaw = localStorage.getItem('atlyx_pending_onboarding');
-
-      if (pendingDataRaw) {
-        try {
-          const pendingData = JSON.parse(pendingDataRaw);
-          setLoading(true);
-          setIsOpen(true);
-          setSuccessMsg('Setting up your profile...');
-
-          fetch('/api/onboarding', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(pendingData),
-          })
-            .then((res) => res.json())
-            .then(async (data) => {
-              if (data.success) {
-                localStorage.removeItem('atlyx_pending_onboarding');
-                await update({ isOnboarded: true, role: data.role });
-                setSuccessMsg(data.message || 'Welcome to ATLYX!');
-                setTimeout(() => {
-                  setIsOpen(false);
-                  if (data.role === 'TRAINER') {
-                    router.push('/dashboard/trainer');
-                  } else {
-                    router.push('/dashboard/student');
-                  }
-                  router.refresh();
-                }, 1500);
-              } else {
-                localStorage.removeItem('atlyx_pending_onboarding');
-                setError(data.error || 'Failed to complete setup.');
-                setLoading(false);
-              }
-            })
-            .catch(() => {
-              localStorage.removeItem('atlyx_pending_onboarding');
-              setLoading(false);
-            });
-        } catch (e) {
-          localStorage.removeItem('atlyx_pending_onboarding');
-        }
-      } else if (!user.isOnboarded && user.role !== 'ADMIN' && !pathname?.startsWith('/admin')) {
-        // Force the user to complete their profile
-        setMode('signup');
-        setIsOpen(true);
-      }
-    }
-  }, [session, status, pathname, router, update]);
-
-  if (!isOpen || !mounted) return null;
-
   const handleGoogleSignIn = () => {
     setLoading(true);
     setError('');
-    signIn('google', { callbackUrl: window.location.pathname });
+    signIn('google', { callbackUrl: '/dashboard/student' });
   };
 
   const handleCustomSignIn = (e: React.FormEvent) => {
@@ -132,8 +58,7 @@ export default function AuthModal() {
     }
 
     setLoading(true);
-    // Directly initiate login flow
-    signIn('google', { callbackUrl: window.location.pathname });
+    signIn('google', { callbackUrl: '/dashboard/student' });
   };
 
   const handleSignUpAndContinue = (e: React.FormEvent) => {
@@ -158,68 +83,45 @@ export default function AuthModal() {
       name: fullName.trim() || undefined,
     };
 
-    if (status === 'authenticated') {
-      setLoading(true);
-      fetch('/api/onboarding', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(onboardingPayload),
-      })
-        .then((res) => res.json())
-        .then(async (data) => {
-          if (data.success || !data.error) {
-            await update({ isOnboarded: true, role: data.role });
-            setSuccessMsg(data.message || 'Profile saved!');
-            setTimeout(() => {
-              setIsOpen(false);
-              if (data.role === 'TRAINER') router.push('/dashboard/trainer');
-              else router.push('/dashboard/student');
-              router.refresh();
-            }, 1200);
-          } else {
-            setError(data.error || 'Failed to save profile.');
-            setLoading(false);
-          }
-        })
-        .catch(() => {
-          setError('Network error occurred.');
-          setLoading(false);
-        });
-    } else {
-      localStorage.setItem('atlyx_pending_onboarding', JSON.stringify(onboardingPayload));
-      setLoading(true);
-      signIn('google', { callbackUrl: window.location.pathname });
-    }
+    localStorage.setItem('atlyx_pending_onboarding', JSON.stringify(onboardingPayload));
+    setLoading(true);
+    signIn('google', { callbackUrl: '/dashboard/student' });
   };
 
-  const modalContent = (
-    <div 
+  return (
+    <div
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: 'rgba(0, 0, 0, 0.78)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        zIndex: 999999,
+        minHeight: '100vh',
+        width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '16px',
-      }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget && !(status === 'authenticated' && session?.user && !(session.user as any).isOnboarded && (session.user as any).role !== 'ADMIN')) {
-          setIsOpen(false);
-        }
+        backgroundColor: '#0a0a0c',
+        backgroundImage: 'radial-gradient(circle at 50% 10%, rgba(56, 189, 248, 0.08) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 50%)',
+        padding: '24px 16px',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      {/* Background glowing orbs */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '20%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '500px',
+          height: '350px',
+          background: 'radial-gradient(circle, rgba(0, 114, 255, 0.15) 0%, rgba(124, 58, 237, 0.08) 50%, transparent 70%)',
+          filter: 'blur(70px)',
+          pointerEvents: 'none',
+        }}
+      />
+
       <motion.div
-        initial={{ opacity: 0, scale: 0.94, y: 12 }}
+        initial={{ opacity: 0, scale: 0.95, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.94, y: 12 }}
-        transition={{ type: 'spring', damping: 26, stiffness: 340 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
         style={{
           width: '100%',
           maxWidth: mode === 'signup' ? '460px' : '390px',
@@ -227,97 +129,51 @@ export default function AuthModal() {
           backgroundImage: 'radial-gradient(circle at 50% -20%, rgba(56, 189, 248, 0.12), transparent 70%), linear-gradient(180deg, #1c1c20 0%, #151518 100%)',
           border: '1px solid rgba(255, 255, 255, 0.1)',
           borderRadius: '20px',
-          padding: '30px 26px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.75), 0 0 40px rgba(0, 114, 255, 0.1)',
+          padding: '34px 28px',
+          boxShadow: '0 30px 60px -15px rgba(0, 0, 0, 0.8), 0 0 45px rgba(0, 114, 255, 0.12)',
           color: '#ffffff',
           position: 'relative',
-          overflow: 'hidden',
-          transition: 'max-width 0.25s ease',
+          zIndex: 10,
         }}
       >
-        {/* Subtle Ambient Backlight */}
-        <div 
-          style={{
-            position: 'absolute',
-            top: '-80px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '260px',
-            height: '140px',
-            background: 'radial-gradient(ellipse, rgba(0, 210, 255, 0.25) 0%, rgba(99, 102, 241, 0.15) 50%, transparent 80%)',
-            filter: 'blur(30px)',
-            pointerEvents: 'none',
-          }} 
-        />
-
-        {/* Close Button ('X') at top right */}
-        {!(status === 'authenticated' && session?.user && !(session.user as any).isOnboarded && (session.user as any).role !== 'ADMIN') && (
-          <button
-            onClick={() => setIsOpen(false)}
-            aria-label="Close modal"
-            style={{
-              position: 'absolute',
-              top: '16px',
-              right: '16px',
-              background: 'transparent',
-              border: 'none',
-              color: 'rgba(255, 255, 255, 0.5)',
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.color = '#ffffff';
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.color = 'rgba(255, 255, 255, 0.5)';
-              e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            <X size={20} />
-          </button>
-        )}
-
-        {/* Brand Header: Logo + ATLYX Title (LeetCode Style) */}
+        {/* Brand Header: Logo + ATLYX Title */}
         <div style={{ textAlign: 'center', marginBottom: '22px' }}>
-          <div 
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '8px',
-              filter: 'drop-shadow(0 6px 16px rgba(0, 114, 255, 0.35))',
-            }}
-          >
-            {/* ATLYX 3D Logo from Image 3 */}
-            <img 
-              src="/atlyx-logo.png" 
-              alt="ATLYX Logo" 
+          <Link href="/" style={{ textDecoration: 'none', display: 'inline-block' }}>
+            <div
               style={{
-                width: '54px',
-                height: '54px',
-                objectFit: 'contain',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '8px',
+                filter: 'drop-shadow(0 6px 16px rgba(0, 114, 255, 0.35))',
+                cursor: 'pointer',
               }}
-            />
-          </div>
+            >
+              <img
+                src="/atlyx-logo.png"
+                alt="ATLYX Logo"
+                style={{
+                  width: '54px',
+                  height: '54px',
+                  objectFit: 'contain',
+                }}
+              />
+            </div>
 
-          <div style={{
-            fontSize: '1.45rem',
-            fontWeight: 800,
-            fontFamily: 'var(--font-heading, "Outfit", sans-serif)',
-            letterSpacing: '0.04em',
-            color: '#ffffff',
-            lineHeight: 1.1,
-            marginBottom: '4px',
-          }}>
-            ATLYX
-          </div>
+            <div
+              style={{
+                fontSize: '1.45rem',
+                fontWeight: 800,
+                fontFamily: 'var(--font-heading, "Outfit", sans-serif)',
+                letterSpacing: '0.04em',
+                color: '#ffffff',
+                lineHeight: 1.1,
+                marginBottom: '4px',
+              }}
+            >
+              ATLYX
+            </div>
+          </Link>
           {mode === 'signup' && (
             <p style={{ fontSize: '0.82rem', color: 'rgba(255, 255, 255, 0.6)', margin: '4px 0 0' }}>
               Create your account &amp; get started
@@ -373,7 +229,7 @@ export default function AuthModal() {
           </motion.div>
         )}
 
-        {/* SIGN IN FORM (Matching LeetCode Reference Image 2) */}
+        {/* SIGN IN FORM (Matching LeetCode Reference) */}
         {mode === 'signin' ? (
           <form onSubmit={handleCustomSignIn} style={{ display: 'flex', flexDirection: 'column', gap: '13px' }}>
             {/* Username or E-mail Input */}
@@ -406,7 +262,7 @@ export default function AuthModal() {
               />
             </div>
 
-            {/* Password Input with visibility toggle */}
+            {/* Password Input with eye toggle */}
             <div style={{ position: 'relative' }}>
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -458,7 +314,7 @@ export default function AuthModal() {
               </button>
             </div>
 
-            {/* Cloudflare Verification Box (LeetCode Reference Image 2) */}
+            {/* Cloudflare Verification Badge (LeetCode Reference) */}
             <div
               style={{
                 borderRadius: '10px',
@@ -471,7 +327,6 @@ export default function AuthModal() {
                 userSelect: 'none',
               }}
             >
-              {/* Left: Verified Status */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div
                   style={{
@@ -492,7 +347,6 @@ export default function AuthModal() {
                 </span>
               </div>
 
-              {/* Right: Cloudflare Logo + Links */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <svg width="20" height="13" viewBox="0 0 32 22" fill="none">
@@ -515,7 +369,7 @@ export default function AuthModal() {
               </div>
             </div>
 
-            {/* High-Contrast White Sign In Button (LeetCode Reference) */}
+            {/* High-Contrast White Sign In Button */}
             <button
               type="submit"
               disabled={loading}
@@ -641,7 +495,7 @@ export default function AuthModal() {
               <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255, 255, 255, 0.1)' }} />
             </div>
 
-            {/* Social Logins Row (Google, GitHub, Apple, LinkedIn) */}
+            {/* Social Logins Row */}
             <div
               style={{
                 display: 'flex',
@@ -1022,6 +876,4 @@ export default function AuthModal() {
       </motion.div>
     </div>
   );
-
-  return createPortal(modalContent, document.body);
 }
