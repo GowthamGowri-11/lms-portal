@@ -20,6 +20,8 @@ import {
   Check
 } from 'lucide-react';
 
+import BrandLogo from '@/components/ui/BrandLogo';
+
 export default function AuthModal() {
   const { data: session, status, update } = useSession();
   const router = useRouter();
@@ -291,20 +293,11 @@ export default function AuthModal() {
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: '8px',
-              filter: 'drop-shadow(0 6px 16px rgba(0, 114, 255, 0.35))',
+              marginBottom: '6px',
             }}
           >
-            {/* ATLYX 3D Logo from Image 3 */}
-            <img 
-              src="/atlyx-logo.png" 
-              alt="ATLYX Logo" 
-              style={{
-                width: '54px',
-                height: '54px',
-                objectFit: 'contain',
-              }}
-            />
+            {/* ATLYX 3D Vector Logo */}
+            <BrandLogo size={52} />
           </div>
 
           <div style={{
@@ -314,6 +307,7 @@ export default function AuthModal() {
             letterSpacing: '0.04em',
             color: '#ffffff',
             lineHeight: 1.1,
+            marginTop: '4px',
             marginBottom: '4px',
           }}>
             ATLYX
