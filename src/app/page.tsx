@@ -4,6 +4,7 @@ import Navbar from '@/components/ui/Navbar';
 import HeroAuthButtons from '@/components/auth/HeroAuthButtons';
 import CareerGrowthVisual from '@/components/ui/CareerGrowthVisual';
 import Footer from '@/components/ui/Footer';
+import CourseBanner from '@/components/ui/CourseBanner';
 import { prisma } from '@/lib/prisma';
 import styles from './page.module.css';
 import {
@@ -226,21 +227,18 @@ export default async function Home() {
 
                   return (
                     <div key={course.id} className={styles.courseCard}>
-                      {/* Top Subtle Hairline Accent Line */}
-                      <div className={styles.courseTopAccent} />
-
-                      {/* Header Row: Category Badge & Difficulty */}
-                      <div className={styles.courseCardHeader}>
-                        <span className={styles.courseCategoryTag}>{course.category}</span>
-                        <span className={styles.courseLevelTag}>{course.level}</span>
-                      </div>
+                      {/* Redesigned Visual Course Banner */}
+                      <CourseBanner
+                        category={course.category}
+                        title={course.title}
+                        level={course.level}
+                        rating={course.rating || '4.8'}
+                        learnerCount={((course.title.charCodeAt(0) * 89) % 750) + 200}
+                        logo={course.logo}
+                      />
 
                       {/* Card Body */}
                       <div className={styles.courseCardBody}>
-                        {/* Course Icon Container */}
-                        <div className={`${styles.courseIconWrap} ${boxClass}`}>
-                          {icon}
-                        </div>
 
                         {/* Course Title */}
                         <h3 className={styles.courseCardTitle}>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <radialGradient id="genBg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#1e1b4b" />
+      <stop offset="60%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </radialGradient>
+    <linearGradient id="genAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <filter id="genShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <rect width="800" height="450" fill="url(#genBg)" />
+  <circle cx="400" cy="225" r="180" fill="#6366f1" opacity="0.12" filter="blur(60px)" />
+  <rect width="800" height="450" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2" />
+
+  <!-- Monogram Tech Emblem -->
+  <g filter="url(#genShadow)" transform="translate(400, 185)">
+    <!-- Hex / Diamond frame -->
+    <polygon points="0,-110 95,-45 95,45 0,110 -95,45 -95,-45" fill="none" stroke="url(#genAccent)" stroke-width="4" />
+    
+    <!-- Inner glowing node circle -->
+    <circle cx="0" cy="0" r="50" fill="#1e1b4b" stroke="url(#genAccent)" stroke-width="3" />
+    
+    <!-- Code brackets & spark glyphs -->
+    <path d="M -22 -16 L -36 0 L -22 16" fill="none" stroke="#60a5fa" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 22 -16 L 36 0 L 22 16" fill="none" stroke="#60a5fa" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    <line x1="6" y1="-20" x2="-6" y2="20" stroke="#a78bfa" stroke-width="4" stroke-linecap="round" />
+  </g>
+
+  <!-- Typography -->
+  <text x="400" y="375" 
+        text-anchor="middle" 
+        font-family="'Inter', 'Outfit', sans-serif" 
+        font-size="40" 
+        font-weight="800" 
+        letter-spacing="5" 
+        fill="#f8fafc">ATLYX ACADEMY</text>
+</svg>

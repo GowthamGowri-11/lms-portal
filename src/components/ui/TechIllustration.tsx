@@ -177,9 +177,102 @@ function getTechConfig(title: string, category: string): TechConfig {
   };
 }
 
-export default function TechOrbIcon({ title, category, size = 110 }: TechOrbIconProps) {
+export interface TechIllustrationProps {
+  title: string;
+  category: string;
+  size?: number;
+}
+
+export default function TechIllustration({ title, category, size = 110 }: TechIllustrationProps) {
   const t = (title + ' ' + category).toLowerCase();
+  const isJava = t.includes('java') && !t.includes('javascript');
+  const isPython = t.includes('python');
+  const isFullStack = t.includes('full stack') || t.includes('fullstack') || t.includes('web development');
   const isCpp = t.includes('c++') || t.includes('cpp');
+
+  if (isJava) {
+    return (
+      <div
+        style={{
+          width: size,
+          height: size,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          boxShadow: '0 8px 24px rgba(30, 58, 95, 0.25)',
+        }}
+      >
+        <img
+          src="/images/courses/java.svg"
+          alt="Java Logo"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (isPython) {
+    return (
+      <div
+        style={{
+          width: size,
+          height: size,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          boxShadow: '0 8px 24px rgba(43, 130, 186, 0.25)',
+        }}
+      >
+        <img
+          src="/images/courses/python.svg"
+          alt="Python Logo"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (isFullStack) {
+    return (
+      <div
+        style={{
+          width: size,
+          height: size,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          boxShadow: '0 8px 24px rgba(2, 132, 199, 0.2)',
+        }}
+      >
+        <img
+          src="/images/courses/fullstack.svg"
+          alt="Full Stack Logo"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      </div>
+    );
+  }
 
   if (isCpp) {
     return (
@@ -191,29 +284,20 @@ export default function TechOrbIcon({ title, category, size = 110 }: TechOrbIcon
           alignItems: 'center',
           justifyContent: 'center',
           position: 'relative',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          boxShadow: '0 8px 24px rgba(0, 89, 156, 0.25)',
         }}
       >
         <img
-          src="/cpp-logo.png"
+          src="/images/courses/cpp.svg"
           alt="C++ Logo"
           style={{
-            width: '92%',
-            height: '92%',
-            objectFit: 'contain',
-            filter: 'drop-shadow(0 6px 16px rgba(0, 89, 156, 0.16))',
-            animation: 'floatingOrb 4s ease-in-out infinite',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
           }}
         />
-        <style jsx global>{`
-          @keyframes floatingOrb {
-            0%, 100% {
-              transform: translateY(0px);
-            }
-            50% {
-              transform: translateY(-6px);
-            }
-          }
-        `}</style>
       </div>
     );
   }

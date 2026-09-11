@@ -25,6 +25,7 @@ import {
 import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import Footer from '@/components/ui/Footer';
+import CourseBanner from '@/components/ui/CourseBanner';
 import styles from './page.module.css';
 import { CourseWithArrays } from '@/lib/utils';
 import { Trainer } from '@/generated/prisma/client';
@@ -309,36 +310,15 @@ export default function CoursesClient({
                           whileHover={{ y: -5 }}
                           transition={{ duration: 0.22, ease: 'easeOut' }}
                         >
-                          {/* ── 1. VISUAL MESH GRADIENT BANNER ── */}
-                          <div
-                            className={styles.cardBanner}
-                            style={{ background: theme.gradient }}
-                          >
-                            {/* Ambient Light Overlay */}
-                            <div className={styles.bannerGlowOverlay} />
-
-                            {/* Top Row on Banner */}
-                            <div className={styles.bannerTopRow}>
-                              <div className={styles.floatingTechBadge}>
-                                <span className={styles.techEmoji}>{theme.icon}</span>
-                                <span className={styles.categoryName}>{course.category}</span>
-                              </div>
-
-                              <div className={styles.ratingFrostedPill}>
-                                <Star size={12} className={styles.starIconGold} />
-                                <span className={styles.ratingScore}>{course.rating || '4.8'}</span>
-                                <span className={styles.ratingCount}>({learnerCount}+)</span>
-                              </div>
-                            </div>
-
-                            {/* Bottom Row on Banner: Level Pill & Certificate Chip */}
-                            <div className={styles.bannerBottomRow}>
-                              <span className={styles.levelPill}>{course.level}</span>
-                              <span className={styles.accreditedTag}>
-                                <ShieldCheck size={12} /> Accredited
-                              </span>
-                            </div>
-                          </div>
+                          {/* ── 1. REDESIGNED VISUAL COURSE BANNER (IMAGE & BADGES) ── */}
+                          <CourseBanner
+                            category={course.category}
+                            title={course.title}
+                            level={course.level}
+                            rating={course.rating || '4.8'}
+                            learnerCount={learnerCount}
+                            logo={course.logo}
+                          />
 
                           {/* ── 2. CARD CONTENT BODY ── */}
                           <div className={styles.cardBody}>

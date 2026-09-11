@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useSession, signOut } from 'next-auth/react';
 import { formatDate } from '@/lib/utils';
+import { getCourseVisual } from '@/lib/courseImages';
 import styles from './student.module.css';
 
 type EnrollmentWithCourse = {
@@ -255,9 +256,14 @@ export default function StudentDashboardClient({
                       transition={{ delay: i * 0.07 }}
                     >
                       <div className={styles.listItemLogo}>
-                        {e.course.logo
-                          ? <img src={e.course.logo} alt="" referrerPolicy="no-referrer" crossOrigin="anonymous" loading="lazy" />
-                          : <BookOpen size={24} />}
+                        <img
+                          src={getCourseVisual(e.course.category, e.course.title, e.course.logo).imageSrc}
+                          alt={e.course.title}
+                          referrerPolicy="no-referrer"
+                          crossOrigin="anonymous"
+                          loading="lazy"
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
+                        />
                       </div>
                       <div className={styles.listItemBody}>
                         <div className={styles.listItemTop}>
