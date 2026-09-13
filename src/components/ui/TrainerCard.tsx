@@ -12,10 +12,11 @@ import {
   GraduationCap,
   Sparkles,
   Trophy,
-  Mail,
   Code2,
   CheckCircle2,
   ShieldCheck,
+  Briefcase,
+  Layers,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Trainer } from '@/generated/prisma/client';
@@ -24,28 +25,28 @@ import styles from './TrainerCard.module.css';
 type Course = { id: string; title: string; logo: string; trainerId: string };
 
 // ── SKILL DETECTION ──────────────────────────────────────────────────────────
-const SKILL_MAP: { keyword: string; label: string; icon: string }[] = [
-  { keyword: 'python',           label: 'Python',           icon: '🐍' },
-  { keyword: 'react',            label: 'React.js',         icon: '⚛️' },
-  { keyword: 'node',             label: 'Node.js',          icon: '🟢' },
-  { keyword: 'java',             label: 'Java Enterprise',  icon: '☕' },
-  { keyword: 'javascript',       label: 'JavaScript',       icon: '🟡' },
-  { keyword: 'typescript',       label: 'TypeScript',       icon: '🔷' },
-  { keyword: 'django',           label: 'Django',           icon: '🎸' },
-  { keyword: 'spring',           label: 'Spring Boot',      icon: '🍃' },
-  { keyword: 'machine learning', label: 'Machine Learning', icon: '🤖' },
-  { keyword: 'data science',     label: 'Data Science',     icon: '📊' },
-  { keyword: 'aws',              label: 'AWS Cloud',        icon: '☁️' },
-  { keyword: 'docker',           label: 'Docker & K8s',     icon: '🐳' },
-  { keyword: 'c++',              label: 'C++ Systems',      icon: '⚙️' },
-  { keyword: 'devops',           label: 'DevOps',           icon: '🔧' },
-  { keyword: 'next',             label: 'Next.js',          icon: '▲' },
-  { keyword: 'fullstack',        label: 'Full Stack Web',   icon: '💻' },
-  { keyword: 'full stack',       label: 'Full Stack Web',   icon: '💻' },
-  { keyword: 'web developer',    label: 'Modern Web Dev',   icon: '🌐' },
-  { keyword: 'database',         label: 'SQL & Databases',  icon: '🗄️' },
-  { keyword: 'backend',          label: 'Backend Arch',     icon: '🛠️' },
-  { keyword: 'frontend',         label: 'Frontend UI/UX',   icon: '🎨' },
+const SKILL_MAP: { keyword: string; label: string; icon: string; color: string }[] = [
+  { keyword: 'python',           label: 'Python',           icon: '🐍', color: '#3b82f6' },
+  { keyword: 'react',            label: 'React.js',         icon: '⚛️', color: '#06b6d4' },
+  { keyword: 'node',             label: 'Node.js',          icon: '🟢', color: '#22c55e' },
+  { keyword: 'java',             label: 'Java Enterprise',  icon: '☕', color: '#ea580c' },
+  { keyword: 'javascript',       label: 'JavaScript',       icon: '🟡', color: '#eab308' },
+  { keyword: 'typescript',       label: 'TypeScript',       icon: '🔷', color: '#2563eb' },
+  { keyword: 'django',           label: 'Django',           icon: '🎸', color: '#16a34a' },
+  { keyword: 'spring',           label: 'Spring Boot',      icon: '🍃', color: '#22c55e' },
+  { keyword: 'machine learning', label: 'Machine Learning', icon: '🤖', color: '#8b5cf6' },
+  { keyword: 'data science',     label: 'Data Science',     icon: '📊', color: '#0284c7' },
+  { keyword: 'aws',              label: 'AWS Cloud',        icon: '☁️', color: '#f59e0b' },
+  { keyword: 'docker',           label: 'Docker & K8s',     icon: '🐳', color: '#0284c7' },
+  { keyword: 'c++',              label: 'C++ Systems',      icon: '⚙️', color: '#0ea5e9' },
+  { keyword: 'devops',           label: 'DevOps & CI/CD',   icon: '🔧', color: '#6366f1' },
+  { keyword: 'next',             label: 'Next.js',          icon: '▲',  color: '#0f172a' },
+  { keyword: 'fullstack',        label: 'Full Stack Web',   icon: '💻', color: '#2563eb' },
+  { keyword: 'full stack',       label: 'Full Stack Web',   icon: '💻', color: '#2563eb' },
+  { keyword: 'web developer',    label: 'Modern Web Dev',   icon: '🌐', color: '#0284c7' },
+  { keyword: 'database',         label: 'SQL & Databases',  icon: '🗄️', color: '#d97706' },
+  { keyword: 'backend',          label: 'Backend Arch',     icon: '🛠️', color: '#475569' },
+  { keyword: 'frontend',         label: 'Frontend UI/UX',   icon: '🎨', color: '#ec4899' },
 ];
 
 function getSkills(trainer: Trainer) {
@@ -55,9 +56,9 @@ function getSkills(trainer: Trainer) {
     return detected.slice(0, 3);
   }
   return [
-    { label: trainer.specialization || 'Software Engineering', icon: '💻' },
-    { label: 'System Architecture', icon: '⚙️' },
-    { label: 'Mentorship', icon: '🎯' },
+    { label: trainer.specialization || 'Software Engineering', icon: '💻', color: '#2563eb' },
+    { label: 'System Architecture', icon: '⚙️', color: '#0284c7' },
+    { label: 'Mentorship', icon: '🎯', color: '#8b5cf6' },
   ];
 }
 
@@ -85,12 +86,24 @@ function getAvatarGradient(name: string) {
 
 function getFeaturedTag(trainer: Trainer, indexSeed: number) {
   if (trainer.rating && trainer.rating >= 4.9) {
-    return { label: 'Top Rated Faculty', icon: <Star size={11} className={styles.starIconGold} />, pillClass: styles.badgeGold };
+    return {
+      label: 'Top Rated Faculty',
+      icon: <Star size={12} className={styles.starIconGold} />,
+      badgeClass: styles.badgeGold,
+    };
   }
   if (indexSeed % 2 === 0) {
-    return { label: 'Featured Mentor', icon: <Trophy size={11} className={styles.trophyIconBlue} />, pillClass: styles.badgeBlue };
+    return {
+      label: 'Featured Mentor',
+      icon: <Trophy size={12} className={styles.trophyIconBlue} />,
+      badgeClass: styles.badgeBlue,
+    };
   }
-  return { label: 'Senior Instructor', icon: <GraduationCap size={11} className={styles.gradIconPurple} />, pillClass: styles.badgePurple };
+  return {
+    label: 'Senior Instructor',
+    icon: <GraduationCap size={12} className={styles.gradIconPurple} />,
+    badgeClass: styles.badgePurple,
+  };
 }
 
 interface Props {
@@ -135,22 +148,22 @@ export default function TrainerCard({
 
   const statMetrics = [
     {
-      icon: <Star size={13} className={styles.metricStar} />,
+      icon: <Star size={14} className={styles.metricStar} />,
       value: ratingValue,
       label: 'Rating',
     },
     {
-      icon: <Users size={13} className={styles.metricUsers} />,
+      icon: <Users size={14} className={styles.metricUsers} />,
       value: `${studentCount}+`,
       label: 'Students',
     },
     {
-      icon: <BookOpen size={13} className={styles.metricCourses} />,
+      icon: <BookOpen size={14} className={styles.metricCourses} />,
       value: trainerCourses.length.toString(),
       label: 'Courses',
     },
     {
-      icon: <Award size={13} className={styles.metricExp} />,
+      icon: <Award size={14} className={styles.metricExp} />,
       value: experienceValue.replace(/ years?/i, ' Yrs'),
       label: 'Exp',
     },
@@ -159,86 +172,91 @@ export default function TrainerCard({
   return (
     <motion.div
       className={styles.card}
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Top subtle hairline accent line */}
-      <div className={styles.topAccentBar} />
+      {/* ── TOP DECORATIVE BANNER ── */}
+      <div className={styles.cardBanner}>
+        <div className={styles.bannerPattern} />
+        <div className={styles.bannerGlow} />
 
-      {/* ── CARD TOP BAR (TAG + ADMIN CONTROLS) ── */}
-      <div className={styles.cardHeader}>
-        <div className={`${styles.featuredBadge} ${featuredBadge.pillClass}`}>
-          <span className={styles.badgeIcon}>{featuredBadge.icon}</span>
-          <span className={styles.badgeText}>{featuredBadge.label}</span>
-        </div>
-
-        {isAdmin && (
-          <div className={styles.adminControls}>
-            <button
-              className={styles.adminBtn}
-              onClick={() => onEdit?.(trainer)}
-              title="Edit Trainer"
-              type="button"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-              </svg>
-            </button>
-            <button
-              className={`${styles.adminBtn} ${styles.adminDangerBtn}`}
-              onClick={() => onDelete?.(trainer.id)}
-              title="Delete Trainer"
-              type="button"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                <path d="M10 11v6M14 11v6" /><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-              </svg>
-            </button>
+        {/* Top Header Row with Badge & Admin Controls */}
+        <div className={styles.bannerHeader}>
+          <div className={`${styles.featuredBadge} ${featuredBadge.badgeClass}`}>
+            <span className={styles.badgeIcon}>{featuredBadge.icon}</span>
+            <span className={styles.badgeText}>{featuredBadge.label}</span>
           </div>
-        )}
+
+          {isAdmin && (
+            <div className={styles.adminControls}>
+              <button
+                className={styles.adminBtn}
+                onClick={() => onEdit?.(trainer)}
+                title="Edit Trainer"
+                type="button"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+              </button>
+              <button
+                className={`${styles.adminBtn} ${styles.adminDangerBtn}`}
+                onClick={() => onDelete?.(trainer.id)}
+                title="Delete Trainer"
+                type="button"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  <path d="M10 11v6M14 11v6" /><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className={styles.cardBody}>
-        {/* ── PROFILE SECTION ── */}
+        {/* ── PROFILE SECTION WITH FLOATING AVATAR ── */}
         <div className={styles.profileSection}>
-          <div className={styles.avatarWrapper}>
-            {isValidAvatar && !imgFailed ? (
-              <img
-                src={trainer.avatar}
-                alt={trainer.name}
-                className={styles.avatarImg}
-                onError={() => setImgFailed(true)}
-              />
-            ) : (
-              <div
-                className={styles.avatarInitials}
-                style={{ background: avatarGradient }}
-              >
-                {getInitials(trainer.name)}
-              </div>
-            )}
+          <div className={styles.avatarContainer}>
+            <div className={styles.avatarRing}>
+              {isValidAvatar && !imgFailed ? (
+                <img
+                  src={trainer.avatar}
+                  alt={trainer.name}
+                  className={styles.avatarImg}
+                  onError={() => setImgFailed(true)}
+                />
+              ) : (
+                <div
+                  className={styles.avatarInitials}
+                  style={{ background: avatarGradient }}
+                >
+                  {getInitials(trainer.name)}
+                </div>
+              )}
+            </div>
+            <span className={styles.verifiedCheck} title="Verified Faculty Mentor">
+              ✓
+            </span>
           </div>
 
           <div className={styles.profileDetails}>
             <div className={styles.nameRow}>
               <h3 className={styles.trainerName}>{trainer.name}</h3>
-              <span className={styles.verifiedBadge} title="Verified Faculty Mentor">
-                ✓
-              </span>
             </div>
 
-            <div className={styles.specializationPill}>
+            <div className={styles.specializationBadge}>
               <span className={styles.specDot} />
               <span className={styles.specText}>
-                {trainer.specialization || 'Fullstack Developer'}
+                {trainer.specialization || 'Fullstack Web Developer'}
               </span>
             </div>
           </div>
         </div>
 
-        {/* ── STREAMLINED 4-METRIC STRIP ── */}
+        {/* ── 4-METRIC STATS STRIP ── */}
         <div className={styles.metricsStrip}>
           {statMetrics.map((stat, idx) => (
             <div key={stat.label} className={styles.metricItem}>
@@ -254,7 +272,7 @@ export default function TrainerCard({
           ))}
         </div>
 
-        {/* ── ABOUT TRAINER BIO SECTION ── */}
+        {/* ── ABOUT FACULTY BIO ── */}
         <div className={styles.infoSection}>
           <div className={styles.sectionHeader}>
             <User size={12} className={styles.sectionIcon} />
@@ -284,7 +302,7 @@ export default function TrainerCard({
           </div>
         )}
 
-        {/* ── ASSIGNED / ACTIVE COURSES ── */}
+        {/* ── CURRICULUM & COURSES ── */}
         <div className={styles.infoSection}>
           <div className={styles.sectionHeader}>
             <BookOpen size={12} className={styles.sectionIcon} />
@@ -292,6 +310,7 @@ export default function TrainerCard({
           </div>
           {trainerCourses.length === 0 ? (
             <div className={styles.noCoursesPill}>
+              <Sparkles size={11} className={styles.sparkleIconMuted} />
               <span>Upcoming Curricula in Development</span>
             </div>
           ) : (
@@ -314,7 +333,7 @@ export default function TrainerCard({
           )}
         </div>
 
-        {/* ── CTA BUTTON ── */}
+        {/* ── EXPLORE COURSES CTA BUTTON ── */}
         <div className={styles.actionWrapper}>
           <Link href="/courses" className={styles.exploreBtn}>
             <span>Explore Courses</span>
