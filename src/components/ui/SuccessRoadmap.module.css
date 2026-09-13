@@ -64,8 +64,8 @@
   align-items: center;
   gap: 6px;
   padding: 5px 15px;
-  background: #eff6ff;
-  border: 1px solid #dbeafe;
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.2);
   border-radius: 9999px;
   color: #2563eb;
   font-size: 0.74rem;
@@ -91,11 +91,15 @@
 }
 
 .titleAccent {
-  color: #2563eb;
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
 }
 
 .subtitle {
-  color: #64748b;
+  color: #475569;
   font-size: 0.98rem;
   max-width: 580px;
   margin: 0 auto;

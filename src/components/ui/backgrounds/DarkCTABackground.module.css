@@ -1,0 +1,112 @@
+/* ==========================================================================
+   DARK CTA BACKGROUND — DEEP AURORA GLOW, SILHOUETTE & STAR PARTICLES
+   ========================================================================== */
+
+.ctaAtmosphere {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+/* 1. Deep Space Aurora Glows */
+.auroraGlowCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px;
+  height: 450px;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(37, 99, 235, 0.28) 0%,
+    rgba(56, 189, 248, 0.12) 45%,
+    transparent 75%
+  );
+  filter: blur(55px);
+  pointer-events: none;
+}
+
+.auroraGlowBlue {
+  position: absolute;
+  top: -20%;
+  left: 10%;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, transparent 70%);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+.auroraGlowPurple {
+  position: absolute;
+  bottom: -20%;
+  right: 10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.18) 0%, transparent 70%);
+  filter: blur(65px);
+  pointer-events: none;
+}
+
+/* 2. ATLYX Geometric Silhouette */
+.atlyxSilhouette {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  height: 340px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* 3. Thin Orbital Rings */
+.orbitalRings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.ringRotate {
+  animation: slowRingRotate 40s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes slowRingRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 4. Micro Star-like Particles */
+.starDot {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffffff;
+  pointer-events: none;
+  opacity: 0.6;
+  animation: starTwinkle 4s ease-in-out infinite alternate;
+}
+
+.star1 { top: 20%; left: 15%; width: 3px; height: 3px; box-shadow: 0 0 6px #38bdf8; animation-delay: 0.2s; }
+.star2 { top: 35%; right: 18%; width: 2.5px; height: 2.5px; box-shadow: 0 0 5px #c084fc; animation-delay: 1.2s; }
+.star3 { bottom: 25%; left: 22%; width: 3.5px; height: 3.5px; box-shadow: 0 0 7px #60a5fa; animation-delay: 2.4s; }
+.star4 { bottom: 30%; right: 25%; width: 2px; height: 2px; box-shadow: 0 0 4px #ffffff; animation-delay: 0.8s; }
+.star5 { top: 15%; right: 35%; width: 3px; height: 3px; box-shadow: 0 0 6px #38bdf8; animation-delay: 1.8s; }
+.star6 { bottom: 15%; left: 45%; width: 2.5px; height: 2.5px; box-shadow: 0 0 5px #a855f7; animation-delay: 3s; }
+
+@keyframes starTwinkle {
+  0% { opacity: 0.3; transform: scale(0.8); }
+  100% { opacity: 0.9; transform: scale(1.2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ringRotate,
+  .starDot {
+    animation: none;
+  }
+}

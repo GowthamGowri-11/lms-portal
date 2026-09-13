@@ -24,6 +24,8 @@ export const metadata: Metadata = {
     "Master in-demand skills with expert-led courses. ATLYX offers world-class training in Web Development, UI/UX Design, Data Science, and more.",
 };
 
+import AmbientShutterBackground from "@/components/ui/AmbientShutterBackground";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,6 +39,7 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <ATLYXPageLoader />
           </Suspense>
+          <AmbientShutterBackground />
           {children}
         </AuthProvider>
       </body>

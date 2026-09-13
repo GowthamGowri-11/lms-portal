@@ -1,0 +1,106 @@
+/* ===================================================================
+   CURSOR EFFECT — INTERACTIVE AMBIENT GLOW & PRECISION FOLLOWER
+   =================================================================== */
+
+.cursorContainer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99999;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.cursorContainer.visible {
+  opacity: 1;
+}
+
+@media (pointer: coarse), (hover: none) {
+  .cursorContainer {
+    display: none !important;
+  }
+}
+
+/* 1. Fluid Ambient Spotlight Glow */
+.cursorGlow {
+  position: absolute;
+  top: -160px;
+  left: -160px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(37, 99, 235, 0.09) 0%,
+    rgba(56, 189, 248, 0.05) 35%,
+    rgba(99, 102, 241, 0.02) 60%,
+    transparent 80%
+  );
+  filter: blur(16px);
+  will-change: transform;
+  pointer-events: none;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.3s ease;
+}
+
+.glowExpanded {
+  width: 420px;
+  height: 420px;
+  top: -210px;
+  left: -210px;
+  background: radial-gradient(
+    circle,
+    rgba(37, 99, 235, 0.14) 0%,
+    rgba(56, 189, 248, 0.08) 40%,
+    rgba(99, 102, 241, 0.03) 70%,
+    transparent 85%
+  );
+  filter: blur(20px);
+}
+
+/* 2. Precision Interactive Follower Ring */
+.cursorRing {
+  position: absolute;
+  top: -16px;
+  left: -16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(37, 99, 235, 0.45);
+  background: rgba(37, 99, 235, 0.04);
+  backdrop-filter: blur(1px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  pointer-events: none;
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease,
+              background-color 0.25s ease;
+}
+
+.cursorCenterDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #2563eb;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.ringHovered {
+  width: 48px;
+  height: 48px;
+  top: -24px;
+  left: -24px;
+  border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+  box-shadow: 0 0 16px rgba(37, 99, 235, 0.25);
+}
+
+.ringHovered .cursorCenterDot {
+  transform: scale(1.6);
+  background: #1d4ed8;
+}

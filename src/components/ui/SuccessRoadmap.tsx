@@ -3,6 +3,7 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Flame, Target, RotateCw, Zap, Trophy, Compass } from 'lucide-react';
+import BlueprintBackground from '@/components/ui/backgrounds/BlueprintBackground';
 import styles from './SuccessRoadmap.module.css';
 
 interface RoadmapStep {
@@ -93,10 +94,8 @@ export default function SuccessRoadmap() {
 
   return (
     <section className={styles.roadmapSection} ref={containerRef}>
-      {/* Background Decorative Mesh & Radial Ambient Glow */}
-      <div className={styles.bgGridPattern} />
-      <div className={styles.ambientGlowTop} />
-      <div className={styles.ambientGlowBottom} />
+      {/* Reusable Coordinated Blueprint Background Atmosphere */}
+      <BlueprintBackground />
 
       <div className={styles.container}>
         {/* Section Header */}

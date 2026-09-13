@@ -1,21 +1,70 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   ChevronLeft, ChevronRight, CheckCircle, Play, Lock,
-  BookOpen, Code, FileText, Menu, X, ArrowLeft,
+  BookOpen, Code, FileText, Menu, ArrowLeft,
   Download, ExternalLink, Eye, ClipboardList, FileCode,
-  GitBranch, Globe, ExternalLink as YoutubeLink, Calendar, Award, RotateCcw,
+  GitBranch, Globe, Video, Calendar, Award, RotateCcw,
+  Copy, Check, Sparkles, Clock, Compass, Layers, CheckCircle2
 } from 'lucide-react';
-import { Course, Lesson, CodingProblem } from '@/generated/prisma/client';
+import type { Course, Lesson, CodingProblem } from '@/generated/prisma/client';
 import type { LessonNote, LessonResource, LessonAssignment, LessonPracticeFile } from '@/generated/prisma/client';
 import { useLearn } from '@/app/learn/[courseId]/LearnContext';
 import ReactMarkdown from 'react-markdown';
 import styles from './lesson.module.css';
 
+// Code Block Component with Copy functionality and Mac Window Header
+function CustomCodeBlock({ inline, className, children, ...props }: any) {
+  const match = /language-(\w+)/.exec(className || '');
+  const language = match ? match[1] : '';
+  const codeString = String(children).replace(/\n$/, '');
+  const [copied, setCopied] = useState(false);
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(codeString);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  if (inline || !match) {
+    return (
+      <code className={className} {...props}>
+        {children}
+      </code>
+    );
+  }
+
+  return (
+    <div className={styles.codeEditorBlock}>
+      <div className={styles.codeEditorHeader}>
+        <div className={styles.codeEditorDots}>
+          <span className={styles.dotRed} />
+          <span className={styles.dotYellow} />
+          <span className={styles.dotGreen} />
+        </div>
+        <span className={styles.codeLangBadge}>{language || 'CODE'}</span>
+        <button
+          className={styles.copyCodeBtn}
+          onClick={handleCopy}
+          title="Copy code to clipboard"
+        >
+          {copied ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
+          <span>{copied ? 'Copied!' : 'Copy'}</span>
+        </button>
+      </div>
+      <pre className={styles.codeEditorPre}>
+        <code>{codeString}</code>
+      </pre>
+    </div>
+  );
+}
 
 export default function LessonClient({
   course,
@@ -44,7 +93,7 @@ export default function LessonClient({
 }) {
   const router = useRouter();
   const { setMobileSidebarOpen } = useLearn();
-  
+
   const [activeTab, setActiveTab] = useState<'notes' | 'docs' | 'resources' | 'assignments' | 'practice' | 'coding'>('notes');
   const [completed, setCompleted] = useState(initialProgress?.completed ?? false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -79,8 +128,6 @@ export default function LessonClient({
     }
   };
 
-  // Using react-markdown for robust rendering
-
   const nextLocked = nextItem ? !completed : false;
 
   const trackDownload = async (noteId: string) => {
@@ -90,14 +137,16 @@ export default function LessonClient({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ noteId }),
       });
-    } catch { /* non-fatal */ }
+    } catch {
+      /* non-fatal */
+    }
   };
 
   const resourceIcon = (type: string) => {
-    if (type === 'GitHub') return <GitBranch size={15} />;
-    if (type === 'YouTube') return <YoutubeLink size={15} />;
-    if (type === 'Official Website' || type === 'Documentation') return <Globe size={15} />;
-    return <ExternalLink size={15} />;
+    if (type === 'GitHub') return <GitBranch size={18} />;
+    if (type === 'YouTube') return <Video size={18} />;
+    if (type === 'Official Website' || type === 'Documentation') return <Globe size={18} />;
+    return <ExternalLink size={18} />;
   };
 
   return (
@@ -108,311 +157,414 @@ export default function LessonClient({
           <ArrowLeft size={18} />
         </Link>
         <div className={styles.mobileTitle}>{lesson.title}</div>
-        <button className={styles.mobileMenuBtn} onClick={() => setMobileSidebarOpen(true)}>
+        <button
+          className={styles.mobileMenuBtn}
+          onClick={() => setMobileSidebarOpen(true)}
+          aria-label="Open Curriculum Menu"
+        >
           <Menu size={20} />
         </button>
       </div>
 
-      {/* Main Content */}
+      {/* Main Workspace */}
       <main className={styles.main}>
-        <div className={styles.glassContainer}>
-          {/* Lesson Header */}
-          <div className={styles.lessonHeader}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <Link href={`/courses/${course.id}`} className={styles.backButton}>
-                <ArrowLeft size={16} />
-                <span>Back to Course</span>
+        <div className={styles.workspaceContainer}>
+          {/* Top Command / Breadcrumbs Bar */}
+          <div className={styles.topBar}>
+            <div className={styles.breadcrumbs}>
+              <Link href="/courses" className={styles.breadcrumbLink}>
+                <Compass size={14} /> Courses
               </Link>
-              <div>
-                <h1 className={styles.lessonTitle}>{lesson.title}</h1>
-                {lesson.description && <p className={styles.lessonDesc}>{lesson.description}</p>}
-              </div>
+              <ChevronRight size={13} />
+              <Link href={`/courses/${course.id}`} className={styles.breadcrumbLink}>
+                {course.title}
+              </Link>
+              <ChevronRight size={13} />
+              <span className={styles.breadcrumbActive}>{lesson.title}</span>
+            </div>
+
+            <div className={styles.topBarActions}>
+              <button
+                className={`${styles.quickCompleteBtn} ${completed ? styles.quickCompleteBtnDone : ''}`}
+                onClick={toggleComplete}
+                disabled={isUpdating}
+                title={completed ? 'Click to mark as incomplete' : 'Mark lesson as complete'}
+              >
+                {completed ? <CheckCircle2 size={14} style={{ color: '#16a34a' }} /> : <CheckCircle size={14} />}
+                <span>{completed ? 'Completed' : 'Mark as Complete'}</span>
+              </button>
             </div>
           </div>
 
-        {/* Tabs */}
-        <div className={styles.tabs}>
-          {[
-            { key: 'notes', label: 'Lesson Notes', icon: <FileText size={15} /> },
-            ...(lessonNotes.length > 0 ? [{ key: 'docs', label: `Notes (${lessonNotes.length})`, icon: <Download size={15} /> }] : []),
-            ...(lessonResources.length > 0 ? [{ key: 'resources', label: `Resources (${lessonResources.length})`, icon: <BookOpen size={15} /> }] : []),
-            ...(lessonAssignments.length > 0 ? [{ key: 'assignments', label: `Assignments (${lessonAssignments.length})`, icon: <ClipboardList size={15} /> }] : []),
-            ...(lessonPracticeFiles.length > 0 ? [{ key: 'practice', label: `Practice (${lessonPracticeFiles.length})`, icon: <FileCode size={15} /> }] : []),
-            ...(codingProblems.length > 0
-              ? [{ key: 'coding', label: `Problems (${codingProblems.length})`, icon: <Code size={15} /> }]
-              : []),
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              className={`${styles.tab} ${activeTab === tab.key ? styles.tabActive : ''}`}
-              onClick={() => setActiveTab(tab.key as typeof activeTab)}
-            >
-              {tab.icon}
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Tab Content */}
-        <div className={styles.tabContent}>
-          {activeTab === 'notes' && (
-            <div className={styles.notesContent}>
-              {lesson.notes ? (
-                <div className={styles.notesBody}>
-                  <ReactMarkdown>{lesson.notes}</ReactMarkdown>
-                </div>
+          {/* Hero Overview Card */}
+          <div className={styles.heroCard}>
+            <div className={styles.heroPillRow}>
+              <span className={styles.lessonTagPill}>
+                <Sparkles size={12} />
+                Core Learning Module
+              </span>
+              {completed ? (
+                <span className={`${styles.statusPill} ${styles.statusPillCompleted}`}>
+                  <CheckCircle size={12} /> Lesson Finished
+                </span>
               ) : (
-                <p className={styles.emptyState}>No lesson notes available.</p>
+                <span className={`${styles.statusPill} ${styles.statusPillInProgress}`}>
+                  <Clock size={12} /> In Progress
+                </span>
               )}
             </div>
-          )}
 
-          {activeTab === 'docs' && (
-            <div className={styles.resourcesContent}>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                Download course notes for this lesson.
-              </p>
-              {lessonNotes.map((note) => (
-                <div key={note.id} className={styles.resourceItem} style={{ marginBottom: 8, flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
-                    <FileText size={16} style={{ flexShrink: 0 }} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 600, fontSize: '0.88rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{note.title}</div>
-                      {note.description && <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: 2 }}>{note.description}</div>}
-                      <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap', alignItems: 'center' }}>
-                        <span style={{ fontSize: '0.68rem', background: 'rgba(99,102,241,0.1)', color: 'var(--accent-primary)', padding: '1px 6px', borderRadius: 5, fontWeight: 700 }}>{note.fileType.toUpperCase()}</span>
-                        <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>{note.category}</span>
-                        <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>v{note.version}</span>
-                        <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>↓ {note.downloadCount}</span>
+            <h1 className={styles.lessonTitle}>{lesson.title}</h1>
+
+            {lesson.description && <p className={styles.lessonDesc}>{lesson.description}</p>}
+
+            <div className={styles.heroMetaRow}>
+              <div className={styles.metaItem}>
+                <Clock size={14} style={{ color: 'var(--accent-primary)' }} />
+                <span>Duration: <strong>{lesson.duration || '15 min read'}</strong></span>
+              </div>
+              <div className={styles.metaItem}>
+                <Layers size={14} style={{ color: 'var(--accent-primary)' }} />
+                <span>Level: <strong>Comprehensive</strong></span>
+              </div>
+              {codingProblems.length > 0 && (
+                <div className={styles.metaItem}>
+                  <Code size={14} style={{ color: '#9333ea' }} />
+                  <span>Interactive Labs: <strong>{codingProblems.length} Problems</strong></span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Tabs Navigation Bar */}
+          <div className={styles.tabsContainer}>
+            {[
+              { key: 'notes', label: 'Lesson Guide & Notes', icon: <FileText size={15} /> },
+              ...(lessonNotes.length > 0 ? [{ key: 'docs', label: 'PDF Notes', count: lessonNotes.length, icon: <Download size={15} /> }] : []),
+              ...(lessonResources.length > 0 ? [{ key: 'resources', label: 'Web Resources', count: lessonResources.length, icon: <BookOpen size={15} /> }] : []),
+              ...(lessonAssignments.length > 0 ? [{ key: 'assignments', label: 'Assignments', count: lessonAssignments.length, icon: <ClipboardList size={15} /> }] : []),
+              ...(lessonPracticeFiles.length > 0 ? [{ key: 'practice', label: 'Starter Files', count: lessonPracticeFiles.length, icon: <FileCode size={15} /> }] : []),
+              ...(codingProblems.length > 0 ? [{ key: 'coding', label: 'Coding Practice', count: codingProblems.length, icon: <Code size={15} /> }] : []),
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                className={`${styles.tab} ${activeTab === tab.key ? styles.tabActive : ''}`}
+                onClick={() => setActiveTab(tab.key as typeof activeTab)}
+              >
+                {tab.icon}
+                <span>{tab.label}</span>
+                {tab.count !== undefined && <span className={styles.tabCountBadge}>{tab.count}</span>}
+              </button>
+            ))}
+          </div>
+
+          {/* Main Tab Content Panel */}
+          <div className={styles.tabContentCard}>
+            {activeTab === 'notes' && (
+              <div className={styles.notesContent}>
+                {lesson.notes ? (
+                  <div className={styles.notesBody}>
+                    <ReactMarkdown
+                      components={{
+                        code: CustomCodeBlock,
+                      }}
+                    >
+                      {lesson.notes}
+                    </ReactMarkdown>
+
+                    {/* Key Takeaways Card */}
+                    <div className={styles.takeawaysCard}>
+                      <div className={styles.takeawaysHeader}>
+                        <Sparkles size={18} />
+                        <span>Core Takeaways & Best Practices</span>
+                      </div>
+                      <div className={styles.takeawaysList}>
+                        <div className={styles.takeawayItem}>
+                          <CheckCircle2 size={16} className={styles.takeawayCheckIcon} />
+                          <span>Understand the architectural concepts and practical use cases covered in this module.</span>
+                        </div>
+                        <div className={styles.takeawayItem}>
+                          <CheckCircle2 size={16} className={styles.takeawayCheckIcon} />
+                          <span>Review the code snippets above and execute the interactive exercises in your development environment.</span>
+                        </div>
+                        <div className={styles.takeawayItem}>
+                          <CheckCircle2 size={16} className={styles.takeawayCheckIcon} />
+                          <span>Mark this lesson as completed when ready to unlock subsequent lessons and certification milestones.</span>
+                        </div>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                  </div>
+                ) : (
+                  <p className={styles.emptyState}>No written notes available for this lesson.</p>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'docs' && (
+              <div className={styles.resourcesList}>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                  Download official lesson notes, study sheets, and PDF documentation:
+                </p>
+                {lessonNotes.map((note) => (
+                  <div key={note.id} className={styles.resourceCard}>
+                    <div className={styles.resourceLeft}>
+                      <div className={styles.resourceIconContainer}>
+                        <FileText size={20} />
+                      </div>
+                      <div className={styles.resourceInfo}>
+                        <div className={styles.resourceTitle}>{note.title}</div>
+                        {note.description && <div className={styles.resourceDesc}>{note.description}</div>}
+                        <div className={styles.resourceMetaTags}>
+                          <span className={`${styles.metaBadge} ${styles.metaBadgeAccent}`}>{note.fileType.toUpperCase()}</span>
+                          <span className={styles.metaBadge}>{note.category}</span>
+                          <span className={styles.metaBadge}>v{note.version}</span>
+                          <span className={styles.metaBadge}>↓ {note.downloadCount} downloads</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={styles.resourceActions}>
                       {note.fileType === 'pdf' && (
                         <a
                           href={note.secureUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`btn btn-secondary btn-sm`}
-                          style={{ fontSize: '0.75rem', padding: '5px 10px' }}
+                          className="btn btn-secondary btn-sm"
+                          style={{ fontSize: '0.8rem', padding: '6px 12px' }}
                           onClick={() => trackDownload(note.id)}
                         >
-                          <Eye size={13} /> View
+                          <Eye size={14} /> View
                         </a>
                       )}
                       <a
                         href={note.secureUrl}
                         download
-                        className={`btn btn-primary btn-sm`}
-                        style={{ fontSize: '0.75rem', padding: '5px 10px' }}
+                        className="btn btn-primary btn-sm"
+                        style={{ fontSize: '0.8rem', padding: '6px 12px' }}
                         onClick={() => trackDownload(note.id)}
                       >
-                        <Download size={13} /> Download
+                        <Download size={14} /> Download
                       </a>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
 
-          {activeTab === 'resources' && (
-            <div className={styles.resourcesContent}>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                External resources and reference links for this lesson.
-              </p>
-              {lessonResources.map((r) => (
-                <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" className={styles.resourceItem} style={{ marginBottom: 8 }}>
-                  {resourceIcon(r.type)}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 600, fontSize: '0.88rem' }}>{r.title}</div>
-                    {r.description && <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: 2 }}>{r.description}</div>}
-                    <div style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)', marginTop: 4 }}>{r.type}</div>
-                  </div>
-                  <ExternalLink size={14} style={{ flexShrink: 0, opacity: 0.5 }} />
-                </a>
-              ))}
-            </div>
-          )}
-
-          {activeTab === 'assignments' && (
-            <div className={styles.resourcesContent}>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                Complete and submit your assignments below.
-              </p>
-              {lessonAssignments.map((a) => (
-                <div key={a.id} className={styles.resourceItem} style={{ marginBottom: 10, flexDirection: 'column', alignItems: 'flex-start', gap: 8 }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, width: '100%' }}>
-                    <ClipboardList size={16} style={{ marginTop: 2, flexShrink: 0 }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{a.title}</div>
-                      {a.description && <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: 4 }}>{a.description}</div>}
-                      <div style={{ display: 'flex', gap: 10, marginTop: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-                        {a.deadline && (
-                          <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', color: 'var(--accent-warning)' }}>
-                            <Calendar size={12} /> Due: {new Date(a.deadline).toLocaleDateString('en-US')}
-                          </span>
-                        )}
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
-                          <Award size={12} /> {a.maxMarks} marks
-                        </span>
+            {activeTab === 'resources' && (
+              <div className={styles.resourcesList}>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                  Handpicked reference materials, official repositories, and video deep-dives:
+                </p>
+                {lessonResources.map((r) => (
+                  <a
+                    key={r.id}
+                    href={r.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.resourceCard}
+                  >
+                    <div className={styles.resourceLeft}>
+                      <div className={styles.resourceIconContainer}>
+                        {resourceIcon(r.type)}
                       </div>
-                      {a.instructions && (
-                        <div style={{ marginTop: 8, fontSize: '0.82rem', color: 'var(--text-secondary)', background: 'rgba(99,102,241,0.04)', padding: '8px 12px', borderRadius: 8, lineHeight: 1.6 }}>
-                          {a.instructions}
+                      <div className={styles.resourceInfo}>
+                        <div className={styles.resourceTitle}>{r.title}</div>
+                        {r.description && <div className={styles.resourceDesc}>{r.description}</div>}
+                        <div className={styles.resourceMetaTags}>
+                          <span className={`${styles.metaBadge} ${styles.metaBadgeAccent}`}>{r.type}</span>
                         </div>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                  {a.secureUrl && (
-                    <div style={{ display: 'flex', gap: 8, paddingLeft: 28 }}>
-                      <a href={a.secureUrl} target="_blank" rel="noopener noreferrer"
-                        className="btn btn-secondary btn-sm" style={{ fontSize: '0.75rem', padding: '5px 10px' }}>
-                        <Eye size={13} /> View PDF
-                      </a>
-                      <a href={a.secureUrl} download
-                        className="btn btn-primary btn-sm" style={{ fontSize: '0.75rem', padding: '5px 10px' }}>
-                        <Download size={13} /> Download
-                      </a>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {activeTab === 'practice' && (
-            <div className={styles.resourcesContent}>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                Download starter code, completed examples, and project files.
-              </p>
-              {lessonPracticeFiles.map((f) => (
-                <div key={f.id} className={styles.resourceItem} style={{ marginBottom: 8, gap: 12 }}>
-                  <FileCode size={16} style={{ flexShrink: 0 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 600, fontSize: '0.88rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.title}</div>
-                    {f.description && <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: 2 }}>{f.description}</div>}
-                    <div style={{ display: 'flex', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: '0.68rem', background: 'rgba(16,185,129,0.1)', color: 'var(--accent-success)', padding: '1px 6px', borderRadius: 5, fontWeight: 700 }}>{f.type}</span>
-                      <span style={{ fontSize: '0.68rem', color: 'var(--text-tertiary)' }}>{f.fileType.toUpperCase()}</span>
-                    </div>
-                  </div>
-                  <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                    <a href={f.secureUrl} target="_blank" rel="noopener noreferrer"
-                      className="btn btn-secondary btn-sm" style={{ fontSize: '0.75rem', padding: '5px 10px' }}>
-                      <Eye size={13} /> View
-                    </a>
-                    <a href={f.secureUrl} download
-                      className="btn btn-primary btn-sm" style={{ fontSize: '0.75rem', padding: '5px 10px' }}>
-                      <Download size={13} /> Download
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {activeTab === 'coding' && (
-            <div className={styles.codingList}>
-              <p className={styles.codingIntro}>Practice problems for this lesson:</p>
-              {codingProblems.map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/learn/${course.id}/lesson/${lesson.id}/problem/${p.id}`}
-                  className={styles.problemCard}
-                >
-                  <div className={styles.problemInfo}>
-                    <span className={styles.problemTitle}>{p.title}</span>
-                    <span className={`${styles.difficulty} ${styles[`diff${p.difficulty}`]}`}>
-                      {p.difficulty}
-                    </span>
-                  </div>
-                  <div className={styles.problemMeta}>
-                    <span>{p.points} pts</span>
-                    <ChevronRight size={16} />
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Bottom Navigation */}
-        <div className={styles.lessonNav}>
-          {prevItem ? (
-            <Link href={prevItem.url} className={`btn btn-secondary ${styles.navBtn}`}>
-              <ChevronLeft size={18} />
-              <span>
-                <span className={styles.navLabel}>Previous</span>
-                <span className={styles.navTitle}>{prevItem.title}</span>
-              </span>
-            </Link>
-          ) : (
-            <div />
-          )}
-
-          {completed ? (
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <button 
-                className={`btn btn-secondary ${styles.navBtn}`}
-                onClick={toggleComplete}
-                disabled={isUpdating}
-                title="Mark as incomplete to relearn"
-              >
-                <RotateCcw size={18} />
-                <span>
-                  <span className={styles.navLabel}>Relearn</span>
-                  <span className={styles.navTitle}>Redo Topic</span>
-                </span>
-              </button>
-              <div className={`btn btn-success ${styles.navBtn}`} style={{ cursor: 'default' }}>
-                <CheckCircle size={18} />
-                <span>
-                  <span className={styles.navLabel}>Status</span>
-                  <span className={styles.navTitle}>Completed!</span>
-                </span>
+                    <ExternalLink size={16} style={{ color: 'var(--text-tertiary)' }} />
+                  </a>
+                ))}
               </div>
-            </div>
-          ) : (
-            <button
-              className={`btn btn-primary ${styles.navBtn}`}
-              onClick={toggleComplete}
-              disabled={isUpdating}
-              style={{ minWidth: 200 }}
-            >
-              <CheckCircle size={18} />
-              <span>
-                <span className={styles.navLabel}>Status</span>
-                <span className={styles.navTitle}>Mark as Complete</span>
-              </span>
-            </button>
-          )}
+            )}
 
-          {nextItem ? (
-            nextLocked ? (
-              <div
-                className={`btn btn-secondary ${styles.navBtn}`}
-                style={{ cursor: 'not-allowed', opacity: 0.5, border: '1px dashed var(--glass-border)' }}
-                title="Complete current lesson to unlock next"
-              >
-                <span>
-                  <span className={styles.navLabel}>Next (Locked)</span>
-                  <span className={styles.navTitle}>{nextItem.title}</span>
-                </span>
-                <Lock size={14} style={{ marginLeft: 6 }} />
+            {activeTab === 'assignments' && (
+              <div className={styles.resourcesList}>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                  Practical assessments to test your real-world understanding:
+                </p>
+                {lessonAssignments.map((a) => (
+                  <div key={a.id} className={styles.resourceCard} style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <div className={styles.resourceLeft} style={{ width: '100%' }}>
+                      <div className={styles.resourceIconContainer} style={{ background: '#fef3c7', color: '#d97706', borderColor: '#fde68a' }}>
+                        <ClipboardList size={20} />
+                      </div>
+                      <div className={styles.resourceInfo}>
+                        <div className={styles.resourceTitle}>{a.title}</div>
+                        {a.description && <div className={styles.resourceDesc}>{a.description}</div>}
+                        <div className={styles.resourceMetaTags}>
+                          {a.deadline && (
+                            <span className={styles.metaBadge} style={{ color: '#d97706', background: '#fffbeb' }}>
+                              <Calendar size={11} style={{ marginRight: 4, display: 'inline' }} />
+                              Due: {new Date(a.deadline).toLocaleDateString('en-US')}
+                            </span>
+                          )}
+                          <span className={styles.metaBadge}>
+                            <Award size={11} style={{ marginRight: 4, display: 'inline' }} />
+                            {a.maxMarks} max marks
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    {a.instructions && (
+                      <div style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--text-secondary)', background: 'var(--bg-secondary)', padding: '10px 14px', borderRadius: 8, width: '100%', border: '1px solid var(--glass-border)' }}>
+                        <strong>Instructions:</strong> {a.instructions}
+                      </div>
+                    )}
+                    {a.secureUrl && (
+                      <div style={{ display: 'flex', gap: 8, marginTop: '0.75rem' }}>
+                        <a href={a.secureUrl} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm">
+                          <Eye size={14} /> View Task PDF
+                        </a>
+                        <a href={a.secureUrl} download className="btn btn-primary btn-sm">
+                          <Download size={14} /> Download Template
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-            ) : (
-              <Link href={nextItem.url} className={`btn btn-primary ${styles.navBtn}`}>
-                <span>
-                  <span className={styles.navLabel}>Next</span>
-                  <span className={styles.navTitle}>{nextItem.title}</span>
-                </span>
-                <ChevronRight size={18} />
+            )}
+
+            {activeTab === 'practice' && (
+              <div className={styles.resourcesList}>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                  Starter projects, solution templates, and boilerplate files:
+                </p>
+                {lessonPracticeFiles.map((f) => (
+                  <div key={f.id} className={styles.resourceCard}>
+                    <div className={styles.resourceLeft}>
+                      <div className={styles.resourceIconContainer} style={{ background: '#ecfdf5', color: '#10b981', borderColor: '#a7f3d0' }}>
+                        <FileCode size={20} />
+                      </div>
+                      <div className={styles.resourceInfo}>
+                        <div className={styles.resourceTitle}>{f.title}</div>
+                        {f.description && <div className={styles.resourceDesc}>{f.description}</div>}
+                        <div className={styles.resourceMetaTags}>
+                          <span className={styles.metaBadge} style={{ color: '#16a34a', background: '#f0fdf4' }}>{f.type}</span>
+                          <span className={styles.metaBadge}>{f.fileType.toUpperCase()}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className={styles.resourceActions}>
+                      <a href={f.secureUrl} download className="btn btn-primary btn-sm">
+                        <Download size={14} /> Download
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'coding' && (
+              <div className={styles.problemList}>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>
+                  Solve these hands-on coding challenges to test your implementation:
+                </p>
+                {codingProblems.map((p) => (
+                  <Link
+                    key={p.id}
+                    href={`/learn/${course.id}/lesson/${lesson.id}/problem/${p.id}`}
+                    className={styles.problemCard}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                      <div className={styles.resourceIconContainer} style={{ background: '#faf5ff', color: '#9333ea', borderColor: '#e9d5ff' }}>
+                        <Code size={20} />
+                      </div>
+                      <div>
+                        <div className={styles.problemTitle}>{p.title}</div>
+                        <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                          <span className={`${styles.difficulty} ${styles[`diff${p.difficulty}`]}`}>
+                            {p.difficulty}
+                          </span>
+                          <span className={styles.metaBadge}>{p.points} Points</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--accent-primary)', fontWeight: 700, fontSize: '0.85rem' }}>
+                      <span>Solve Lab</span>
+                      <ChevronRight size={16} />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Bottom Sticky Action & Navigation Dock */}
+          <div className={styles.bottomDock}>
+            {/* Previous Lesson */}
+            {prevItem ? (
+              <Link href={prevItem.url} className={`${styles.dockNavBtn} ${styles.dockNavBtnLeft}`}>
+                <ChevronLeft size={18} />
+                <div className={styles.dockNavText}>
+                  <span className={styles.dockNavSubtitle}>Previous Lesson</span>
+                  <span className={styles.dockNavTitle}>{prevItem.title}</span>
+                </div>
               </Link>
-            )
-          ) : (
-            <div />
-          )}
-        </div>
+            ) : (
+              <div style={{ minWidth: 180 }} />
+            )}
+
+            {/* Center Action: Mark as Complete / Completed status */}
+            <div className={styles.dockCenterAction}>
+              {completed ? (
+                <>
+                  <div className={styles.completedBadge}>
+                    <CheckCircle2 size={18} />
+                    <span>Lesson Completed</span>
+                  </div>
+                  <button
+                    className={styles.redoBtn}
+                    onClick={toggleComplete}
+                    disabled={isUpdating}
+                    title="Mark incomplete to review topic"
+                  >
+                    <RotateCcw size={14} />
+                    <span>Relearn</span>
+                  </button>
+                </>
+              ) : (
+                <button
+                  className={styles.markCompleteBtn}
+                  onClick={toggleComplete}
+                  disabled={isUpdating}
+                >
+                  <CheckCircle size={18} />
+                  <span>Mark as Completed</span>
+                </button>
+              )}
+            </div>
+
+            {/* Next Lesson */}
+            {nextItem ? (
+              nextLocked ? (
+                <div
+                  className={`${styles.dockNavBtn} ${styles.dockNavBtnLocked}`}
+                  title="Complete current lesson to unlock next"
+                >
+                  <div className={styles.dockNavText} style={{ textAlign: 'right' }}>
+                    <span className={styles.dockNavSubtitle}>Locked Next</span>
+                    <span className={styles.dockNavTitle}>{nextItem.title}</span>
+                  </div>
+                  <Lock size={16} style={{ marginLeft: 4 }} />
+                </div>
+              ) : (
+                <Link href={nextItem.url} className={`${styles.dockNavBtn} ${styles.dockNavBtnRight}`}>
+                  <div className={styles.dockNavText} style={{ textAlign: 'right' }}>
+                    <span className={styles.dockNavSubtitle}>Next Lesson</span>
+                    <span className={styles.dockNavTitle}>{nextItem.title}</span>
+                  </div>
+                  <ChevronRight size={18} />
+                </Link>
+              )
+            ) : (
+              <div style={{ minWidth: 180 }} />
+            )}
+          </div>
         </div>
       </main>
     </div>

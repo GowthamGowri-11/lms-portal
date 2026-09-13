@@ -1,5 +1,6 @@
 'use client';
 
+import { FileText } from 'lucide-react';
 import styles from '@/app/about/page.module.css';
 
 export default function ViewResumeButton({ resumeUrl }: { resumeUrl: string }) {
@@ -26,8 +27,9 @@ export default function ViewResumeButton({ resumeUrl }: { resumeUrl: string }) {
   };
 
   return (
-    <button onClick={handleView} className={`btn btn-primary ${styles.resumeBtn}`}>
-      View Resume
+    <button onClick={handleView} className={styles.resumeBtn}>
+      <FileText size={15} />
+      <span>View Resume</span>
     </button>
   );
 }

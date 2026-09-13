@@ -302,16 +302,19 @@ export default function CourseSidebar({
     <>
       {/* Course back / Title */}
       <div className={styles.sidebarHeader}>
-        <Link href={`/courses/${course.id}`} className={styles.sidebarBack}>
-          <GraduationCap size={18} />
+        <Link href={`/courses/${course.id}`} className={styles.sidebarBack} title={`Back to ${course.title}`}>
+          <div className={styles.sidebarLogoBadge}>
+            <GraduationCap size={18} />
+          </div>
           <span className={styles.sidebarCourseName}>{course.title}</span>
         </Link>
         <button
           className={styles.sidebarToggle}
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-label="Toggle Sidebar"
+          title={sidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
         >
-          {sidebarOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+          {sidebarOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
         </button>
       </div>
 
@@ -337,45 +340,55 @@ export default function CourseSidebar({
               </div>
             </div>
             <div className={styles.timeRemaining}>
-              <Clock size={12} />
-              <span>Est. Time Left: {getRemainingTime()}</span>
+              <Clock size={13} style={{ color: 'var(--accent-primary)' }} />
+              <span>Est. Time Left: <strong>{getRemainingTime()}</strong></span>
             </div>
           </div>
 
           {/* Navigation Items */}
           <div className={styles.sidebarContent}>
-            <div className={styles.sidebarLabel}>Course Content</div>
-            {modules.map((mod) => (
-              <div key={mod.id} className={styles.sidebarModule}>
-                <button
-                  className={styles.sidebarModuleHeader}
-                  onClick={() => toggleModule(mod.id)}
-                >
-                  {expandedModules.has(mod.id) ? (
-                    <ChevronDown size={14} />
-                  ) : (
-                    <ChevronRight size={14} />
-                  )}
-                  <span>{mod.title}</span>
-                </button>
+            <div className={styles.sidebarLabel}>Curriculum Modules</div>
+            {modules.map((mod, index) => {
+              const isExpanded = expandedModules.has(mod.id);
+              const modLessonCount = mod.lessons.length;
+              return (
+                <div key={mod.id} className={styles.sidebarModule}>
+                  <button
+                    className={styles.sidebarModuleHeader}
+                    onClick={() => toggleModule(mod.id)}
+                  >
+                    <div className={styles.moduleHeaderLeft}>
+                      {isExpanded ? (
+                        <ChevronDown size={14} style={{ flexShrink: 0, color: 'var(--accent-primary)' }} />
+                      ) : (
+                        <ChevronRight size={14} style={{ flexShrink: 0, color: 'var(--text-tertiary)' }} />
+                      )}
+                      <span className={styles.moduleTitleText}>
+                        <strong style={{ color: 'var(--accent-primary)', marginRight: 6 }}>{`M${index + 1}`}</strong>
+                        {mod.title}
+                      </span>
+                    </div>
+                    <span className={styles.moduleCountBadge}>{modLessonCount}</span>
+                  </button>
 
-                {expandedModules.has(mod.id) && (
-                  <div className={styles.sidebarLessons}>
-                    {renderLessonsList(mod)}
-                  </div>
-                )}
-              </div>
-            ))}
+                  {isExpanded && (
+                    <div className={styles.sidebarLessons}>
+                      {renderLessonsList(mod)}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
 
             {(() => {
               const finalQuizzes = quizzes.filter((q) => q.isFinalAssessment || (!q.moduleId && !q.afterLessonId));
               if (finalQuizzes.length === 0) return null;
               return (
-                <div className={styles.sidebarModule} style={{ marginTop: '0.75rem' }}>
-                  <div className={styles.sidebarModuleHeader} style={{ cursor: 'default', padding: '10px 14px', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '8px' }}>
-                    <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>Final Assessments</span>
+                <div className={styles.sidebarModule} style={{ marginTop: '0.75rem', borderColor: 'rgba(37,99,235,0.2)' }}>
+                  <div className={styles.sidebarModuleHeader} style={{ background: 'rgba(37, 99, 235, 0.05)', color: 'var(--accent-primary)' }}>
+                    <span style={{ fontWeight: 800 }}>🏆 Final Certifications</span>
                   </div>
-                  <div className={styles.sidebarLessons} style={{ paddingLeft: '8px' }}>
+                  <div className={styles.sidebarLessons} style={{ padding: '6px' }}>
                     {finalQuizzes.map((fq) => {
                       const isActive = activeItem?.type === 'quiz' && activeItem.id === fq.id;
                       const isDone = completedIds.has(fq.id);
