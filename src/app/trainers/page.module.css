@@ -1,86 +1,370 @@
-/* ===== TRAINERS PAGE STYLES — Structured Learning Design ===== */
+/* ===================================================================
+   ACADEMIC FACULTY PAGE — MINIMALIST MASTER PREMIUM UI
+   =================================================================== */
 
 .main {
   min-height: 100vh;
-  padding-bottom: 4rem;
+  background-color: #f8fafc;
 }
 
 .accentText {
-  color: var(--accent-primary);
+  color: #2563eb;
 }
 
-/* ===== HERO ===== */
+/* ===================================================================
+   1. HERO SECTION
+   =================================================================== */
 .hero {
   position: relative;
-  padding: 240px 0 80px 0;
-  overflow: hidden;
+  padding: 124px 0 36px 0;
+  background: #ffffff;
+  border-bottom: 1px solid #eef2f6;
 }
 
-.heroDotGrid {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(67, 56, 202, 0.06) 1px, transparent 1px);
-  background-size: 28px 28px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.heroTag {
-  display: inline-block;
-  padding: 6px 14px;
-  background: rgba(67, 56, 202, 0.08);
-  border: 1px solid rgba(67, 56, 202, 0.15);
-  border-radius: var(--radius-full);
-  color: var(--accent-primary);
-  font-size: 0.8rem;
-  font-weight: 600;
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  color: #2563eb;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.sparkleIcon {
+  color: #2563eb;
 }
 
 .heroTitle {
-  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: clamp(2.15rem, 3.2vw, 3rem);
   font-weight: 800;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
+  line-height: 1.15;
+  margin-bottom: 0.65rem;
+  letter-spacing: -0.03em;
+  color: #0f172a;
 }
 
 .heroSubtitle {
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-  max-width: 600px;
-  line-height: 1.7;
+  font-size: 0.98rem;
+  color: #475569;
+  max-width: 620px;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
 }
 
-/* ===== TRAINERS SECTION ===== */
+.heroActionsRow {
+  margin-bottom: 1.5rem;
+}
+
+.applyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  background: #0f172a;
+  color: #ffffff;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 10px;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.applyBtn:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
+}
+
+.academicBadges {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.badgeItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.badgeIconBlue {
+  color: #2563eb;
+}
+
+.badgeIconAmber {
+  color: #f59e0b;
+  fill: #f59e0b;
+}
+
+.badgeIconGreen {
+  color: #16a34a;
+}
+
+.badgeSep {
+  color: #cbd5e1;
+  font-size: 0.75rem;
+}
+
+/* ===================================================================
+   2. CONTENT & FILTER BAR
+   =================================================================== */
 .trainersSection {
-  padding: 4rem 0;
+  padding: 2rem 0 4.5rem;
+}
+
+.filterBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 16px;
+  padding: 0.75rem 1.15rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 6px 18px -4px rgba(15, 23, 42, 0.035);
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.searchContainer {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 8px 30px 8px 36px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.searchInput:focus {
+  background: #ffffff;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.clearSearchBtn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  color: #94a3b8;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+.clearSearchBtn:hover {
+  color: #0f172a;
+}
+
+.filterControlsGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.selectWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.selectLabel {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.04em;
+}
+
+.customSelect {
+  padding: 6px 30px 6px 11px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #0f172a;
+  font-size: 0.84rem;
+  font-weight: 500;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 13px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.customSelect:hover {
+  border-color: #cbd5e1;
+  background-color: #ffffff;
+}
+
+.customSelect:focus {
+  border-color: #3b82f6;
+}
+
+.resetFilterBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.resetFilterBtn:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.counterBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 5px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.counterNumber {
+  color: #2563eb;
+  font-weight: 800;
+}
+
+.counterText {
+  font-weight: 500;
+}
+
+/* ===================================================================
+   3. FACULTY GRID
+   =================================================================== */
+.gridContainer {
+  width: 100%;
 }
 
 .trainersGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.75rem;
+  gap: 1.5rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 960px) {
   .trainersGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 1.25rem;
   }
 }
 
-@media (max-width: 600px) {
-  .trainersGrid {
-    grid-template-columns: 1fr;
-  }
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  color: #64748b;
+  margin-top: 1rem;
 }
 
-/* Legacy — keep for backward compat */
-.staggerItemWrapper {
-  height: 100%;
-  display: block;
+.emptyIconWrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.85rem;
+}
+
+.emptyTitle {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.35rem;
+}
+
+.emptySubtitle {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin-bottom: 1.25rem;
+}
+
+.emptyResetBtn {
+  padding: 7px 16px;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.84rem;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.emptyResetBtn:hover {
+  background: #1d4ed8;
 }

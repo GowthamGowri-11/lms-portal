@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient (Crisp, High-End Studio Tech Canvas) -->
+    <radialGradient id="fsBgGlow" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="65%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#edf2f7" />
+    </radialGradient>
+
+    <!-- 3D Ribbon Gradients -->
+    <!-- Top Horizontal Bar -->
+    <linearGradient id="ribbonTop" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0ea5e9" />
+    </linearGradient>
+
+    <!-- Top Fold Shading (Connecting back diagonally) -->
+    <linearGradient id="ribbonFold1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <!-- Middle Horizontal Ribbon -->
+    <linearGradient id="ribbonMid" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0ea5e9" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+
+    <!-- Middle Fold Shading -->
+    <linearGradient id="ribbonFold2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#075985" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <!-- Lower Vertical Stem -->
+    <linearGradient id="ribbonBottom" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+
+    <!-- Ambient Shadow for Ribbon -->
+    <filter id="ribbonShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0f172a" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#fsBgGlow)" />
+  
+  <!-- Subtle Grid Accent Lines -->
+  <rect width="800" height="450" fill="none" stroke="#e2e8f0" stroke-width="1.5" />
+
+  <!-- 3D FOLDED BLUE RIBBON "F" LOGO (Centered at 400, 160) -->
+  <g filter="url(#ribbonShadow)" transform="translate(340, 70)">
+    
+    <!-- 1. Top Horizontal Bar (Slanted end) -->
+    <!-- Polygon: starts from left (0, 35) to top-right (140, 0), down to (140, 35), back to (0, 70) -->
+    <polygon points="0,35 140,0 140,35 0,70" fill="url(#ribbonTop)" />
+
+    <!-- 2. Upper Fold (Angles down-left from right) -->
+    <polygon points="140,35 140,65 0,115 0,85" fill="url(#ribbonFold1)" />
+
+    <!-- 3. Middle Horizontal Extension (F middle prong) -->
+    <polygon points="0,85 140,115 140,150 0,120" fill="url(#ribbonMid)" />
+
+    <!-- 4. Lower Left Return Fold -->
+    <polygon points="0,120 0,150 45,165 45,135" fill="url(#ribbonFold2)" />
+
+    <!-- 5. Bottom Left Vertical Stem -->
+    <polygon points="0,150 45,165 45,215 0,200" fill="url(#ribbonBottom)" />
+  </g>
+
+  <!-- "FULLSTACK" TYPOGRAPHY (Centered at 400, 355) -->
+  <g transform="translate(400, 360)">
+    <text x="0" y="0" text-anchor="middle">
+      <tspan font-family="'Inter', 'Montserrat', 'Segoe UI', -apple-system, sans-serif" 
+             font-size="64" 
+             font-weight="900" 
+             letter-spacing="4" 
+             fill="#0f172a">FULL</tspan>
+      <tspan font-family="'Inter', 'Montserrat', 'Segoe UI', -apple-system, sans-serif" 
+             font-size="64" 
+             font-weight="300" 
+             letter-spacing="8" 
+             fill="#64748b">STACK</tspan>
+    </text>
+  </g>
+</svg>

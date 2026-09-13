@@ -23,6 +23,23 @@ export async function POST(
     );
   }
 
+  // --- Check course validity & assigned trainer ---
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+    select: { id: true, isPublished: true, trainerId: true },
+  });
+
+  if (!course) {
+    return NextResponse.json({ error: 'Course not found.' }, { status: 404 });
+  }
+
+  if (!course.trainerId) {
+    return NextResponse.json(
+      { error: 'No trainer assigned to this course yet.' },
+      { status: 400 }
+    );
+  }
+
   // --- Resolve student profile ---
   const student = await prisma.student.findUnique({
     where: { userId: session.user.id },
@@ -51,7 +68,7 @@ export async function POST(
     },
   });
   if (existing) {
-    return NextResponse.json({ error: 'You are already enrolled in this course.' }, { status: 400 });
+    return NextResponse.json({ error: 'Already enrolled in this course.' }, { status: 400 });
   }
 
   // --- Count lessons for progress initialization ---
@@ -86,6 +103,7 @@ export async function POST(
     });
   });
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, message: 'Successfully enrolled' });
 }
+
 

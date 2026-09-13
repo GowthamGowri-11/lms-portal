@@ -1,0 +1,345 @@
+/* ==========================================================================
+   CAREER GROWTH HERO VISUAL (ATLYX MINIMALIST EDTECH BRAND STORY)
+   ========================================================================== */
+
+.visualContainer {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+@media (max-width: 1040px) {
+  .visualContainer {
+    max-width: 500px;
+    height: 440px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .visualContainer {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+}
+
+.ambientGlow {
+  position: absolute;
+  inset: -10px;
+  background: radial-gradient(circle at 60% 40%, rgba(37, 99, 235, 0.05) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* SVG Connecting Trajectory Path */
+.pathSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .pathSvg {
+    display: none;
+  }
+}
+
+.animatedPath {
+  animation: pathDash 20s linear infinite;
+}
+
+@keyframes pathDash {
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+
+/* ==========================================================================
+   STAGE CARDS
+   ========================================================================== */
+
+.stageCard {
+  position: absolute;
+  z-index: 2;
+  background: #ffffff;
+  border: 1px solid #eef2f6;
+  border-radius: 16px;
+  padding: 1.15rem 1.25rem;
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.02),
+    0 8px 24px -4px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stageCard:hover {
+  border-color: #cbd5e1;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.03),
+    0 12px 30px -4px rgba(15, 23, 42, 0.08);
+}
+
+/* Stage 1: LEARN (Bottom Left) */
+.stageLearn {
+  bottom: 15px;
+  left: 10px;
+  width: 250px;
+}
+
+/* Stage 2: BUILD (Middle Right) */
+.stageBuild {
+  top: 48%;
+  right: 15px;
+  width: 250px;
+  transform: translateY(-50%);
+}
+
+/* Stage 3: GROW (Upper Left) */
+.stageGrow {
+  top: 14%;
+  left: 20px;
+  width: 245px;
+}
+
+@media (max-width: 640px) {
+  .stageCard,
+  .stageLearn,
+  .stageBuild,
+  .stageGrow {
+    position: static;
+    width: 100%;
+    transform: none !important;
+  }
+}
+
+.stageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.iconBoxBlue {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.iconBoxTeal {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #f0fdfa;
+  border: 1px solid #ccfbf1;
+  color: #0d9488;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.iconBoxAmber {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #d97706;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stepBadge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  padding: 3px 8px;
+  border-radius: 99px;
+}
+
+.stepBadgeTeal {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #0f766e;
+  background: #f0fdfa;
+  border: 1px solid #ccfbf1;
+  padding: 3px 8px;
+  border-radius: 99px;
+}
+
+.stepBadgeAmber {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  padding: 3px 8px;
+  border-radius: 99px;
+}
+
+.stageBody {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.stageTitle {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.stageDesc {
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   DESTINATION APEX: CAREER READY
+   ========================================================================== */
+
+.apexDestination {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  z-index: 3;
+  background: #ffffff;
+  border: 1px solid #dbeafe;
+  border-radius: 16px;
+  padding: 0.85rem 1.15rem;
+  box-shadow: 
+    0 2px 8px -2px rgba(37, 99, 235, 0.08),
+    0 10px 24px -4px rgba(15, 23, 42, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.apexDestination:hover {
+  border-color: #93c5fd;
+  box-shadow: 
+    0 4px 14px -2px rgba(37, 99, 235, 0.15),
+    0 14px 30px -4px rgba(15, 23, 42, 0.09);
+}
+
+@media (max-width: 640px) {
+  .apexDestination {
+    position: static;
+    width: 100%;
+  }
+}
+
+.apexHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apexIconBox {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.apexBadgeText {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: #1d4ed8;
+  text-transform: uppercase;
+}
+
+.apexSubtitle {
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-left: 2px;
+}
+
+/* ==========================================================================
+   FLOATING SUPPORTING MICRO-BADGES
+   ========================================================================== */
+
+.floatingBadge {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 99px;
+  padding: 6px 12px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #475569;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s ease;
+}
+
+.floatingBadge:hover {
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.badgeMentorship {
+  bottom: 85px;
+  right: 35px;
+}
+
+.badgeProjects {
+  top: 36%;
+  left: 20px;
+}
+
+@media (max-width: 640px) {
+  .floatingBadge {
+    display: none;
+  }
+}
+
+.badgeIconBlue {
+  color: #2563eb;
+}
+
+.badgeIconGreen {
+  color: #059669;
+}

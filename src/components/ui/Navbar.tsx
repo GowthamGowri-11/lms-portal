@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, GraduationCap, LayoutDashboard, LogIn, LogOut } from 'lucide-react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { openAuthModal } from '@/lib/auth-modal-events';
+import BrandLogo from '@/components/ui/BrandLogo';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
@@ -44,9 +45,7 @@ export default function Navbar() {
       <div className={styles.container}>
         {/* Logo */}
         <Link href="/" className={styles.logo}>
-          <div className={styles.logoIcon}>
-            <GraduationCap size={28} />
-          </div>
+          <BrandLogo size={32} />
           <span className={styles.logoText}>
             <span>ATLYX</span>
           </span>
@@ -98,13 +97,13 @@ export default function Navbar() {
             <button
               onClick={() => openAuthModal('signin')}
               style={{
-                background: 'rgba(255, 255, 255, 0.06)',
+                background: '#2563eb',
                 color: '#ffffff',
-                border: '1px solid rgba(255, 255, 255, 0.16)',
-                boxShadow: '0 2px 10px rgba(0, 0, 0, 0.4)',
-                padding: '7px 18px',
-                borderRadius: '20px',
-                fontWeight: 500,
+                border: '1px solid #2563eb',
+                boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)',
+                padding: '8px 20px',
+                borderRadius: '999px',
+                fontWeight: 600,
                 fontSize: '0.88rem',
                 letterSpacing: '0.01em',
                 display: 'flex',
@@ -114,17 +113,17 @@ export default function Navbar() {
                 transition: 'all 0.2s ease',
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.background = '#1d4ed8';
+                e.currentTarget.style.borderColor = '#1d4ed8';
                 e.currentTarget.style.transform = 'translateY(-1px)';
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.16)';
+                e.currentTarget.style.background = '#2563eb';
+                e.currentTarget.style.borderColor = '#2563eb';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              <LogIn size={15} style={{ opacity: 0.8 }} />
+              <LogIn size={15} />
               <span>Sign In</span>
             </button>
           )}

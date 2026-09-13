@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import dynamic from 'next/dynamic';
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import AuthModal from "@/components/auth/AuthModal";
+import ATLYXPageLoader from "@/components/ui/ATLYXPageLoader";
 
 const GalaxyBackground = dynamic(
   () => import('@/components/animations/GalaxyBackground')
@@ -53,6 +55,9 @@ export default function RootLayout({
         <AuthProvider>
           <GalaxyBackground />
           <AuthModal />
+          <Suspense fallback={null}>
+            <ATLYXPageLoader />
+          </Suspense>
           {children}
         </AuthProvider>
       </body>

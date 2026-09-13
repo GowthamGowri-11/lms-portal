@@ -1,6 +1,6 @@
 'use client';
 
-import { Code2, Users, Rocket, Brain, Trophy } from 'lucide-react';
+import { Code2, Users, Rocket, Brain, Trophy, ArrowUpRight, Sparkles, CheckCircle } from 'lucide-react';
 import styles from './TrendingBento.module.css';
 import TiltCard from '../animations/TiltCard';
 
@@ -9,34 +9,42 @@ export default function TrendingBento() {
     <section className={styles.bentoSection}>
       <div className="container">
         <div className={styles.sectionHeaderCenter}>
-          <span className={styles.sectionTag}>Next-Gen Learning</span>
+          <span className={styles.sectionTag}>
+            <Sparkles size={13} style={{ display: 'inline', marginRight: 5, verticalAlign: -1 }} />
+            Core Academic Capabilities
+          </span>
           <h2 className={styles.sectionTitle}>
-            Everything you need to <span className={styles.accentText}>Excel</span>
+            Engineered for <span className={styles.accentText}>Real Mastery</span>
           </h2>
           <p className={styles.sectionSubtitleCenter}>
-            A modern, comprehensive ecosystem built to accelerate your career.
+            A modern, production-grade learning infrastructure designed to bridge theory and industry engineering.
           </p>
         </div>
 
         <div className={styles.bentoGrid} style={{ perspective: '1500px' }}>
           {/* Card 1: Large 2x2 (Row 1-2, Col 1-2) */}
-          <TiltCard 
+          <TiltCard
             className={`${styles.bentoCard} ${styles.span2x2}`}
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            initial={{ opacity: 0, y: 30, scale: 0.96 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            whileHover={{ scale: 1.02, z: 20, boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}
-            transition={{ duration: 0.5, type: 'spring', bounce: 0.4 }}
+            whileHover={{ y: -4 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
             viewport={{ once: true }}
           >
-            <div className={styles.cardGlow} style={{ background: 'var(--accent-primary)', transform: 'translateZ(-10px)' }} />
-            <div className={styles.iconWrapper} style={{ color: 'var(--accent-primary)', transform: 'translateZ(30px)' }}>
-              <Code2 size={24} />
+            <div className={styles.cardAccentBar} style={{ background: '#2563eb' }} />
+            <div className={styles.cardHeaderRow}>
+              <div className={styles.iconWrapper} style={{ color: '#2563eb', background: '#eff6ff', borderColor: '#bfdbfe' }}>
+                <Code2 size={22} />
+              </div>
+              <span className={styles.categoryChip} style={{ color: '#2563eb', background: '#eff6ff' }}>
+                Live Cloud IDE
+              </span>
             </div>
-            <h3 style={{ transform: 'translateZ(20px)' }}>Interactive Coding Labs</h3>
-            <p style={{ transform: 'translateZ(20px)' }}>
-              Stop watching and start building. Our browser-based IDE lets you write, run, and debug code in real-time, right next to the lesson materials.
+            <h3>Interactive Browser Coding Labs</h3>
+            <p>
+              Write, compile, and execute code in real time within your browser. Integrated unit tests validate your logic instantly without local machine setup.
             </p>
-            <div className={styles.ideMockup} style={{ transform: 'translateZ(40px)' }}>
+            <div className={styles.ideMockup}>
               <div className={styles.ideHeader}>
                 <div className={styles.ideDots}>
                   <span className={styles.dotClose}></span>
@@ -47,11 +55,14 @@ export default function TrendingBento() {
               </div>
               <div className={styles.ideBody}>
                 <div>
-                  <span className={styles.codeKeyword}>function</span> <span className={styles.codeFunc}>LearnToCode</span>() {'{'}
+                  <span className={styles.codeKeyword}>export function</span>{' '}
+                  <span className={styles.codeFunc}>AccelerateCareer</span>() {'{'}
                   <br />
-                  &nbsp;&nbsp;<span className={styles.codeKeyword}>const</span> skills = <span className={styles.codeString}>&apos;limitless&apos;</span>;
+                  &nbsp;&nbsp;<span className={styles.codeKeyword}>const</span> practicalSkills ={' '}
+                  <span className={styles.codeString}>&apos;production-grade&apos;</span>;
                   <br />
-                  &nbsp;&nbsp;<span className={styles.codeKeyword}>return</span> <span className={styles.codeTag}>&lt;Future /&gt;</span>;
+                  &nbsp;&nbsp;<span className={styles.codeKeyword}>return</span>{' '}
+                  <span className={styles.codeTag}>&lt;IndustryReady /&gt;</span>;
                   <br />
                   {'}'}
                 </div>
@@ -60,73 +71,94 @@ export default function TrendingBento() {
           </TiltCard>
 
           {/* Card 2: 1x1 (Row 1, Col 3) */}
-          <TiltCard 
+          <TiltCard
             className={`${styles.bentoCard} ${styles.span1x1}`}
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            initial={{ opacity: 0, y: 30, scale: 0.96 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            whileHover={{ scale: 1.05, z: 30, boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}
+            whileHover={{ y: -4 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1, type: 'spring', bounce: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
           >
-            <div className={styles.cardGlow} style={{ background: 'var(--accent-secondary)' }} />
-            <div className={styles.iconWrapper} style={{ color: 'var(--accent-secondary)', transform: 'translateZ(30px)' }}>
-              <Brain size={24} />
+            <div className={styles.cardAccentBar} style={{ background: '#7c3aed' }} />
+            <div className={styles.cardHeaderRow}>
+              <div className={styles.iconWrapper} style={{ color: '#7c3aed', background: '#f5f3ff', borderColor: '#ddd6fe' }}>
+                <Brain size={22} />
+              </div>
+              <span className={styles.categoryChip} style={{ color: '#7c3aed', background: '#f5f3ff' }}>
+                Adaptive
+              </span>
             </div>
-            <h3 style={{ transform: 'translateZ(20px)' }}>AI Mentorship</h3>
-            <p style={{ transform: 'translateZ(20px)' }}>Our smart AI provides hints, code reviews, and deep explanations 24/7, ensuring you never stop learning.</p>
+            <h3>AI Code Mentor</h3>
+            <p>Smart hints, automated code reviews, and contextual syntax breakdowns available 24/7 on every exercise.</p>
           </TiltCard>
 
           {/* Card 3: 1x1 (Row 2, Col 3) */}
-          <TiltCard 
+          <TiltCard
             className={`${styles.bentoCard} ${styles.span1x1}`}
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            initial={{ opacity: 0, y: 30, scale: 0.96 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            whileHover={{ scale: 1.05, z: 30, boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}
+            whileHover={{ y: -4 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2, type: 'spring', bounce: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
           >
-            <div className={styles.cardGlow} style={{ background: 'var(--accent-warning)' }} />
-            <div className={styles.iconWrapper} style={{ color: 'var(--accent-warning)', transform: 'translateZ(30px)' }}>
-              <Rocket size={24} />
+            <div className={styles.cardAccentBar} style={{ background: '#d97706' }} />
+            <div className={styles.cardHeaderRow}>
+              <div className={styles.iconWrapper} style={{ color: '#d97706', background: '#fffbeb', borderColor: '#fde68a' }}>
+                <Rocket size={22} />
+              </div>
+              <span className={styles.categoryChip} style={{ color: '#d97706', background: '#fffbeb' }}>
+                Career Track
+              </span>
             </div>
-            <h3 style={{ transform: 'translateZ(20px)' }}>Career Prep</h3>
-            <p style={{ transform: 'translateZ(20px)' }}>Master the interview process with tailored mock interviews and professional resume reviews by industry veterans.</p>
+            <h3>Interview Preparation</h3>
+            <p>Structured algorithmic challenges, system design patterns, and curated mock evaluations with faculty feedback.</p>
           </TiltCard>
 
           {/* Card 4: 1x1 (Row 3, Col 1) */}
-          <TiltCard 
+          <TiltCard
             className={`${styles.bentoCard} ${styles.span1x1}`}
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            initial={{ opacity: 0, y: 30, scale: 0.96 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            whileHover={{ scale: 1.05, z: 30, boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}
+            whileHover={{ y: -4 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3, type: 'spring', bounce: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
           >
-            <div className={styles.cardGlow} style={{ background: 'var(--accent-danger)' }} />
-            <div className={styles.iconWrapper} style={{ color: 'var(--accent-danger)', transform: 'translateZ(30px)' }}>
-              <Trophy size={24} />
+            <div className={styles.cardAccentBar} style={{ background: '#059669' }} />
+            <div className={styles.cardHeaderRow}>
+              <div className={styles.iconWrapper} style={{ color: '#059669', background: '#ecfdf5', borderColor: '#a7f3d0' }}>
+                <Trophy size={22} />
+              </div>
+              <span className={styles.categoryChip} style={{ color: '#059669', background: '#ecfdf5' }}>
+                Portfolio
+              </span>
             </div>
-            <h3 style={{ transform: 'translateZ(20px)' }}>Real Projects</h3>
-            <p style={{ transform: 'translateZ(20px)' }}>Build a robust portfolio of production-ready apps that will make you stand out to top recruiters.</p>
+            <h3>Production Capstones</h3>
+            <p>Deploy real full-stack web applications and architectures ready to showcase in technical hiring pipelines.</p>
           </TiltCard>
 
           {/* Card 5: 2x1 (Row 3, Col 2-3) */}
-          <TiltCard 
+          <TiltCard
             className={`${styles.bentoCard} ${styles.span2x1}`}
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
+            initial={{ opacity: 0, y: 30, scale: 0.96 }}
             whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            whileHover={{ scale: 1.03, z: 25, boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}
+            whileHover={{ y: -4 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4, type: 'spring', bounce: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.4, ease: 'easeOut' }}
           >
-            <div className={styles.cardGlow} style={{ background: 'var(--accent-tertiary)' }} />
-            <div className={styles.iconWrapper} style={{ color: 'var(--accent-tertiary)', transform: 'translateZ(30px)' }}>
-              <Users size={24} />
+            <div className={styles.cardAccentBar} style={{ background: '#0284c7' }} />
+            <div className={styles.cardHeaderRow}>
+              <div className={styles.iconWrapper} style={{ color: '#0284c7', background: '#f0f9ff', borderColor: '#bae6fd' }}>
+                <Users size={22} />
+              </div>
+              <span className={styles.categoryChip} style={{ color: '#0284c7', background: '#f0f9ff' }}>
+                Collab & Community
+              </span>
             </div>
-            <h3 style={{ transform: 'translateZ(20px)' }}>Thriving Community</h3>
-            <p style={{ transform: 'translateZ(20px)' }}>Join thousands of active learners. Participate in global hackathons, collaborative study groups, and exclusive networking events with industry leaders.</p>
+            <h3>Collaborative Academic Community</h3>
+            <p>
+              Engage with peer study groups, academic forums, code sharing sessions, and exclusive masterclasses conducted by verified industry leaders.
+            </p>
           </TiltCard>
-
         </div>
       </div>
     </section>

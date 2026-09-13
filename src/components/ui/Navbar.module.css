@@ -1,17 +1,19 @@
 .navbar {
   position: fixed;
-  top: 1.5rem;
+  top: 1rem;
   left: 2rem;
   right: 2rem;
   max-width: 1280px;
   margin: 0 auto;
-  height: 70px;
+  height: 68px;
   border-radius: 100px;
-  background: #070912;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   z-index: 9999;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
 }
 
 .navbar.scrolled {
@@ -20,12 +22,12 @@
   right: 0;
   max-width: 100%;
   border-radius: 0;
-  background: #060810;
+  background: rgba(255, 255, 255, 0.98);
   border-top: none;
   border-left: none;
   border-right: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.85);
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
 }
 
 .container {
@@ -42,31 +44,17 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   z-index: 10;
-}
-
-.logoIcon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--accent-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
+  text-decoration: none;
 }
 
 .logoText {
   font-family: var(--font-heading);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 800;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
-}
-
-.logoAccent {
-  color: var(--accent-primary);
+  color: #0f172a;
+  letter-spacing: -0.01em;
 }
 
 /* Desktop Nav */
@@ -79,28 +67,30 @@
 .navLink {
   position: relative;
   padding: 8px 18px;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 500;
-  color: var(--text-secondary);
-  transition: color 0.2s;
+  color: #475569;
+  text-decoration: none;
+  transition: all 0.2s ease;
   border-radius: 8px;
 }
 
 .navLink:hover {
-  color: var(--text-primary);
+  color: #0f172a;
+  background: #f1f5f9;
 }
 
 .navLink.active {
-  color: white;
+  color: #2563eb;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(37, 99, 235, 0.08);
 }
 
 /* Right Actions */
 .rightActions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .adminBtn {
@@ -110,35 +100,31 @@
   padding: 8px 16px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text-secondary);
-  border: 1px solid var(--glass-border);
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
-  transition: all 0.3s;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
 }
 
 .adminBtn:hover {
-  color: var(--accent-primary);
-  border-color: var(--accent-primary);
-  background: rgba(67, 56, 202, 0.05);
-}
-
-.ctaBtn {
-  font-size: 0.875rem !important;
+  color: #2563eb;
+  border-color: #bfdbfe;
+  background: #eff6ff;
 }
 
 .mobileToggle {
   display: none;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  color: var(--text-primary);
-  transition: all 0.3s;
-}
-
-.mobileToggle:hover {
-  background: var(--bg-tertiary);
+  border-radius: 8px;
+  color: #0f172a;
+  background: #f1f5f9;
+  cursor: pointer;
 }
 
 /* Mobile Nav */
@@ -148,24 +134,25 @@
   gap: 4px;
   padding: 16px 2rem;
   overflow: hidden;
-  background: #070912;
-  border-bottom: 1px solid var(--glass-border);
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .mobileLink {
   display: block;
-  padding: 14px 16px;
-  font-size: 1rem;
+  padding: 12px 16px;
+  font-size: 0.95rem;
   font-weight: 500;
-  color: var(--text-secondary);
-  border-radius: 10px;
-  transition: all 0.3s;
+  color: #475569;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s;
 }
 
 .mobileLink:hover,
 .mobileLink.active {
-  color: var(--accent-primary);
-  background: rgba(67, 56, 202, 0.06);
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.06);
 }
 
 @media (max-width: 768px) {
@@ -173,8 +160,7 @@
     display: none;
   }
 
-  .adminBtn,
-  .ctaBtn {
+  .adminBtn {
     display: none;
   }
 
@@ -191,7 +177,7 @@
     left: 0.5rem;
     right: 0.5rem;
     width: auto;
-    border-radius: 16px;
+    border-radius: 14px;
   }
 
   .navbar.scrolled {

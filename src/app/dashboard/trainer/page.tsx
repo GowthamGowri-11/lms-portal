@@ -28,7 +28,19 @@ export default async function TrainerDashboardPage() {
             include: { questions: { orderBy: { order: 'asc' } } },
             orderBy: { createdAt: 'desc' },
           },
-          enrollments: true,
+          enrollments: {
+            include: {
+              student: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  avatar: true,
+                },
+              },
+            },
+            orderBy: { enrolledAt: 'desc' },
+          },
         },
         orderBy: { createdAt: 'desc' },
       },

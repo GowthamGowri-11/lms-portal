@@ -31,6 +31,17 @@ export async function POST(req: Request) {
 
     // 2. Check if student is already enrolled in the course (for course enrollment)
     if (type === 'COURSE_ENROLLMENT' && targetId) {
+      const course = await prisma.course.findUnique({
+        where: { id: targetId },
+        select: { id: true, trainerId: true },
+      });
+      if (!course) {
+        return NextResponse.json({ error: 'Course not found.' }, { status: 404 });
+      }
+      if (!course.trainerId) {
+        return NextResponse.json({ error: 'No trainer assigned to this course yet.' }, { status: 400 });
+      }
+
       const student = await prisma.student.findUnique({
         where: { userId: session.user.id },
       });
@@ -45,7 +56,7 @@ export async function POST(req: Request) {
           },
         });
         if (enrollment) {
-          return NextResponse.json({ error: 'You are already enrolled in this course.' }, { status: 400 });
+          return NextResponse.json({ error: 'Already enrolled in this course.' }, { status: 400 });
         }
 
         // Enforce gating: requests are only for students who already have ≥1 active enrollments.
