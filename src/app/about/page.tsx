@@ -23,6 +23,7 @@ import { FadeInUp, ScrollReveal } from '@/components/animations/MotionWrappers';
 import { prisma } from '@/lib/prisma';
 import ViewResumeButton from '@/components/ui/ViewResumeButton';
 import Footer from '@/components/ui/Footer';
+import AcademicBackground from '@/components/ui/backgrounds/AcademicBackground';
 import styles from './page.module.css';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
@@ -48,6 +49,9 @@ export default async function AboutPage() {
     <>
       <Navbar />
       <main className={styles.main}>
+        {/* ── ACADEMIC INSTITUTIONAL BACKGROUND LAYER ── */}
+        <AcademicBackground accent="cyan" />
+
         {/* ── HERO SECTION ── */}
         <section className={styles.hero}>
           <div className={styles.heroBgGlow} />

@@ -1,0 +1,113 @@
+/* ===================================================================
+   ACADEMIC BACKGROUND — INSTITUTIONAL ENGINEERING PRECISION
+   =================================================================== */
+
+.academicAtmosphere {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* 1. Technical Coordinate Grid Pattern */
+.coordinateGrid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(rgba(37, 99, 235, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.85;
+}
+
+/* 2. Soft Academic Radial Ambient Glows */
+.glowPrimary {
+  position: absolute;
+  top: -80px;
+  right: 10%;
+  width: 650px;
+  height: 500px;
+  filter: blur(80px);
+  opacity: 0.65;
+}
+
+.glow_blue {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(56, 189, 248, 0.14) 0%,
+    rgba(37, 99, 235, 0.05) 50%,
+    transparent 75%
+  );
+}
+
+.glow_purple {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(168, 85, 247, 0.12) 0%,
+    rgba(99, 102, 241, 0.05) 50%,
+    transparent 75%
+  );
+}
+
+.glow_cyan {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(14, 165, 233, 0.14) 0%,
+    rgba(16, 185, 129, 0.05) 50%,
+    transparent 75%
+  );
+}
+
+.glowSecondary {
+  position: absolute;
+  top: 160px;
+  left: 4%;
+  width: 500px;
+  height: 420px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(129, 140, 248, 0.08) 0%,
+    rgba(37, 99, 235, 0.02) 50%,
+    transparent 75%
+  );
+  filter: blur(75px);
+  opacity: 0.7;
+}
+
+/* 3. Engineering Precision SVG Blueprint Lines */
+.blueprintSvg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 520px;
+  pointer-events: none;
+}
+
+/* 4. Subtle Engineering Crosshairs */
+.crosshairTL,
+.crosshairTR,
+.crosshairBR {
+  position: absolute;
+  font-family: var(--font-heading, 'Outfit', monospace);
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: rgba(37, 99, 235, 0.22);
+  line-height: 1;
+  user-select: none;
+}
+
+.crosshairTL {
+  top: 40px;
+  left: 40px;
+}
+
+.crosshairTR {
+  top: 40px;
+  right: 40px;
+}
+
+.crosshairBR {
+  bottom: 80px;
+  right: 60px;
+}

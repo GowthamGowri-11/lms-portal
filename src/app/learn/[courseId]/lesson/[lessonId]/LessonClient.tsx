@@ -16,54 +16,85 @@ import { useLearn } from '@/app/learn/[courseId]/LearnContext';
 import ReactMarkdown from 'react-markdown';
 import styles from './lesson.module.css';
 
-// Code Block Component with Copy functionality and Mac Window Header
-function CustomCodeBlock({ inline, className, children, ...props }: any) {
-  const match = /language-(\w+)/.exec(className || '');
-  const language = match ? match[1] : '';
-  const codeString = String(children).replace(/\n$/, '');
-  const [copied, setCopied] = useState(false);
+function normalizeLanguageLabel(lang: string | undefined, courseCategory?: string, courseTitle?: string): string {
+  const l = (lang || '').toLowerCase().trim();
+  if (l === 'cpp' || l === 'c++') return 'C++';
+  if (l === 'c') return 'C';
+  if (l === 'py' || l === 'python') return 'PYTHON';
+  if (l === 'js' || l === 'javascript') return 'JAVASCRIPT';
+  if (l === 'ts' || l === 'typescript') return 'TYPESCRIPT';
+  if (l === 'java') return 'JAVA';
+  if (l === 'html') return 'HTML';
+  if (l === 'css') return 'CSS';
+  if (l === 'sql') return 'SQL';
+  if (l === 'rust') return 'RUST';
+  if (l === 'go' || l === 'golang') return 'GO';
+  if (l === 'sh' || l === 'bash' || l === 'shell') return 'BASH';
+  if (l === 'json') return 'JSON';
+  if (l) return l.toUpperCase();
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(codeString);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy text: ', err);
+  const ct = `${courseCategory || ''} ${courseTitle || ''}`.toLowerCase();
+  if (ct.includes('c++') || ct.includes('cpp')) return 'C++';
+  if (ct.includes('python')) return 'PYTHON';
+  if (ct.includes('java') && !ct.includes('script')) return 'JAVA';
+  if (ct.includes('react') || ct.includes('next') || ct.includes('web') || ct.includes('javascript')) return 'JAVASCRIPT';
+  if (ct.includes('data') || ct.includes('sql')) return 'SQL';
+  return 'CODE';
+}
+
+// Code Block Component with Dynamic Language, Mac Header, Line Numbers & Copy Feedback
+function createCodeBlock(courseCategory?: string, courseTitle?: string) {
+  return function CustomCodeBlock({ inline, className, children, ...props }: any) {
+    const match = /language-(\w+)/.exec(className || '');
+    const rawLang = match ? match[1] : '';
+    const displayLang = normalizeLanguageLabel(rawLang, courseCategory, courseTitle);
+    const codeString = String(children).replace(/\n$/, '');
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = async () => {
+      try {
+        await navigator.clipboard.writeText(codeString);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error('Failed to copy text: ', err);
+      }
+    };
+
+    if (inline || !match) {
+      return (
+        <code className={styles.inlineCode} {...props}>
+          {children}
+        </code>
+      );
     }
-  };
 
-  if (inline || !match) {
     return (
-      <code className={className} {...props}>
-        {children}
-      </code>
-    );
-  }
-
-  return (
-    <div className={styles.codeEditorBlock}>
-      <div className={styles.codeEditorHeader}>
-        <div className={styles.codeEditorDots}>
-          <span className={styles.dotRed} />
-          <span className={styles.dotYellow} />
-          <span className={styles.dotGreen} />
+      <div className={styles.codeEditorBlock}>
+        <div className={styles.codeEditorHeader}>
+          <div className={styles.codeEditorDots}>
+            <span className={styles.dotRed} />
+            <span className={styles.dotYellow} />
+            <span className={styles.dotGreen} />
+          </div>
+          <div className={styles.codeEditorMeta}>
+            <span className={styles.codeLangBadge}>{displayLang}</span>
+          </div>
+          <button
+            className={`${styles.copyCodeBtn} ${copied ? styles.copyCodeBtnCopied : ''}`}
+            onClick={handleCopy}
+            title="Copy code to clipboard"
+          >
+            {copied ? <Check size={12} className={styles.copyCheckIcon} /> : <Copy size={12} />}
+            <span>{copied ? 'Copied!' : 'Copy Code'}</span>
+          </button>
         </div>
-        <span className={styles.codeLangBadge}>{language || 'CODE'}</span>
-        <button
-          className={styles.copyCodeBtn}
-          onClick={handleCopy}
-          title="Copy code to clipboard"
-        >
-          {copied ? <Check size={12} style={{ color: '#10b981' }} /> : <Copy size={12} />}
-          <span>{copied ? 'Copied!' : 'Copy'}</span>
-        </button>
+        <pre className={styles.codeEditorPre}>
+          <code>{codeString}</code>
+        </pre>
       </div>
-      <pre className={styles.codeEditorPre}>
-        <code>{codeString}</code>
-      </pre>
-    </div>
-  );
+    );
+  };
 }
 
 export default function LessonClient({
@@ -149,8 +180,20 @@ export default function LessonClient({
     return <ExternalLink size={18} />;
   };
 
+  const CodeBlockComponent = createCodeBlock(course.category, course.title);
+
   return (
     <div className={styles.layout}>
+      {/* ── SUBTLE ATLYX BACKGROUND ATMOSPHERE (5-10% INTENSITY) ── */}
+      <div className={styles.learnAtmosphere} aria-hidden="true">
+        <div className={styles.ambientGlowBlue} />
+        <div className={styles.ambientGlowViolet} />
+        <div className={styles.faintGridPattern} />
+        <div className={styles.diagonalEnergyBeam} />
+        <div className={styles.floatingOrb1} />
+        <div className={styles.floatingOrb2} />
+      </div>
+
       {/* Mobile Header */}
       <div className={styles.mobileHeader}>
         <Link href={`/courses/${course.id}`} className={styles.mobileBack}>
@@ -173,13 +216,14 @@ export default function LessonClient({
           <div className={styles.topBar}>
             <div className={styles.breadcrumbs}>
               <Link href="/courses" className={styles.breadcrumbLink}>
-                <Compass size={14} /> Courses
+                <Compass size={14} />
+                <span>Courses</span>
               </Link>
-              <ChevronRight size={13} />
+              <ChevronRight size={13} className={styles.breadcrumbChevron} />
               <Link href={`/courses/${course.id}`} className={styles.breadcrumbLink}>
-                {course.title}
+                <span>{course.title}</span>
               </Link>
-              <ChevronRight size={13} />
+              <ChevronRight size={13} className={styles.breadcrumbChevron} />
               <span className={styles.breadcrumbActive}>{lesson.title}</span>
             </div>
 
@@ -190,7 +234,7 @@ export default function LessonClient({
                 disabled={isUpdating}
                 title={completed ? 'Click to mark as incomplete' : 'Mark lesson as complete'}
               >
-                {completed ? <CheckCircle2 size={14} style={{ color: '#16a34a' }} /> : <CheckCircle size={14} />}
+                {completed ? <CheckCircle2 size={14} className={styles.quickCheckDone} /> : <CheckCircle size={14} />}
                 <span>{completed ? 'Completed' : 'Mark as Complete'}</span>
               </button>
             </div>
@@ -198,18 +242,21 @@ export default function LessonClient({
 
           {/* Hero Overview Card */}
           <div className={styles.heroCard}>
+            <div className={styles.heroCardAccentGlow} />
             <div className={styles.heroPillRow}>
               <span className={styles.lessonTagPill}>
-                <Sparkles size={12} />
-                Core Learning Module
+                <Sparkles size={13} className={styles.tagSparkle} />
+                <span>CORE LEARNING MODULE</span>
               </span>
               {completed ? (
                 <span className={`${styles.statusPill} ${styles.statusPillCompleted}`}>
-                  <CheckCircle size={12} /> Lesson Finished
+                  <CheckCircle size={12} />
+                  <span>LESSON FINISHED</span>
                 </span>
               ) : (
                 <span className={`${styles.statusPill} ${styles.statusPillInProgress}`}>
-                  <Clock size={12} /> In Progress
+                  <span className={styles.inProgressDot} />
+                  <span>IN PROGRESS</span>
                 </span>
               )}
             </div>
@@ -218,20 +265,26 @@ export default function LessonClient({
 
             {lesson.description && <p className={styles.lessonDesc}>{lesson.description}</p>}
 
+            <div className={styles.heroDivider} />
+
             <div className={styles.heroMetaRow}>
               <div className={styles.metaItem}>
-                <Clock size={14} style={{ color: 'var(--accent-primary)' }} />
+                <Clock size={14} className={styles.metaIcon} />
                 <span>Duration: <strong>{lesson.duration || '15 min read'}</strong></span>
               </div>
+              <div className={styles.metaSep}>•</div>
               <div className={styles.metaItem}>
-                <Layers size={14} style={{ color: 'var(--accent-primary)' }} />
+                <Layers size={14} className={styles.metaIcon} />
                 <span>Level: <strong>Comprehensive</strong></span>
               </div>
               {codingProblems.length > 0 && (
-                <div className={styles.metaItem}>
-                  <Code size={14} style={{ color: '#9333ea' }} />
-                  <span>Interactive Labs: <strong>{codingProblems.length} Problems</strong></span>
-                </div>
+                <>
+                  <div className={styles.metaSep}>•</div>
+                  <div className={styles.metaItem}>
+                    <Code size={14} className={styles.metaIconPurple} />
+                    <span>Interactive Labs: <strong>{codingProblems.length} Problems</strong></span>
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -266,7 +319,7 @@ export default function LessonClient({
                   <div className={styles.notesBody}>
                     <ReactMarkdown
                       components={{
-                        code: CustomCodeBlock,
+                        code: CodeBlockComponent,
                       }}
                     >
                       {lesson.notes}

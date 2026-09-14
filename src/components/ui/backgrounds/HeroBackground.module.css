@@ -1,5 +1,5 @@
 /* ==========================================================================
-   HERO BACKGROUND — SOFT RADIAL LIGHT, DOT GRID, WAVES & 3D SPHERES
+   HERO BACKGROUND — SOFT RADIAL LIGHT, 3D WAVES & FLOATING SPHERES
    ========================================================================== */
 
 .heroAtmosphere {
@@ -10,20 +10,48 @@
   overflow: hidden;
 }
 
-/* 1. Large Blurred Ambient Glow Light Sources */
+/* 1. Fluid 3D Silk Wave Backdrop */
+.waveBackdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.65;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.bgWaveImg {
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+.waveOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.8) 100%
+  );
+  pointer-events: none;
+}
+
+/* 2. Large Blurred Ambient Glow Light Sources */
 .radialGlowPrimary {
   position: absolute;
   top: -80px;
-  right: 10%;
+  right: 15%;
   width: 650px;
   height: 550px;
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(56, 189, 248, 0.14) 0%,
-    rgba(37, 99, 235, 0.06) 45%,
+    rgba(56, 189, 248, 0.2) 0%,
+    rgba(37, 99, 235, 0.08) 45%,
     transparent 70%
   );
-  filter: blur(60px);
+  filter: blur(70px);
   pointer-events: none;
 }
 
@@ -35,11 +63,11 @@
   height: 450px;
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(129, 140, 248, 0.12) 0%,
-    rgba(37, 99, 235, 0.04) 50%,
+    rgba(129, 140, 248, 0.16) 0%,
+    rgba(37, 99, 235, 0.05) 50%,
     transparent 75%
   );
-  filter: blur(70px);
+  filter: blur(80px);
   pointer-events: none;
 }
 
@@ -51,58 +79,38 @@
   height: 380px;
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(192, 132, 252, 0.08) 0%,
-    rgba(56, 189, 248, 0.03) 60%,
+    rgba(192, 132, 252, 0.12) 0%,
+    rgba(56, 189, 248, 0.05) 60%,
     transparent 80%
   );
   filter: blur(60px);
   pointer-events: none;
 }
 
-/* 2. Extremely Faint Technical Coordinate Grid */
-.faintDotGrid {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(37, 99, 235, 0.05) 1px, transparent 1px);
-  background-size: 32px 32px;
-  opacity: 0.75;
-  pointer-events: none;
-}
-
-/* 3. Subtle Curved Wave Ribbon */
-.heroWaveSvg {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 280px;
-  pointer-events: none;
-}
-
-/* 4. Subtle Ambient Floating Spheres */
+/* 3. Subtle Ambient Floating Spheres */
 .floatingSphereLeft {
   position: absolute;
-  bottom: 80px;
-  left: 2.5%;
-  width: 54px;
-  height: 54px;
+  bottom: 60px;
+  left: 3%;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #dbeafe 60%, #93c5fd 100%);
-  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.14), inset 0 2px 4px #ffffff;
-  filter: blur(0.4px);
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #dbeafe 55%, #93c5fd 100%);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18), inset 0 2px 4px #ffffff;
+  filter: blur(0.3px);
   opacity: 0.85;
   animation: floatSphereLeft 7s ease-in-out infinite alternate;
 }
 
 .floatingSphereRight {
   position: absolute;
-  bottom: 110px;
-  right: 5.5%;
-  width: 44px;
-  height: 44px;
+  bottom: 85px;
+  right: 5%;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #ede9fe 60%, #c4b5fd 100%);
-  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.12), inset 0 2px 4px #ffffff;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #ede9fe 55%, #c4b5fd 100%);
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.15), inset 0 2px 4px #ffffff;
   opacity: 0.8;
   animation: floatSphereRight 8s ease-in-out infinite alternate;
 }
@@ -128,10 +136,5 @@
   .floatingSphereLeft,
   .floatingSphereRight {
     display: none;
-  }
-  .radialGlowPrimary,
-  .radialGlowSecondary {
-    width: 300px;
-    height: 300px;
   }
 }

@@ -160,15 +160,17 @@ export default function CourseSidebar({
           <Link
             key={`les-${les.id}`}
             href={`/learn/${course.id}/lesson/${les.id}`}
-            className={`${styles.sidebarLesson} ${isActive ? styles.sidebarLessonActive : ''}`}
+            className={`${styles.sidebarLesson} ${isActive ? styles.sidebarLessonActive : ''} ${isDone ? styles.sidebarLessonDone : ''}`}
           >
             <div className={styles.sidebarLessonIcon}>
               {isDone ? (
                 <CheckCircle size={14} className={styles.doneIcon} />
               ) : isActive ? (
-                <Play size={12} className={styles.activeIcon} />
+                <span className={styles.activePulseBadge}>
+                  <Play size={10} className={styles.activeIcon} />
+                </span>
               ) : (
-                <Play size={12} className={styles.pendingIcon} />
+                <span className={styles.pendingDot} />
               )}
             </div>
             <span className={styles.sidebarLessonTitle}>{les.title}</span>

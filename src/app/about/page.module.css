@@ -15,17 +15,18 @@
   position: relative;
 }
 
+
+
 /* ===================================================================
    HERO SECTION
    =================================================================== */
 .hero {
   position: relative;
-  padding: 135px 0 45px 0;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  padding: 140px 0 32px 0;
+  background: transparent;
+  border-bottom: none;
   overflow: hidden;
+  z-index: 1;
 }
 
 .heroBgGlow {
@@ -260,31 +261,36 @@
 }
 
 .statCard {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 1.35rem 1.15rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 18px;
+  padding: 1.45rem 1.25rem;
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02), 0 8px 24px -4px rgba(15, 23, 42, 0.05);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .statCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.09), 0 2px 8px rgba(0, 0, 0, 0.03);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px -8px rgba(37, 99, 235, 0.15), 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
 .statCardBlue:hover {
   border-color: #93c5fd;
+  box-shadow: 0 16px 36px -8px rgba(37, 99, 235, 0.18), 0 0 0 1px rgba(147, 197, 253, 0.6);
 }
 .statCardPurple:hover {
   border-color: #c4b5fd;
+  box-shadow: 0 16px 36px -8px rgba(124, 58, 237, 0.18), 0 0 0 1px rgba(196, 181, 253, 0.6);
 }
 .statCardEmerald:hover {
   border-color: #6ee7b7;
+  box-shadow: 0 16px 36px -8px rgba(16, 185, 129, 0.18), 0 0 0 1px rgba(110, 231, 183, 0.6);
 }
 
 .statCardAccent {

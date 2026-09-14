@@ -4,20 +4,48 @@
 
 .card {
   position: relative;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
   border-radius: 20px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   height: 100%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 6px 20px -6px rgba(15, 23, 42, 0.05);
-  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02), 0 8px 24px -6px rgba(15, 23, 42, 0.05);
+  transition: all 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #818cf8, #a855f7, #38bdf8);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
 }
 
 .card:hover {
-  border-color: #93c5fd;
-  box-shadow: 0 16px 36px -8px rgba(37, 99, 235, 0.12), 0 4px 12px rgba(0, 0, 0, 0.03);
+  border-color: #c4b5fd;
+  transform: translateY(-8px);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.03),
+    0 24px 48px -12px rgba(124, 58, 237, 0.16),
+    0 0 0 1px rgba(196, 181, 253, 0.6);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card:hover .avatarRing {
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.35), 0 8px 20px rgba(124, 58, 237, 0.25);
+  transform: scale(1.04);
 }
 
 /* ── 1. CARD TOP DECORATIVE BANNER ── */
