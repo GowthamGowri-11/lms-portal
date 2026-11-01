@@ -2,7 +2,8 @@ import { prisma } from '@/lib/prisma';
 import { parseCourse } from '@/lib/utils';
 import CoursesClient from './CoursesClient';
 
-export const revalidate = 3600; // Cache this page for 1 hour
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function CoursesPage() {
   const [raw, trainers] = await Promise.all([

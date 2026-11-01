@@ -22,7 +22,60 @@ export function getCourseVisual(category?: string | null, title?: string | null,
 
   const text = `${category || ''} ${title || ''}`.toLowerCase();
 
-  // 1. JAVA (matches user's Java image)
+  // 1. ARTIFICIAL INTELLIGENCE & MACHINE LEARNING
+  if (
+    text.includes('artificial intelligence') ||
+    text.includes('ai') ||
+    text.includes('machine learning') ||
+    text.includes('deep learning') ||
+    text.includes('neural')
+  ) {
+    return {
+      tag: 'Artificial Intelligence',
+      icon: '🧠',
+      gradient: 'linear-gradient(135deg, #0b1120 0%, #141e33 50%, #1e1b4b 100%)',
+      accent: '#38bdf8',
+      glow: 'rgba(56, 189, 248, 0.25)',
+      imageSrc: '/images/courses/ai.svg',
+    };
+  }
+
+  // 2. DATABASE ENGINEERING
+  if (
+    text.includes('database') ||
+    text.includes('sql') ||
+    text.includes('postgres') ||
+    text.includes('mongo') ||
+    text.includes('data engineering')
+  ) {
+    return {
+      tag: 'Database Engineering',
+      icon: '🗄️',
+      gradient: 'linear-gradient(135deg, #090e1a 0%, #0f172a 50%, #1e3a8a 100%)',
+      accent: '#2563eb',
+      glow: 'rgba(37, 99, 235, 0.22)',
+      imageSrc: '/images/courses/database.svg',
+    };
+  }
+
+  // 3. COMPUTER SCIENCE & ALGORITHMS
+  if (
+    text.includes('computer science') ||
+    text.includes('algorithm') ||
+    text.includes('data structure') ||
+    text.includes('dsa')
+  ) {
+    return {
+      tag: 'Computer Science',
+      icon: '📐',
+      gradient: 'linear-gradient(135deg, #0b0f17 0%, #111827 50%, #1e293b 100%)',
+      accent: '#10b981',
+      glow: 'rgba(16, 185, 129, 0.22)',
+      imageSrc: '/images/courses/computerscience.svg',
+    };
+  }
+
+  // 4. JAVA
   if (text.includes('java') && !text.includes('javascript')) {
     return {
       tag: 'Java Enterprise',
@@ -34,7 +87,7 @@ export function getCourseVisual(category?: string | null, title?: string | null,
     };
   }
 
-  // 2. PYTHON (matches user's Python hexagon badge image)
+  // 5. PYTHON
   if (text.includes('python')) {
     return {
       tag: 'Python & Data',
@@ -46,7 +99,7 @@ export function getCourseVisual(category?: string | null, title?: string | null,
     };
   }
 
-  // 3. FULL STACK & WEB DEVELOPMENT (matches user's Full Stack ribbon image)
+  // 6. FULL STACK & WEB DEVELOPMENT
   if (
     text.includes('full stack') ||
     text.includes('fullstack') ||
@@ -59,16 +112,16 @@ export function getCourseVisual(category?: string | null, title?: string | null,
     text.includes('backend')
   ) {
     return {
-      tag: 'Full Stack Engineering',
+      tag: 'Web Development',
       icon: '💻',
-      gradient: 'linear-gradient(135deg, #f8fafc 0%, #edf2f7 50%, #e2e8f0 100%)',
+      gradient: 'linear-gradient(135deg, #090e17 0%, #0f172a 50%, #0369a1 100%)',
       accent: '#0284c7',
-      glow: 'rgba(2, 132, 199, 0.15)',
+      glow: 'rgba(2, 132, 199, 0.22)',
       imageSrc: '/images/courses/fullstack.svg',
     };
   }
 
-  // 4. C++ / SYSTEMS (matches official C++ blue logo)
+  // 7. C++ / SYSTEMS
   if (text.includes('c++') || text.includes('cpp') || text.includes('system')) {
     return {
       tag: 'Systems & C++',
@@ -80,7 +133,7 @@ export function getCourseVisual(category?: string | null, title?: string | null,
     };
   }
 
-  // 5. DEFAULT / OTHER
+  // 8. DEFAULT / OTHER
   return {
     tag: category || 'Academic Track',
     icon: '🎓',
@@ -90,3 +143,4 @@ export function getCourseVisual(category?: string | null, title?: string | null,
     imageSrc: '/images/courses/general.svg',
   };
 }
+

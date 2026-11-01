@@ -68,6 +68,60 @@
   --navbar-height: 72px;
 }
 
+/* ---------- Hydration-Safe Entry Animations ---------- */
+@keyframes motionFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes motionFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes motionScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes motionSlideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes motionSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* ---------- Reset & Base ---------- */
 *,
 *::before,
@@ -271,12 +325,17 @@ ul, ol {
 
 .btn-ghost {
   color: var(--text-secondary);
+  background: #ffffff;
+  border: 1px solid var(--glass-border);
   padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
 }
 
 .btn-ghost:hover {
   color: var(--text-primary);
   background: var(--bg-tertiary);
+  border-color: #cbd5e1;
 }
 
 .btn-sm {
@@ -366,23 +425,27 @@ ul, ol {
 }
 
 .badge-primary {
-  background: rgba(67, 56, 202, 0.1);
-  color: var(--accent-primary);
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
 }
 
 .badge-success {
-  background: rgba(0, 184, 148, 0.15);
-  color: var(--accent-success);
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
 }
 
 .badge-warning {
-  background: rgba(253, 203, 110, 0.15);
-  color: var(--accent-warning);
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
 }
 
 .badge-danger {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--accent-danger);
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
 }
 
 /* ---------- Stat Card ---------- */

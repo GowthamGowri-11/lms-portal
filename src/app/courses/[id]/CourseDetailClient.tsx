@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -63,6 +64,7 @@ export default function CourseDetailClient({
   const [directEnrollDone, setDirectEnrollDone] = useState(false);
   const [directEnrollError, setDirectEnrollError] = useState('');
   const router = useRouter();
+  const { data: session } = useSession();
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -75,6 +77,10 @@ export default function CourseDetailClient({
   }, []);
 
   const handlePayment = async () => {
+    if (!session) {
+      router.push(`/login?callbackUrl=${encodeURIComponent(`/courses/${course.id}`)}`);
+      return;
+    }
     setDirectEnrollLoading(true);
     setDirectEnrollError('');
     try {
@@ -851,7 +857,15 @@ export default function CourseDetailClient({
                     {/* CTA Actions */}
                     <div className={styles.ctaContainer}>
                       <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                        {enrollmentStatus === 'ENROLLED' || directEnrollDone ? (
+                        {!session ? (
+                          <button
+                            className="btn btn-primary btn-lg"
+                            style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: '8px' }}
+                            onClick={() => router.push(`/login?callbackUrl=${encodeURIComponent(`/courses/${course.id}`)}`)}
+                          >
+                            <Lock size={16} /> Sign In to Enroll
+                          </button>
+                        ) : enrollmentStatus === 'ENROLLED' || directEnrollDone ? (
                           firstLesson ? (
                             <Link
                               href={`/learn/${course.id}/lesson/${firstLesson.id}`}

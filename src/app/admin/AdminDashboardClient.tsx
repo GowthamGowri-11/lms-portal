@@ -120,15 +120,16 @@ export default function AdminDashboardClient({
   ];
 
   const filteredEnrollments = useMemo(() => {
+    const query = searchFilter.trim().toLowerCase();
     return enrollments.filter((e) => {
       const student = students.find((s) => s.id === e.studentId);
       const course = courses.find((c) => c.id === e.courseId);
-      const query = searchFilter.toLowerCase();
       
       const matchesSearch =
-        (student?.name && student.name.toLowerCase().includes(query)) ||
-        (student?.email && student.email.toLowerCase().includes(query)) ||
-        (course?.title && course.title.toLowerCase().includes(query));
+        !query ||
+        Boolean(student?.name && student.name.toLowerCase().includes(query)) ||
+        Boolean(student?.email && student.email.toLowerCase().includes(query)) ||
+        Boolean(course?.title && course.title.toLowerCase().includes(query));
 
       const matchesStatus =
         statusFilter === 'all'
@@ -141,8 +142,9 @@ export default function AdminDashboardClient({
     });
   }, [enrollments, students, courses, searchFilter, statusFilter]);
 
-  // Color generator for avatar initials
-  const getAvatarGradient = (str: string) => {
+  // Safe color generator for avatar initials
+  const getAvatarGradient = (str?: string | null) => {
+    const safeStr = str && str.trim().length > 0 ? str : 'Atlyx';
     const gradients = [
       'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
       'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
@@ -151,8 +153,8 @@ export default function AdminDashboardClient({
       'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
     ];
     let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    for (let i = 0; i < safeStr.length; i++) {
+      hash = safeStr.charCodeAt(i) + ((hash << 5) - hash);
     }
     return gradients[Math.abs(hash) % gradients.length];
   };
@@ -161,33 +163,31 @@ export default function AdminDashboardClient({
     <PageTransition>
       <div className={styles.dashboard}>
         {/* ── MINIMALIST HERO / HEADER ── */}
-        <FadeInUp>
-          <div className={styles.header}>
-            <div className={styles.headerLeft}>
-              <div className={styles.breadcrumb}>
-                <span className={styles.breadcrumbBrand}>ATLYX Hub</span>
-                <ChevronRight size={12} className={styles.breadcrumbChevron} />
-                <span className={styles.breadcrumbCurrent}>Overview</span>
-              </div>
-              <h1 className={styles.title}>System Overview</h1>
-              <p className={styles.subtitle}>
-                Real-time institutional performance, course enrollments, and academic intelligence.
-              </p>
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <div className={styles.breadcrumb}>
+              <span className={styles.breadcrumbBrand}>ATLYX Hub</span>
+              <ChevronRight size={12} className={styles.breadcrumbChevron} />
+              <span className={styles.breadcrumbCurrent}>Overview</span>
             </div>
-
-            <div className={styles.headerRight}>
-              <div className={styles.telemetryBadge}>
-                <span className={styles.telemetryDot} />
-                <span className={styles.telemetryText}>Live Telemetry</span>
-              </div>
-
-              <Link href="/admin/courses" className={styles.primaryActionBtn}>
-                <Plus size={16} strokeWidth={2.5} />
-                <span>New Course</span>
-              </Link>
-            </div>
+            <h1 className={styles.title}>System Overview</h1>
+            <p className={styles.subtitle}>
+              Real-time institutional performance, course enrollments, and academic intelligence.
+            </p>
           </div>
-        </FadeInUp>
+
+          <div className={styles.headerRight}>
+            <div className={styles.telemetryBadge}>
+              <span className={styles.telemetryDot} />
+              <span className={styles.telemetryText}>Live Telemetry</span>
+            </div>
+
+            <Link href="/admin/courses" className={styles.primaryActionBtn}>
+              <Plus size={16} strokeWidth={2.5} />
+              <span>New Course</span>
+            </Link>
+          </div>
+        </div>
 
         {/* ── MASTER PREMIUM STATS CARDS ── */}
         <StaggerContainer className={styles.statsGrid}>
@@ -290,180 +290,178 @@ export default function AdminDashboardClient({
         </StaggerContainer>
 
         {/* ── RECENT ENROLLMENTS MASTER TABLE CARD ── */}
-        <FadeInUp delay={0.15}>
-          <div className={styles.masterCard}>
-            {/* Card Header */}
-            <div className={styles.masterCardHeader}>
-              <div className={styles.masterCardTitleGroup}>
-                <div className={styles.masterCardTitleRow}>
-                  <h2 className={styles.masterCardTitle}>Recent Student Enrollments</h2>
-                  <span className={styles.recordCounterBadge}>
-                    {filteredEnrollments.length} Total
-                  </span>
-                </div>
-                <p className={styles.masterCardSubtitle}>
-                  Real-time course admissions, learner progression, and verified payment statuses
-                </p>
+        <div className={styles.masterCard}>
+          {/* Card Header */}
+          <div className={styles.masterCardHeader}>
+            <div className={styles.masterCardTitleGroup}>
+              <div className={styles.masterCardTitleRow}>
+                <h2 className={styles.masterCardTitle}>Recent Student Enrollments</h2>
+                <span className={styles.recordCounterBadge}>
+                  {filteredEnrollments.length} Total
+                </span>
               </div>
-
-              {/* Filters and Search Bar */}
-              <div className={styles.filterControls}>
-                <div className={styles.statusTabGroup}>
-                  <button
-                    onClick={() => setStatusFilter('all')}
-                    className={`${styles.statusTab} ${
-                      statusFilter === 'all' ? styles.statusTabActive : ''
-                    }`}
-                  >
-                    All
-                  </button>
-                  <button
-                    onClick={() => setStatusFilter('completed')}
-                    className={`${styles.statusTab} ${
-                      statusFilter === 'completed' ? styles.statusTabActive : ''
-                    }`}
-                  >
-                    Completed
-                  </button>
-                  <button
-                    onClick={() => setStatusFilter('pending')}
-                    className={`${styles.statusTab} ${
-                      statusFilter === 'pending' ? styles.statusTabActive : ''
-                    }`}
-                  >
-                    Pending
-                  </button>
-                </div>
-
-                <div className={styles.searchBox}>
-                  <Search size={15} className={styles.searchIcon} />
-                  <input
-                    type="text"
-                    placeholder="Search student, email, or course..."
-                    value={searchFilter}
-                    onChange={(e) => setSearchFilter(e.target.value)}
-                    className={styles.searchInput}
-                  />
-                  {searchFilter && (
-                    <button
-                      onClick={() => setSearchFilter('')}
-                      className={styles.clearSearchBtn}
-                    >
-                      ×
-                    </button>
-                  )}
-                </div>
-              </div>
+              <p className={styles.masterCardSubtitle}>
+                Real-time course admissions, learner progression, and verified payment statuses
+              </p>
             </div>
 
-            {/* Table Area */}
-            <div className={styles.tableContainer}>
-              <table className={styles.table}>
-                <thead>
-                  <tr>
-                    <th>Student Profile</th>
-                    <th>Enrolled Course</th>
-                    <th>Payment Status</th>
-                    <th>Course Progress</th>
-                    <th>Date Registered</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <AnimatePresence>
-                    {filteredEnrollments.map((enrollment) => {
-                      const student = students.find((s) => s.id === enrollment.studentId);
-                      const course = courses.find((c) => c.id === enrollment.courseId);
-                      const isCompleted = enrollment.paymentStatus === 'completed';
-                      const studentName = student?.name || 'Anonymous Learner';
-                      const avatarGradient = getAvatarGradient(studentName);
+            {/* Filters and Search Bar */}
+            <div className={styles.filterControls}>
+              <div className={styles.statusTabGroup}>
+                <button
+                  onClick={() => setStatusFilter('all')}
+                  className={`${styles.statusTab} ${
+                    statusFilter === 'all' ? styles.statusTabActive : ''
+                  }`}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setStatusFilter('completed')}
+                  className={`${styles.statusTab} ${
+                    statusFilter === 'completed' ? styles.statusTabActive : ''
+                  }`}
+                >
+                  Completed
+                </button>
+                <button
+                  onClick={() => setStatusFilter('pending')}
+                  className={`${styles.statusTab} ${
+                    statusFilter === 'pending' ? styles.statusTabActive : ''
+                  }`}
+                >
+                  Pending
+                </button>
+              </div>
 
-                      return (
-                        <tr key={enrollment.id} className={styles.tableRow}>
-                          <td>
-                            <div className={styles.studentProfileCell}>
-                              <div
-                                className={styles.studentAvatar}
-                                style={{ background: avatarGradient }}
-                              >
-                                {studentName.charAt(0).toUpperCase()}
-                              </div>
-                              <div className={styles.studentDetails}>
-                                <span className={styles.studentName}>{studentName}</span>
-                                <span className={styles.studentEmail}>
-                                  {student?.email || 'No email attached'}
-                                </span>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <div className={styles.courseCell}>
-                              <div className={styles.courseIconWrap}>
-                                <BookOpen size={14} />
-                              </div>
-                              <span className={styles.courseName}>
-                                {course?.title || 'Academic Course'}
-                              </span>
-                            </div>
-                          </td>
-                          <td>
-                            <span
-                              className={`${styles.statusPill} ${
-                                isCompleted ? styles.statusSuccess : styles.statusWarning
-                              }`}
-                            >
-                              <span className={styles.statusPillDot} />
-                              {enrollment.paymentStatus}
-                            </span>
-                          </td>
-                          <td>
-                            <div className={styles.progressCell}>
-                              <div className={styles.progressTrack}>
-                                <motion.div
-                                  className={styles.progressBar}
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${enrollment.progress}%` }}
-                                  transition={{ duration: 0.6, ease: 'easeOut' }}
-                                />
-                              </div>
-                              <span className={styles.progressValue}>
-                                {enrollment.progress}%
-                              </span>
-                            </div>
-                          </td>
-                          <td>
-                            <div className={styles.dateCell}>
-                              <Clock size={13} className={styles.dateIcon} />
-                              <span>{formatDate(enrollment.enrolledAt)}</span>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </AnimatePresence>
-                  {filteredEnrollments.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className={styles.emptyState}>
-                        <div className={styles.emptyStateInner}>
-                          <div className={styles.emptyIconCircle}>
-                            <Search size={24} />
+              <div className={styles.searchBox}>
+                <Search size={15} className={styles.searchIcon} />
+                <input
+                  type="text"
+                  placeholder="Search student, email, or course..."
+                  value={searchFilter}
+                  onChange={(e) => setSearchFilter(e.target.value)}
+                  className={styles.searchInput}
+                />
+                {searchFilter && (
+                  <button
+                    onClick={() => setSearchFilter('')}
+                    className={styles.clearSearchBtn}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Table Area */}
+          <div className={styles.tableContainer}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Student Profile</th>
+                  <th>Enrolled Course</th>
+                  <th>Payment Status</th>
+                  <th>Course Progress</th>
+                  <th>Date Registered</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredEnrollments.map((enrollment) => {
+                  const student = students.find((s) => s.id === enrollment.studentId);
+                  const course = courses.find((c) => c.id === enrollment.courseId);
+                  const isCompleted =
+                    enrollment.paymentStatus === 'completed' || enrollment.paymentStatus === 'assigned';
+                  const studentName = student?.name?.trim() || 'Anonymous Learner';
+                  const avatarGradient = getAvatarGradient(studentName);
+                  const initialChar = (studentName.charAt(0) || 'L').toUpperCase();
+                  const courseName = course?.title || 'Academic Course';
+                  const progressVal = typeof enrollment.progress === 'number' ? enrollment.progress : 0;
+                  const dateDisplay = enrollment.enrolledAt ? formatDate(enrollment.enrolledAt) : 'Recently';
+
+                  return (
+                    <tr key={enrollment.id} className={styles.tableRow}>
+                      <td>
+                        <div className={styles.studentProfileCell}>
+                          <div
+                            className={styles.studentAvatar}
+                            style={{ background: avatarGradient }}
+                          >
+                            {initialChar}
                           </div>
-                          <h4 className={styles.emptyStateTitle}>No enrollments found</h4>
-                          <p className={styles.emptyStateText}>
-                            Try adjusting your search terms or status filters.
-                          </p>
+                          <div className={styles.studentDetails}>
+                            <span className={styles.studentName}>{studentName}</span>
+                            <span className={styles.studentEmail}>
+                              {student?.email || 'No email attached'}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div className={styles.courseCell}>
+                          <div className={styles.courseIconWrap}>
+                            <BookOpen size={14} />
+                          </div>
+                          <span className={styles.courseName}>{courseName}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span
+                          className={`${styles.statusPill} ${
+                            isCompleted ? styles.statusSuccess : styles.statusWarning
+                          }`}
+                        >
+                          <span className={styles.statusPillDot} />
+                          {enrollment.paymentStatus}
+                        </span>
+                      </td>
+                      <td>
+                        <div className={styles.progressCell}>
+                          <div className={styles.progressTrack}>
+                            <motion.div
+                              className={styles.progressBar}
+                              initial={{ width: 0 }}
+                              animate={{ width: `${progressVal}%` }}
+                              transition={{ duration: 0.6, ease: 'easeOut' }}
+                            />
+                          </div>
+                          <span className={styles.progressValue}>
+                            {progressVal}%
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        <div className={styles.dateCell}>
+                          <Clock size={13} className={styles.dateIcon} />
+                          <span>{dateDisplay}</span>
                         </div>
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  );
+                })}
+                {filteredEnrollments.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className={styles.emptyState}>
+                      <div className={styles.emptyStateInner}>
+                        <div className={styles.emptyIconCircle}>
+                          <Search size={24} />
+                        </div>
+                        <h4 className={styles.emptyStateTitle}>No enrollments found</h4>
+                        <p className={styles.emptyStateText}>
+                          Try adjusting your search terms or status filters.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-        </FadeInUp>
+        </div>
 
         {/* ── BENTO DUAL MASTER CARDS (TOP COURSES & FACULTY) ── */}
-        <FadeInUp delay={0.25}>
-          <div className={styles.bentoGrid}>
+        <div className={styles.bentoGrid}>
             {/* Top Enrolled Courses Bento Card */}
             <div className={styles.bentoCard}>
               <div className={styles.bentoCardHeader}>
@@ -486,40 +484,44 @@ export default function AdminDashboardClient({
                 {courses.length === 0 ? (
                   <div className={styles.bentoEmpty}>No courses available.</div>
                 ) : (
-                  courses
-                    .sort((a, b) => b.studentsEnrolled - a.studentsEnrolled)
+                  [...courses]
+                    .sort((a, b) => (b.studentsEnrolled || 0) - (a.studentsEnrolled || 0))
                     .slice(0, 4)
-                    .map((course, i) => (
-                      <div key={course.id} className={styles.bentoItem}>
-                        <div
-                          className={`${styles.rankIndicator} ${
-                            i === 0
-                              ? styles.rankGold
-                              : i === 1
-                              ? styles.rankSilver
-                              : i === 2
-                              ? styles.rankBronze
-                              : styles.rankStandard
-                          }`}
-                        >
-                          {i + 1 < 10 ? `0${i + 1}` : i + 1}
-                        </div>
+                    .map((course, i) => {
+                      const courseTitle = course?.title || 'Academic Course';
+                      const enrolledCount = course?.studentsEnrolled || 0;
+                      return (
+                        <div key={course.id} className={styles.bentoItem}>
+                          <div
+                            className={`${styles.rankIndicator} ${
+                              i === 0
+                                ? styles.rankGold
+                                : i === 1
+                                ? styles.rankSilver
+                                : i === 2
+                                ? styles.rankBronze
+                                : styles.rankStandard
+                            }`}
+                          >
+                            {i + 1 < 10 ? `0${i + 1}` : i + 1}
+                          </div>
 
-                        <div className={styles.bentoItemInfo}>
-                          <span className={styles.bentoItemTitle}>{course.title}</span>
-                          <span className={styles.bentoItemMeta}>
-                            {course.studentsEnrolled} Active Learners
-                          </span>
-                        </div>
+                          <div className={styles.bentoItemInfo}>
+                            <span className={styles.bentoItemTitle}>{courseTitle}</span>
+                            <span className={styles.bentoItemMeta}>
+                              {enrolledCount} Active Learners
+                            </span>
+                          </div>
 
-                        <div
-                          className={styles.courseThumbAvatar}
-                          style={{ background: getAvatarGradient(course.title) }}
-                        >
-                          {course.title.charAt(0).toUpperCase()}
+                          <div
+                            className={styles.courseThumbAvatar}
+                            style={{ background: getAvatarGradient(courseTitle) }}
+                          >
+                            {(courseTitle.charAt(0) || 'C').toUpperCase()}
+                          </div>
                         </div>
-                      </div>
-                    ))
+                      );
+                    })
                 )}
               </div>
             </div>
@@ -554,43 +556,45 @@ export default function AdminDashboardClient({
                     })
                     .sort((a, b) => b.studentsCount - a.studentsCount)
                     .slice(0, 4)
-                    .map((trainer, i) => (
-                      <div key={trainer.id} className={styles.bentoItem}>
-                        <div
-                          className={`${styles.rankIndicator} ${
-                            i === 0
-                              ? styles.rankGold
-                              : i === 1
-                              ? styles.rankSilver
-                              : i === 2
-                              ? styles.rankBronze
-                              : styles.rankStandard
-                          }`}
-                        >
-                          {i + 1 < 10 ? `0${i + 1}` : i + 1}
-                        </div>
+                    .map((trainer, i) => {
+                      const trainerName = trainer?.name?.trim() || 'Faculty Mentor';
+                      return (
+                        <div key={trainer.id} className={styles.bentoItem}>
+                          <div
+                            className={`${styles.rankIndicator} ${
+                              i === 0
+                                ? styles.rankGold
+                                : i === 1
+                                ? styles.rankSilver
+                                : i === 2
+                                ? styles.rankBronze
+                                : styles.rankStandard
+                            }`}
+                          >
+                            {i + 1 < 10 ? `0${i + 1}` : i + 1}
+                          </div>
 
-                        <div className={styles.bentoItemInfo}>
-                          <span className={styles.bentoItemTitle}>{trainer.name}</span>
-                          <span className={styles.bentoItemMeta}>
-                            {trainer.studentsCount.toLocaleString()} Students Mentored
-                          </span>
-                        </div>
+                          <div className={styles.bentoItemInfo}>
+                            <span className={styles.bentoItemTitle}>{trainerName}</span>
+                            <span className={styles.bentoItemMeta}>
+                              {trainer.studentsCount.toLocaleString()} Students Mentored
+                            </span>
+                          </div>
 
-                        <div
-                          className={styles.trainerThumbAvatar}
-                          style={{ background: getAvatarGradient(trainer.name) }}
-                        >
-                          {trainer.name.charAt(0).toUpperCase()}
+                          <div
+                            className={styles.trainerThumbAvatar}
+                            style={{ background: getAvatarGradient(trainerName) }}
+                          >
+                            {(trainerName.charAt(0) || 'M').toUpperCase()}
+                          </div>
                         </div>
-                      </div>
-                    ))
+                      );
+                    })
                 )}
               </div>
             </div>
           </div>
-        </FadeInUp>
-      </div>
+        </div>
     </PageTransition>
   );
 }

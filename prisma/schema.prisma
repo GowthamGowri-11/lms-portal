@@ -377,6 +377,7 @@ model Quiz {
   isFinalAssessment Boolean       @default(false) // If true (or afterLessonId is null and moduleId is null), place at the end of course
   timeLimit         Int           @default(0)
   passMark          Int           @default(70)
+  isPublished       Boolean       @default(true)
   questions         QuizQuestion[]
   attempts          QuizAttempt[]
   retakeRequests    QuizRetakeRequest[]
@@ -465,3 +466,28 @@ model Developer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// ===== Notifications =====
+model Notification {
+  id             String    @id @default(cuid())
+  recipientEmail String
+  recipientName  String?
+  userId         String?
+  studentId      String?
+  type           String    // COURSE_ASSIGNMENT | NEW_LESSON | NEW_NOTES | NEW_QUIZ | COURSE_PUBLISHED | ANNOUNCEMENT
+  title          String
+  subject        String
+  message        String    @db.Text
+  htmlContent    String?   @db.Text
+  metadata       String?   @db.Text // JSON string: { courseId, lessonId, quizId, noteId, actionUrl }
+  status         String    @default("PENDING") // PENDING | SENT | FAILED
+  error          String?   @db.Text
+  sentAt         DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([recipientEmail])
+  @@index([type])
+  @@index([status])
+}
+

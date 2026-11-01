@@ -94,16 +94,18 @@ export default function AdminRequestsClient({ requests: initialRequests }: { req
                       <button
                         onClick={() => handleAction(req.id, 'APPROVE')}
                         disabled={processing === req.id}
-                        className="btn btn-success btn-sm"
-                        style={{ background: 'var(--accent-success)', color: 'black', padding: '4px 8px', borderRadius: '4px' }}
+                        className="btn btn-sm"
+                        style={{ background: '#16a34a', color: '#ffffff', padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
+                        title="Approve Request"
                       >
                         {processing === req.id ? <Clock size={16} /> : <Check size={16} />}
                       </button>
                       <button
                         onClick={() => handleAction(req.id, 'REJECT')}
                         disabled={processing === req.id}
-                        className="btn btn-danger btn-sm"
-                        style={{ padding: '4px 8px', borderRadius: '4px' }}
+                        className="btn btn-sm"
+                        style={{ background: '#dc2626', color: '#ffffff', padding: '6px 12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
+                        title="Reject Request"
                       >
                         {processing === req.id ? <Clock size={16} /> : <X size={16} />}
                       </button>

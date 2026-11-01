@@ -115,12 +115,12 @@ export default function AdminUsersClient({
 
   return (
     <PageTransition>
-      <div style={{ padding: '2rem' }}>
+      <div>
         <FadeInUp>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem' }}>
             <div>
-              <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem' }}>Users Management</h1>
-              <p style={{ color: 'var(--text-secondary)' }}>Manage all accounts, assign roles, and remove unused users.</p>
+              <h1 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.35rem', letterSpacing: '-0.025em' }}>Users Management</h1>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem' }}>Manage all accounts, assign roles, and remove unused users.</p>
             </div>
           </div>
         </FadeInUp>
@@ -201,8 +201,8 @@ export default function AdminUsersClient({
                         title="View Full Overview"
                       >
                         <div style={{
-                          width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)'
+                          width: '40px', height: '40px', borderRadius: '50%', background: '#eff6ff',
+                          border: '1px solid #bfdbfe', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb', flexShrink: 0
                         }}>
                           {user.image ? <img src={user.image} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : <User size={20} />}
                         </div>
@@ -214,8 +214,9 @@ export default function AdminUsersClient({
                     </td>
                     <td>
                       <span className={`badge ${getRoleBadgeColor(user.role)}`} style={{
-                        background: user.role === 'DEVELOPER' ? 'rgba(59, 130, 246, 0.15)' : undefined,
-                        color: user.role === 'DEVELOPER' ? '#3b82f6' : undefined
+                        background: user.role === 'DEVELOPER' ? '#eff6ff' : undefined,
+                        color: user.role === 'DEVELOPER' ? '#2563eb' : undefined,
+                        border: user.role === 'DEVELOPER' ? '1px solid #bfdbfe' : undefined
                       }}>
                         {user.role}
                       </span>
@@ -224,30 +225,32 @@ export default function AdminUsersClient({
                       {new Date(user.createdAt).toLocaleDateString()}
                     </td>
                     <td style={{ textAlign: 'right' }}>
-                      <button 
-                        className="btn btn-ghost btn-sm" 
-                        onClick={() => setViewUser(user)}
-                        title="View Overview"
-                        style={{ padding: '0.4rem', marginRight: '0.2rem', color: 'var(--text-secondary)' }}
-                      >
-                        <Eye size={16} />
-                      </button>
-                      <button 
-                        className="btn btn-ghost btn-sm" 
-                        onClick={() => handleOpenEdit(user)}
-                        title="Change Role"
-                        style={{ padding: '0.4rem', marginRight: '0.2rem' }}
-                      >
-                        <Edit3 size={16} />
-                      </button>
-                      <button 
-                        className="btn btn-ghost btn-sm" 
-                        onClick={() => setDeleteConfirm(user)}
-                        title="Delete User"
-                        style={{ padding: '0.4rem', color: 'var(--accent-danger)' }}
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <button 
+                          className="btn btn-sm" 
+                          onClick={() => setViewUser(user)}
+                          title="View Overview"
+                          style={{ padding: '0.45rem', borderRadius: '8px', background: '#eff6ff', border: '1px solid #bfdbfe', color: '#2563eb' }}
+                        >
+                          <Eye size={15} />
+                        </button>
+                        <button 
+                          className="btn btn-sm" 
+                          onClick={() => handleOpenEdit(user)}
+                          title="Change Role"
+                          style={{ padding: '0.45rem', borderRadius: '8px', background: '#f8fafc', border: '1px solid #cbd5e1', color: '#334155' }}
+                        >
+                          <Edit3 size={15} />
+                        </button>
+                        <button 
+                          className="btn btn-sm" 
+                          onClick={() => setDeleteConfirm(user)}
+                          title="Delete User"
+                          style={{ padding: '0.45rem', borderRadius: '8px', background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626' }}
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

@@ -38,12 +38,29 @@ export default async function CourseDetailPage({
 
   const raw = await prisma.course.findUnique({ where: { id } });
 
-  if (!raw) {
+  // Enforce visibility rules: draft/unpublished courses are hidden from the public unless user is admin or course trainer
+  let isAuthorizedStaff = false;
+  if (session?.user) {
+    const role = (session.user as any).role;
+    if (role === 'ADMIN') {
+      isAuthorizedStaff = true;
+    } else if (role === 'TRAINER' && raw) {
+      const trainerRecord = await prisma.trainer.findUnique({ where: { userId: session.user.id } });
+      if (trainerRecord?.id === raw.trainerId) {
+        isAuthorizedStaff = true;
+      }
+    }
+  }
+
+  if (!raw || (!raw.isPublished && !isAuthorizedStaff)) {
     return (
       <>
         <Navbar />
         <div className={styles.notFound}>
           <h2>Course not found</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontSize: '0.95rem' }}>
+            This course is currently unavailable or saved as an unpublished draft.
+          </p>
           <Link href="/courses" className="btn btn-primary">
             <ArrowLeft size={18} />
             Back to Courses

@@ -185,10 +185,40 @@ export default function AdminProblemsClient({
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                  <button style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, color: 'var(--text-secondary)' }} onClick={() => openEdit(p)}>
+                  <button
+                    style={{
+                      width: 32,
+                      height: 32,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 8,
+                      background: '#f8fafc',
+                      border: '1px solid #cbd5e1',
+                      color: '#334155',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => openEdit(p)}
+                    title="Edit Coding Problem"
+                  >
                     <Edit3 size={15} />
                   </button>
-                  <button style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, color: 'var(--text-secondary)' }} onClick={() => handleDelete(p.id)}>
+                  <button
+                    style={{
+                      width: 32,
+                      height: 32,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 8,
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      color: '#dc2626',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => handleDelete(p.id)}
+                    title="Delete Coding Problem"
+                  >
                     <Trash2 size={15} />
                   </button>
                 </div>

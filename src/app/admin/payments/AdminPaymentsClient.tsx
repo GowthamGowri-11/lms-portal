@@ -121,9 +121,9 @@ export default function AdminPaymentsClient({
       {/* Metric Cards */}
       <div className={styles.statsGrid}>
         <motion.div className={styles.statCard} whileHover={{ y: -4 }}>
-          <div className={styles.statTop}>
-            <div className={styles.statIcon} style={{ background: 'rgba(16, 185, 129, 0.12)', color: '#10b981' }}>
-              <DollarSign size={24} />
+          <div className={styles.statCardTop}>
+            <div className={styles.statIconBadge} style={{ background: 'rgba(16, 185, 129, 0.1)', borderColor: 'rgba(16, 185, 129, 0.25)', color: '#10b981' }}>
+              <DollarSign size={20} />
             </div>
           </div>
           <div className={styles.statValue}>₹{totalRevenue.toLocaleString()}</div>
@@ -131,9 +131,9 @@ export default function AdminPaymentsClient({
         </motion.div>
 
         <motion.div className={styles.statCard} whileHover={{ y: -4 }}>
-          <div className={styles.statTop}>
-            <div className={styles.statIcon} style={{ background: 'rgba(99, 102, 241, 0.12)', color: '#6366f1' }}>
-              <CreditCard size={24} />
+          <div className={styles.statCardTop}>
+            <div className={styles.statIconBadge} style={{ background: 'rgba(99, 102, 241, 0.1)', borderColor: 'rgba(99, 102, 241, 0.25)', color: '#6366f1' }}>
+              <CreditCard size={20} />
             </div>
           </div>
           <div className={styles.statValue}>{enrollments.length}</div>
@@ -141,9 +141,9 @@ export default function AdminPaymentsClient({
         </motion.div>
 
         <motion.div className={styles.statCard} whileHover={{ y: -4 }}>
-          <div className={styles.statTop}>
-            <div className={styles.statIcon} style={{ background: 'rgba(59, 130, 246, 0.12)', color: '#3b82f6' }}>
-              <CheckCircle2 size={24} />
+          <div className={styles.statCardTop}>
+            <div className={styles.statIconBadge} style={{ background: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.25)', color: '#3b82f6' }}>
+              <CheckCircle2 size={20} />
             </div>
           </div>
           <div className={styles.statValue}>{completedCount}</div>
@@ -151,9 +151,9 @@ export default function AdminPaymentsClient({
         </motion.div>
 
         <motion.div className={styles.statCard} whileHover={{ y: -4 }}>
-          <div className={styles.statTop}>
-            <div className={styles.statIcon} style={{ background: 'rgba(245, 158, 11, 0.12)', color: '#f59e0b' }}>
-              <Clock size={24} />
+          <div className={styles.statCardTop}>
+            <div className={styles.statIconBadge} style={{ background: 'rgba(245, 158, 11, 0.1)', borderColor: 'rgba(245, 158, 11, 0.25)', color: '#f59e0b' }}>
+              <Clock size={20} />
             </div>
           </div>
           <div className={styles.statValue}>{pendingCount}</div>
@@ -240,8 +240,8 @@ export default function AdminPaymentsClient({
                         </div>
                       </div>
                     </td>
-                    <td style={{ fontWeight: 500 }}>{e.courseTitle}</td>
-                    <td style={{ fontWeight: 600, color: '#10b981' }}>₹{e.coursePrice}</td>
+                    <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{e.courseTitle}</td>
+                    <td style={{ fontWeight: 700, color: '#047857' }}>₹{e.coursePrice}</td>
                     <td>
                       <span className={`badge ${e.paymentStatus === 'completed' ? 'badge-success' : 'badge-warning'}`}>
                         {e.paymentStatus.toUpperCase()}
@@ -255,9 +255,10 @@ export default function AdminPaymentsClient({
                     </td>
                     <td>
                       <button
-                        className="btn btn-secondary btn-sm"
+                        className="btn btn-sm"
                         onClick={() => setSelectedStudent(studentObj)}
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.75rem' }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.45rem 0.85rem', background: '#eff6ff', border: '1px solid #bfdbfe', color: '#1d4ed8', borderRadius: '8px', fontWeight: 600, cursor: 'pointer' }}
+                        title="View Payment History"
                       >
                         <FileText size={14} />
                         View History

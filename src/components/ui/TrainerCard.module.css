@@ -156,12 +156,12 @@
 }
 
 .adminBtn {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #cbd5e1;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -170,15 +170,22 @@
 }
 
 .adminBtn:hover {
-  background: rgba(37, 99, 235, 0.4);
+  background: #2563eb;
   border-color: #60a5fa;
   color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.adminDangerBtn {
+  background: rgba(220, 38, 38, 0.5) !important;
+  border-color: rgba(239, 68, 68, 0.7) !important;
+  color: #ffffff !important;
 }
 
 .adminDangerBtn:hover {
-  background: rgba(239, 68, 68, 0.4);
-  border-color: #f87171;
-  color: #ffffff;
+  background: #dc2626 !important;
+  border-color: #f87171 !important;
+  color: #ffffff !important;
 }
 
 /* ── 2. CARD BODY ── */

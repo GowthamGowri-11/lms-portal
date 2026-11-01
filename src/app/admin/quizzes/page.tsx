@@ -6,7 +6,7 @@ export default async function AdminQuizzesPage() {
     orderBy: { createdAt: 'desc' },
     include: {
       questions: { orderBy: { order: 'asc' } },
-      course: { select: { id: true, title: true, logo: true } },
+      course: { select: { id: true, title: true, logo: true, category: true } },
       module: { select: { id: true, title: true } },
     },
   });
@@ -16,6 +16,7 @@ export default async function AdminQuizzesPage() {
       id: true,
       title: true,
       logo: true,
+      category: true,
       modules: {
         orderBy: { order: 'asc' },
         select: {
