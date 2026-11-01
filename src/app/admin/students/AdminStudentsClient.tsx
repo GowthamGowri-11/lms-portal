@@ -1,7 +1,8 @@
 'use client';
 
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { GraduationCap, Mail, BookOpen, Award } from 'lucide-react';
+import { GraduationCap, Mail, BookOpen, Award, Search } from 'lucide-react';
 import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
 import { CourseWithArrays } from '@/lib/utils';
@@ -16,6 +17,31 @@ export default function AdminStudentsClient({
   courses: CourseWithArrays[],
   enrollments: Enrollment[]
 }) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCourseId, setSelectedCourseId] = useState('all');
+
+  const filteredStudents = useMemo(() => {
+    return students.filter(student => {
+      // 1. Course Filter
+      if (selectedCourseId !== 'all') {
+        const isEnrolled = enrollments.some(
+          e => e.studentId === student.id && e.courseId === selectedCourseId
+        );
+        if (!isEnrolled) return false;
+      }
+      
+      // 2. Search Filter (Name or Email)
+      if (searchQuery.trim() !== '') {
+        const query = searchQuery.toLowerCase();
+        const matchesName = student.name.toLowerCase().includes(query);
+        const matchesEmail = student.email.toLowerCase().includes(query);
+        if (!matchesName && !matchesEmail) return false;
+      }
+      
+      return true;
+    });
+  }, [students, enrollments, searchQuery, selectedCourseId]);
+
   return (
     <PageTransition>
       <div className={styles.page}>
@@ -26,8 +52,36 @@ export default function AdminStudentsClient({
           </div>
         </FadeInUp>
 
+        <FadeInUp>
+          <div className={styles.filterNav}>
+            <div className={styles.searchBox}>
+              <Search size={18} className={styles.searchIcon} />
+              <input 
+                type="text" 
+                placeholder="Search by student name or email (gmail)..." 
+                className={styles.searchInput}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            
+            <select 
+              className={styles.courseSelect}
+              value={selectedCourseId}
+              onChange={(e) => setSelectedCourseId(e.target.value)}
+            >
+              <option value="all">All Courses</option>
+              {courses.map(course => (
+                <option key={course.id} value={course.id}>
+                  {course.title}
+                </option>
+              ))}
+            </select>
+          </div>
+        </FadeInUp>
+
         <StaggerContainer className={styles.studentsGrid}>
-          {students.map((student) => {
+          {filteredStudents.map((student) => {
             const studentEnrollments = enrollments.filter((e) => e.studentId === student.id);
             const enrolledCoursesCount = studentEnrollments.length;
             const completedCoursesCount = studentEnrollments.filter(e => e.progress === 100).length;
@@ -89,10 +143,10 @@ export default function AdminStudentsClient({
           })}
         </StaggerContainer>
 
-        {students.length === 0 && (
+        {filteredStudents.length === 0 && (
           <FadeInUp>
             <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-secondary)' }}>
-              <p>No students have registered yet.</p>
+              <p>{students.length === 0 ? "No students have registered yet." : "No students match your filter criteria."}</p>
             </div>
           </FadeInUp>
         )}

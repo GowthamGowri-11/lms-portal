@@ -19,24 +19,26 @@ const getCachedLesson = unstable_cache(
 
 const getCachedLessonData = unstable_cache(
   async (lessonId: string) => {
-    return {
-      notes: await prisma.lessonNote.findMany({
+    const [notes, resources, assignments, practiceFiles] = await Promise.all([
+      prisma.lessonNote.findMany({
         where: { lessonId, visibility: { not: 'Private' } },
         orderBy: { createdAt: 'desc' },
       }),
-      resources: await prisma.lessonResource.findMany({
+      prisma.lessonResource.findMany({
         where: { lessonId },
         orderBy: { createdAt: 'asc' },
       }),
-      assignments: await prisma.lessonAssignment.findMany({
+      prisma.lessonAssignment.findMany({
         where: { lessonId },
         orderBy: { createdAt: 'asc' },
       }),
-      practiceFiles: await prisma.lessonPracticeFile.findMany({
+      prisma.lessonPracticeFile.findMany({
         where: { lessonId },
         orderBy: { createdAt: 'asc' },
       }),
-    };
+    ]);
+
+    return { notes, resources, assignments, practiceFiles };
   },
   ['lesson-data-by-id'],
   { revalidate: 3600 }

@@ -126,6 +126,7 @@
   font-family: var(--font-heading, 'Outfit', sans-serif);
   background: linear-gradient(135deg, #2563eb, #38bdf8);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

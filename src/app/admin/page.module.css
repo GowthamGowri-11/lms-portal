@@ -73,6 +73,30 @@
   gap: 12px;
 }
 
+.headerBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.headerBadge svg {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.cellUser {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .telemetryBadge {
   display: inline-flex;
   align-items: center;
@@ -862,4 +886,40 @@
   font-weight: 800;
   color: #ffffff;
   flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: 1.25rem !important;
+  }
+  .subtitle {
+    font-size: 0.82rem !important;
+    margin-top: 2px;
+  }
+  .tableCard {
+    padding: 0.85rem !important;
+    border-radius: 12px !important;
+  }
+  .quickCard {
+    padding: 1rem !important;
+    border-radius: 12px !important;
+  }
+  .quickCard h3 {
+    font-size: 0.95rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  .cellUser {
+    gap: 8px !important;
+  }
+  .cellAvatar {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.8rem !important;
+  }
+  .cellName {
+    font-size: 0.85rem !important;
+  }
+  .cellEmail {
+    font-size: 0.75rem !important;
+  }
 }

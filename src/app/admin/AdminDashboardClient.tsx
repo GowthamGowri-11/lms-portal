@@ -231,7 +231,6 @@ export default function AdminDashboardClient({
                       <span>{stat.change}</span>
                     </div>
                   </div>
-
                   {/* Middle: Metric Value */}
                   <div className={styles.statValueWrap}>
                     <div className={styles.statValue}>{stat.value}</div>
@@ -548,7 +547,11 @@ export default function AdminDashboardClient({
                   <div className={styles.bentoEmpty}>No trainers registered.</div>
                 ) : (
                   trainers
-                    .map((t) => ({ ...t, studentsCount: ((t.name.charCodeAt(0) * 47) % 500) + 50 }))
+                    .map((t) => {
+                      const trainerCourses = courses.filter((c) => c.trainerId === t.id);
+                      const studentsCount = trainerCourses.reduce((sum, c) => sum + (c.studentsEnrolled || 0), 0);
+                      return { ...t, studentsCount };
+                    })
                     .sort((a, b) => b.studentsCount - a.studentsCount)
                     .slice(0, 4)
                     .map((trainer, i) => (
@@ -583,6 +586,8 @@ export default function AdminDashboardClient({
                       </div>
                     ))
                 )}
+              </div>
+            </div>
               </div>
             </div>
           </div>

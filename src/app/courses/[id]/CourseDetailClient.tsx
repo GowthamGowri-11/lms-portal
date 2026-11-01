@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
   ArrowRight,
@@ -61,6 +62,83 @@ export default function CourseDetailClient({
   const [directEnrollLoading, setDirectEnrollLoading] = useState(false);
   const [directEnrollDone, setDirectEnrollDone] = useState(false);
   const [directEnrollError, setDirectEnrollError] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const handlePayment = async () => {
+    setDirectEnrollLoading(true);
+    setDirectEnrollError('');
+    try {
+      const orderRes = await fetch('/api/razorpay/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId: course.id }),
+      });
+      const orderData = await orderRes.json();
+
+      if (!orderRes.ok) {
+        setDirectEnrollError(orderData.error || 'Failed to create order');
+        setDirectEnrollLoading(false);
+        return;
+      }
+
+      // Use the key returned from the server since process.env is only for Node environment or NEXT_PUBLIC_ variables
+      const options = {
+        key: orderData.key_id,
+        amount: orderData.order.amount,
+        currency: orderData.order.currency,
+        name: 'GM Training',
+        description: `Enrollment for ${course.title}`,
+        order_id: orderData.order.id,
+        handler: async function (response: any) {
+          try {
+            const verifyRes = await fetch('/api/razorpay/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                courseId: course.id,
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            if (verifyRes.ok) {
+              setDirectEnrollDone(true);
+              router.refresh();
+            } else {
+              setDirectEnrollError(verifyData.error || 'Payment verification failed');
+            }
+          } catch (e) {
+            setDirectEnrollError('Payment verification failed');
+          }
+        },
+        theme: {
+          color: '#6366f1'
+        }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (response: any) {
+        setDirectEnrollError(response.error.description);
+      });
+      rzp.open();
+
+    } catch (e) {
+      setDirectEnrollError('An error occurred. Please try again.');
+    } finally {
+      setDirectEnrollLoading(false);
+    }
+  };
 
   const totalLessons = modules.reduce((t, m) => t + m.lessons.length, 0);
 
@@ -484,6 +562,9 @@ export default function CourseDetailClient({
                             <button
                               className={styles.moduleHeader}
                               onClick={() => toggleModule(mod.id)}
+                              aria-expanded={expandedModules.has(mod.id)}
+                              aria-controls={`module-content-${mod.id}`}
+                              aria-label={`Toggle ${mod.title} section`}
                             >
                               <div className={styles.moduleHeaderLeft}>
                                 <div className={styles.moduleToggleIcon}>
@@ -502,6 +583,7 @@ export default function CourseDetailClient({
                             <AnimatePresence>
                               {expandedModules.has(mod.id) && (
                                 <motion.div
+                                  id={`module-content-${mod.id}`}
                                   className={styles.lessonsContainer}
                                   initial={{ height: 0, opacity: 0 }}
                                   animate={{ height: 'auto', opacity: 1 }}
@@ -781,8 +863,8 @@ export default function CourseDetailClient({
                               <ArrowRight size={16} className={styles.btnArrow} />
                             </Link>
                           ) : (
-                            <button className="btn btn-secondary btn-lg" disabled>
-                              Coming Soon
+                            <button className="btn btn-secondary btn-lg" disabled style={{ width: '100%', justifyContent: 'center', background: 'rgba(45, 212, 191, 0.2)', color: 'var(--accent-secondary)', border: '1px solid var(--accent-secondary)' }}>
+                              <CheckCircle size={18} style={{ marginRight: '8px' }} /> Enrolled (No lessons yet)
                             </button>
                           )
                         ) : enrollmentStatus === 'PENDING' ? (
@@ -793,35 +875,16 @@ export default function CourseDetailClient({
                           <button className="btn btn-secondary btn-lg" disabled>
                             ✗ Request Rejected
                           </button>
-                        ) : activeEnrollmentCount === 0 ? (
-                          // ── First course: instant direct enrollment ──
+                        ) : (
+                          // ── Buy Now with Razorpay ──
                           <>
                             <button
                               className="btn btn-primary btn-lg"
                               style={{ width: '100%', justifyContent: 'center' }}
                               disabled={directEnrollLoading}
-                              onClick={async () => {
-                                setDirectEnrollLoading(true);
-                                setDirectEnrollError('');
-                                try {
-                                  const res = await fetch(`/api/courses/${course.id}/enroll`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                  });
-                                  const data = await res.json();
-                                  if (res.ok) {
-                                    setDirectEnrollDone(true);
-                                  } else {
-                                    setDirectEnrollError(data.error || 'Enrollment failed. Please try again.');
-                                  }
-                                } catch {
-                                  setDirectEnrollError('An error occurred. Please try again.');
-                                } finally {
-                                  setDirectEnrollLoading(false);
-                                }
-                              }}
+                              onClick={handlePayment}
                             >
-                              {directEnrollLoading ? 'Enrolling...' : '🚀 Enroll Now'}
+                              {directEnrollLoading ? 'Processing...' : '🚀 Buy Now'}
                             </button>
                             {directEnrollError && (
                               <p style={{ color: '#ef4444', fontSize: '0.82rem', marginTop: '8px', textAlign: 'center' }}>
@@ -829,14 +892,6 @@ export default function CourseDetailClient({
                               </p>
                             )}
                           </>
-                        ) : (
-                          // ── Subsequent courses: admin approval required ──
-                          <JoinRequestButton
-                            type="COURSE_ENROLLMENT"
-                            targetId={course.id}
-                            label="Request Enrollment"
-                            className="btn btn-primary btn-lg"
-                          />
                         )}
                       </div>
                     </div>

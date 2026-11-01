@@ -22,7 +22,7 @@ export default function HeroAuthButtons() {
   };
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', alignItems: 'center', minHeight: '56px' }}>
       <motion.button
         className="btn-hero-primary"
         initial="initial"
@@ -36,6 +36,8 @@ export default function HeroAuthButtons() {
         onClick={handlePrimaryClick}
         style={{
           padding: '16px 32px',
+          minWidth: '270px',
+          minHeight: '56px',
           borderRadius: '100px',
           background: 'var(--accent-primary)',
           color: '#ffffff',

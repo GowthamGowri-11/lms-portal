@@ -256,7 +256,7 @@ export default function AuthModal() {
         {!(status === 'authenticated' && session?.user && !(session.user as any).isOnboarded && (session.user as any).role !== 'ADMIN') && (
           <button
             onClick={() => setIsOpen(false)}
-            aria-label="Close modal"
+            aria-label="Close authentication modal"
             style={{
               position: 'absolute',
               top: '16px',

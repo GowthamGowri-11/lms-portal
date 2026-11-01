@@ -5,6 +5,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import AuthModal from "@/components/auth/AuthModal";
 import ATLYXPageLoader from "@/components/ui/ATLYXPageLoader";
+import AmbientShutterBackground from "@/components/ui/AmbientShutterBackground";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,7 +25,14 @@ export const metadata: Metadata = {
     "Master in-demand skills with expert-led courses. ATLYX offers world-class training in Web Development, UI/UX Design, Data Science, and more.",
 };
 
-import AmbientShutterBackground from "@/components/ui/AmbientShutterBackground";
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  name: "ATLYX Learning Management System",
+  description: "Master in-demand skills with expert-led courses in Web Development, UI/UX Design, Data Science, and more.",
+  url: "https://lms-portal-ruby.vercel.app",
+  sameAs: [],
+};
 
 export default function RootLayout({
   children,
@@ -33,6 +41,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body suppressHydrationWarning>
         <AuthProvider>
           <AuthModal />
