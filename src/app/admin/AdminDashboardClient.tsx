@@ -588,8 +588,6 @@ export default function AdminDashboardClient({
                 )}
               </div>
             </div>
-              </div>
-            </div>
           </div>
         </FadeInUp>
       </div>
