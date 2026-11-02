@@ -19,13 +19,13 @@ import { prisma } from '@/lib/prisma';
 import ViewResumeButton from '@/components/ui/ViewResumeButton';
 import Footer from '@/components/ui/Footer';
 import styles from './page.module.css';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
+
+
 
 export const revalidate = 3600;
 
 export default async function AboutPage() {
-  const session = await getServerSession(authOptions);
+
   let developers = await prisma.developer.findMany();
 
   // Sort developers so Gowtham appears first

@@ -3,6 +3,14 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 
+// In-memory cache for user role and onboarding status to avoid remote DB roundtrips on every page navigation
+const userRoleCache = new Map<string, { role: string; isOnboarded: boolean; timestamp: number }>();
+const CACHE_TTL_MS = 60 * 1000; // 60 seconds
+
+export function invalidateUserCache(userId: string) {
+  userRoleCache.delete(userId);
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -22,15 +30,32 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = (user as any).role || "GUEST";
         token.isOnboarded = (user as any).isOnboarded || false;
-      } else if (token.id) {
-        // Fetch the latest role and onboarding status from the database on subsequent token validations
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { role: true, isOnboarded: true },
+        userRoleCache.set(user.id, {
+          role: token.role as string,
+          isOnboarded: token.isOnboarded as boolean,
+          timestamp: Date.now(),
         });
-        if (dbUser) {
-          token.role = dbUser.role;
-          token.isOnboarded = dbUser.isOnboarded;
+      } else if (token.id) {
+        const cached = userRoleCache.get(token.id as string);
+        const now = Date.now();
+        if (cached && now - cached.timestamp < CACHE_TTL_MS) {
+          token.role = cached.role;
+          token.isOnboarded = cached.isOnboarded;
+        } else {
+          // Fetch the latest role and onboarding status from the database on subsequent token validations
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { role: true, isOnboarded: true },
+          });
+          if (dbUser) {
+            token.role = dbUser.role;
+            token.isOnboarded = dbUser.isOnboarded;
+            userRoleCache.set(token.id as string, {
+              role: dbUser.role,
+              isOnboarded: dbUser.isOnboarded,
+              timestamp: now,
+            });
+          }
         }
       }
       return token;

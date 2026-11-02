@@ -464,6 +464,44 @@
   color: #c7d2fe;
 }
 
+/* Document Images & Proper Spacing */
+.notesBody img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 2.75rem auto;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7);
+  background: rgba(15, 15, 25, 0.6);
+  padding: 10px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.notesBody img:hover {
+  transform: scale(1.01);
+  box-shadow: 0 20px 48px -10px rgba(99, 102, 241, 0.3);
+}
+
+.notesBody figure {
+  margin: 2.75rem auto;
+  text-align: center;
+  max-width: 100%;
+}
+
+.notesBody figcaption {
+  margin-top: 0.85rem;
+  font-size: 0.88rem;
+  color: var(--text-tertiary);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.notesBody p:has(> img) {
+  margin: 2.5rem 0;
+  text-align: center;
+}
+
 /* Resources */
 .resourcesContent {
   display: flex;

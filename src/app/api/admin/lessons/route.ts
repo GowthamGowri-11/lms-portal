@@ -5,7 +5,16 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { moduleId, title, description, videoUrl, notes, duration, isFree, order } = body;
   const lesson = await prisma.lesson.create({
-    data: { moduleId, title, description: description ?? '', videoUrl: videoUrl ?? '', notes: notes ?? '', duration: duration ?? '', isFree: isFree ?? false, order: order ?? 0 },
+    data: {
+      moduleId,
+      title,
+      description: description ?? '',
+      videoUrl: videoUrl ?? '',
+      notes: notes ?? '',
+      duration: duration ?? '',
+      isFree: isFree ?? false,
+      order: order ?? 0,
+    },
   });
   return NextResponse.json(lesson);
 }

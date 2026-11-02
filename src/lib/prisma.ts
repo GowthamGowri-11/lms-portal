@@ -12,23 +12,28 @@ function createPool() {
     password: url.password,
     database: url.pathname.slice(1), // remove leading /
     ssl: { rejectUnauthorized: false },
-    max: 10,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+    keepAlive: true,
   });
 }
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
   pool: Pool | undefined;
+  adapter: PrismaPg | undefined;
 };
 
 const pool = globalForPrisma.pool ?? createPool();
-const adapter = new PrismaPg(pool);
+const adapter = globalForPrisma.adapter ?? new PrismaPg(pool);
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
   globalForPrisma.pool = pool;
+  globalForPrisma.adapter = adapter;
 }
 
 export default prisma;

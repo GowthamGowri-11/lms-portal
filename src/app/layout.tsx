@@ -2,14 +2,12 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-import dynamic from 'next/dynamic';
+import GalaxyBackground from "@/components/animations/GalaxyBackground";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import AuthModal from "@/components/auth/AuthModal";
 import ATLYXPageLoader from "@/components/ui/ATLYXPageLoader";
 
-const GalaxyBackground = dynamic(
-  () => import('@/components/animations/GalaxyBackground')
-);
+
 
 const inter = Inter({
   variable: "--font-inter",

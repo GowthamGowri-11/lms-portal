@@ -13,6 +13,8 @@ import { Course, Lesson, CodingProblem } from '@/generated/prisma/client';
 import type { LessonNote, LessonResource, LessonAssignment, LessonPracticeFile } from '@/generated/prisma/client';
 import { useLearn } from '@/app/learn/[courseId]/LearnContext';
 import ReactMarkdown from 'react-markdown';
+import { parseLessonContent, LessonContentPayload } from '@/lib/lessonContent';
+import DocumentViewer from '@/components/common/DocumentViewer';
 import styles from './lesson.module.css';
 
 
@@ -46,6 +48,7 @@ export default function LessonClient({
   const { setMobileSidebarOpen } = useLearn();
   
   const [activeTab, setActiveTab] = useState<'notes' | 'docs' | 'resources' | 'assignments' | 'practice' | 'coding'>('notes');
+  const parsedContent = parseLessonContent(lesson.notes);
   const [completed, setCompleted] = useState(initialProgress?.completed ?? false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -157,13 +160,18 @@ export default function LessonClient({
         <div className={styles.tabContent}>
           {activeTab === 'notes' && (
             <div className={styles.notesContent}>
-              {lesson.notes ? (
-                <div className={styles.notesBody}>
-                  <ReactMarkdown>{lesson.notes}</ReactMarkdown>
+              {parsedContent.document && (
+                <div style={{ marginBottom: parsedContent.markdown ? '2.5rem' : 0 }}>
+                  <DocumentViewer document={parsedContent.document} />
                 </div>
-              ) : (
-                <p className={styles.emptyState}>No lesson notes available.</p>
               )}
+              {parsedContent.markdown ? (
+                <div className={styles.notesBody}>
+                  <ReactMarkdown>{parsedContent.markdown}</ReactMarkdown>
+                </div>
+              ) : !parsedContent.document ? (
+                <p className={styles.emptyState}>No lesson notes available.</p>
+              ) : null}
             </div>
           )}
 

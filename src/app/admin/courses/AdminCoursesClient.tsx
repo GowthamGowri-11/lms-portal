@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Search, Edit3, Trash2, X,
-  Eye, EyeOff, Star, Clock, BookOpen, ArrowRight,
+  Eye, EyeOff, Star, BookOpen, ArrowRight,
 } from 'lucide-react';
 import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import { createCourse, updateCourse, deleteCourse } from '@/lib/actions';
@@ -233,9 +233,7 @@ export default function AdminCoursesClient({
                           <Star size={13} fill="#eab308" stroke="#eab308" />
                           <span>{course.rating || '0'}</span>
                         </div>
-                        <span>•</span>
-                        <Clock size={12} style={{ opacity: 0.5 }} />
-                        <span>{course.duration}</span>
+                        
                         <span>•</span>
                         <BookOpen size={12} style={{ opacity: 0.5 }} />
                         <span>{course.lessonsCount} lessons</span>
@@ -297,130 +295,178 @@ export default function AdminCoursesClient({
         <AnimatePresence>
           {showModal && (
             <motion.div
-              className="modal-overlay"
+              className={styles.modalOverlay}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => !isLoading && setShowModal(false)}
             >
               <motion.div
-                className={`modal-content ${styles.modalWide}`}
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                className={styles.modalCard}
+                initial={{ opacity: 0, scale: 0.95, y: 15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                transition={{ type: 'spring', stiffness: 350, damping: 28 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="modal-header">
-                  <h2>{editingCourse ? 'Edit Course' : 'Add New Course'}</h2>
-                  <button className="modal-close" onClick={() => !isLoading && setShowModal(false)}>
-                    <X size={20} />
+                {/* Fixed Header */}
+                <div className={styles.modalHeader}>
+                  <div>
+                    <h2 className={styles.modalTitle}>{editingCourse ? 'Edit Course' : 'Add New Course'}</h2>
+                    <p style={{ margin: '2px 0 0', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                      Fill in the course details, instructor, and pricing
+                    </p>
+                  </div>
+                  <button
+                    className={styles.modalCloseBtn}
+                    onClick={() => !isLoading && setShowModal(false)}
+                    aria-label="Close"
+                    type="button"
+                  >
+                    <X size={18} />
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className={styles.form}>
-                  <div className={styles.formGrid}>
-                    <div className="input-group">
-                      <label>Course Title *</label>
-                      <input type="text" className="input-field" value={form.title}
-                        onChange={(e) => setForm({ ...form, title: e.target.value })}
-                        required disabled={isLoading} />
+                {/* Form Body with Fixed Footer */}
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+                  <div className={styles.modalBody}>
+                    <div className={styles.formGrid}>
+                      <div className="input-group">
+                        <label>Course Title *</label>
+                        <input
+                          type="text"
+                          className="input-field"
+                          value={form.title}
+                          onChange={(e) => setForm({ ...form, title: e.target.value })}
+                          required
+                          disabled={isLoading}
+                          placeholder="e.g. Master Python Programming"
+                        />
+                      </div>
+
+                      <div className="input-group">
+                        <label>Category</label>
+                        <select
+                          className="input-field"
+                          value={form.category}
+                          onChange={(e) => setForm({ ...form, category: e.target.value })}
+                          disabled={isLoading}
+                        >
+                          {['Web Development','Python','Java','C++','Data Science','Cloud Computing','DevOps','Cybersecurity','Other'].map((c) => (
+                            <option key={c}>{c}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="input-group">
+                        <label>Assign Trainer *</label>
+                        <select
+                          className="input-field"
+                          value={form.trainerId}
+                          onChange={(e) => setForm({ ...form, trainerId: e.target.value })}
+                          required
+                          disabled={isLoading}
+                        >
+                          <option value="">Select trainer...</option>
+                          {trainers.map((t) => (
+                            <option key={t.id} value={t.id}>{t.name} — {t.specialization}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="input-group">
+                        <label>Level</label>
+                        <select
+                          className="input-field"
+                          value={form.level}
+                          onChange={(e) => setForm({ ...form, level: e.target.value })}
+                          disabled={isLoading}
+                        >
+                          <option>Beginner</option>
+                          <option>Intermediate</option>
+                          <option>Advanced</option>
+                        </select>
+                      </div>
+
+                      <div className="input-group">
+                        <label>Price (₹) *</label>
+                        <input
+                          type="number"
+                          className="input-field"
+                          value={form.price || ''}
+                          onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+                          required
+                          disabled={isLoading}
+                          placeholder="0"
+                        />
+                      </div>
+
+                      <div className="input-group">
+                        <label>Discount Price (₹)</label>
+                        <input
+                          type="number"
+                          className="input-field"
+                          value={form.discountPrice || ''}
+                          onChange={(e) => setForm({ ...form, discountPrice: e.target.value ? Number(e.target.value) : undefined })}
+                          disabled={isLoading}
+                          placeholder="Optional"
+                        />
+                      </div>
+
+                      <div className="input-group">
+                        <label>Lessons Count</label>
+                        <input
+                          type="number"
+                          className="input-field"
+                          value={form.lessonsCount || ''}
+                          onChange={(e) => setForm({ ...form, lessonsCount: Math.max(0, Number(e.target.value)) })}
+                          disabled={isLoading}
+                          min="0"
+                        />
+                      </div>
+
+                      <div className="input-group">
+                        <label>Status</label>
+                        <select
+                          className="input-field"
+                          value={form.isPublished ? 'yes' : 'no'}
+                          onChange={(e) => setForm({ ...form, isPublished: e.target.value === 'yes' })}
+                          disabled={isLoading}
+                        >
+                          <option value="yes">Published</option>
+                          <option value="no">Draft</option>
+                        </select>
+                      </div>
                     </div>
+
                     <div className="input-group">
-                      <label>Category</label>
-                      <select className="input-field" value={form.category}
-                        onChange={(e) => setForm({ ...form, category: e.target.value })}
-                        disabled={isLoading}>
-                        {['Web Development','Python','Java','C++','Data Science','Cloud Computing','DevOps','Cybersecurity','Other'].map((c) => (
-                          <option key={c}>{c}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="input-group">
-                      <label>Assign Trainer *</label>
-                      <select className="input-field" value={form.trainerId}
-                        onChange={(e) => setForm({ ...form, trainerId: e.target.value })}
-                        required disabled={isLoading}>
-                        <option value="">Select trainer...</option>
-                        {trainers.map((t) => (
-                          <option key={t.id} value={t.id}>{t.name} — {t.specialization}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="input-group">
-                      <label>Level</label>
-                      <select className="input-field" value={form.level}
-                        onChange={(e) => setForm({ ...form, level: e.target.value })}
-                        disabled={isLoading}>
-                        <option>Beginner</option>
-                        <option>Intermediate</option>
-                        <option>Advanced</option>
-                      </select>
-                    </div>
-                    <div className="input-group">
-                      <label>Price (₹) *</label>
-                      <input type="number" className="input-field" value={form.price || ''}
-                        onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-                        required disabled={isLoading} />
-                    </div>
-                    <div className="input-group">
-                      <label>Discount Price (₹)</label>
-                      <input type="number" className="input-field" value={form.discountPrice || ''}
-                        onChange={(e) => setForm({ ...form, discountPrice: e.target.value ? Number(e.target.value) : undefined })}
-                        disabled={isLoading} />
-                    </div>
-                    <div className="input-group">
-                      <label>Duration</label>
-                      <input type="text" className="input-field" value={form.duration}
-                        onChange={(e) => setForm({ ...form, duration: e.target.value })}
-                        disabled={isLoading} />
-                    </div>
-                    <div className="input-group">
-                      <label>Lessons Count</label>
-                      <input type="number" className="input-field" value={form.lessonsCount || ''}
-                        onChange={(e) => setForm({ ...form, lessonsCount: Number(e.target.value) })}
-                        disabled={isLoading} />
-                    </div>
-                    <div className="input-group">
-                      <label>Published</label>
-                      <select className="input-field" value={form.isPublished ? 'yes' : 'no'}
-                        onChange={(e) => setForm({ ...form, isPublished: e.target.value === 'yes' })}
-                        disabled={isLoading}>
-                        <option value="yes">Published</option>
-                        <option value="no">Draft</option>
-                      </select>
+                      <label>Course Description</label>
+                      <textarea
+                        className="input-field textarea-field"
+                        style={{ minHeight: 80, maxHeight: 150, resize: 'vertical' }}
+                        value={form.shortDescription}
+                        onChange={(e) => setForm({ ...form, shortDescription: e.target.value })}
+                        disabled={isLoading}
+                        placeholder="Brief summary of what this course covers..."
+                      />
                     </div>
                   </div>
 
-                  <div className="input-group">
-                    <label>Short Description</label>
-                    <input type="text" className="input-field" value={form.shortDescription}
-                      onChange={(e) => setForm({ ...form, shortDescription: e.target.value })}
-                      disabled={isLoading} />
-                  </div>
-                  <div className="input-group">
-                    <label>Full Description</label>
-                    <textarea className="input-field textarea-field" value={form.description}
-                      onChange={(e) => setForm({ ...form, description: e.target.value })}
-                      disabled={isLoading} />
-                  </div>
-                  <div className="input-group">
-                    <label>Tags (comma separated)</label>
-                    <input type="text" className="input-field" value={tagsInput}
-                      onChange={(e) => setTagsInput(e.target.value)} disabled={isLoading} />
-                  </div>
-                  <div className="input-group">
-                    <label>Syllabus (one topic per line)</label>
-                    <textarea className="input-field textarea-field" value={syllabusInput}
-                      onChange={(e) => setSyllabusInput(e.target.value)} disabled={isLoading} />
-                  </div>
-
-                  <div className={styles.formActions}>
-                    <button type="button" className="btn btn-secondary"
-                      onClick={() => setShowModal(false)} disabled={isLoading}>
+                  {/* Fixed Footer */}
+                  <div className={styles.modalFooter}>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => setShowModal(false)}
+                      disabled={isLoading}
+                    >
                       Cancel
                     </button>
-                    <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      disabled={isLoading}
+                    >
                       {isLoading ? 'Saving...' : editingCourse ? 'Update Course' : 'Create Course'}
                     </button>
                   </div>
@@ -434,17 +480,18 @@ export default function AdminCoursesClient({
         <AnimatePresence>
           {deleteConfirm && (
             <motion.div
-              className="modal-overlay"
+              className={styles.modalOverlay}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => !isLoading && setDeleteConfirm(null)}
             >
               <motion.div
-                className="modal-content"
-                initial={{ opacity: 0, scale: 0.9 }}
+                className={styles.modalCard}
+                style={{ maxWidth: 420 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
+                exit={{ opacity: 0, scale: 0.95 }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className={styles.deleteModal}>
@@ -452,12 +499,18 @@ export default function AdminCoursesClient({
                   <h3>Delete Course?</h3>
                   <p>This action cannot be undone. The course will be permanently removed.</p>
                   <div className={styles.deleteActions}>
-                    <button className="btn btn-secondary"
-                      onClick={() => setDeleteConfirm(null)} disabled={isLoading}>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => setDeleteConfirm(null)}
+                      disabled={isLoading}
+                    >
                       Cancel
                     </button>
-                    <button className="btn btn-danger"
-                      onClick={() => handleDelete(deleteConfirm)} disabled={isLoading}>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleDelete(deleteConfirm)}
+                      disabled={isLoading}
+                    >
                       {isLoading ? 'Deleting...' : 'Delete Course'}
                     </button>
                   </div>

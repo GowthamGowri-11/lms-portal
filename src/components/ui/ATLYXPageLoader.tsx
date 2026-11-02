@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef, useTransition } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import ATLYXLoadingScreen from './ATLYXLoadingScreen';
 
@@ -10,29 +10,35 @@ export default function ATLYXPageLoader() {
   const [isLoading, setIsLoading] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const prevRouteRef = useRef(`${pathname}?${searchParams.toString()}`);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const showTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const safetyTimerRef = useRef<NodeJS.Timeout | null>(null);
   const exitTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // When pathname or searchParams change, dismiss loader
+  // When pathname or searchParams change, dismiss loader promptly
   useEffect(() => {
     const currentRoute = `${pathname}?${searchParams.toString()}`;
     if (prevRouteRef.current !== currentRoute) {
       prevRouteRef.current = currentRoute;
+      
+      // Cancel pending loader display if transition finished fast
+      if (showTimerRef.current) {
+        clearTimeout(showTimerRef.current);
+        showTimerRef.current = null;
+      }
+
       if (isLoading) {
-        // Smooth exit
         setIsExiting(true);
         exitTimerRef.current = setTimeout(() => {
           setIsLoading(false);
           setIsExiting(false);
-        }, 220);
+        }, 80);
       }
     }
   }, [pathname, searchParams, isLoading]);
 
-  // Global click interceptor for internal navigation links
+  // Global click interceptor for internal navigation links with debounce
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      // Find closest anchor tag
       const target = e.target as HTMLElement | null;
       const anchor = target?.closest('a');
 
@@ -62,20 +68,26 @@ export default function ATLYXPageLoader() {
           !url.hash;
 
         if (!isSamePage) {
-          if (timerRef.current) clearTimeout(timerRef.current);
+          if (showTimerRef.current) clearTimeout(showTimerRef.current);
+          if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
           if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
 
           setIsExiting(false);
-          setIsLoading(true);
 
-          // Safety timeout to prevent loader from hanging indefinitely
-          timerRef.current = setTimeout(() => {
-            setIsExiting(true);
-            setTimeout(() => {
-              setIsLoading(false);
-              setIsExiting(false);
-            }, 200);
-          }, 3500);
+          // Debounce: Only show full loader if page transition takes longer than 150ms
+          // Instant transitions won't flash the heavy overlay
+          showTimerRef.current = setTimeout(() => {
+            setIsLoading(true);
+
+            // Safety timeout to prevent loader from hanging indefinitely
+            safetyTimerRef.current = setTimeout(() => {
+              setIsExiting(true);
+              setTimeout(() => {
+                setIsLoading(false);
+                setIsExiting(false);
+              }, 80);
+            }, 3000);
+          }, 150);
         }
       }
     };
@@ -84,7 +96,8 @@ export default function ATLYXPageLoader() {
 
     return () => {
       document.removeEventListener('click', handleClick, true);
-      if (timerRef.current) clearTimeout(timerRef.current);
+      if (showTimerRef.current) clearTimeout(showTimerRef.current);
+      if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
       if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
     };
   }, []);
