@@ -11,8 +11,6 @@ import {
   GraduationCap,
   ChevronLeft,
   ChevronRight,
-  Settings,
-  BarChart3,
   Home,
   Code,
   LogOut,
@@ -20,10 +18,17 @@ import {
   CircleHelp,
   UserCircle,
   MessageSquare,
+<<<<<<< HEAD
   CreditCard,
   Menu,
   X,
   ShieldAlert,
+=======
+  ShieldAlert,
+  CreditCard,
+  Menu,
+  X,
+>>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import BrandLogo from '@/components/ui/BrandLogo';
@@ -44,10 +49,27 @@ const menuItems = [
   { href: '/admin/queries', label: 'Student Queries', icon: MessageSquare },
 ];
 
-export default function AdminSidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+interface AdminSidebarProps {
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+}
+
+export default function AdminSidebar({
+  collapsed: controlledCollapsed,
+  onToggleCollapse,
+}: AdminSidebarProps = {}) {
+  const [internalCollapsed, setInternalCollapsed] = useState(false);
+  const isCollapsed = controlledCollapsed !== undefined ? controlledCollapsed : internalCollapsed;
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+
+  const handleToggle = () => {
+    if (onToggleCollapse) {
+      onToggleCollapse();
+    } else {
+      setInternalCollapsed((prev) => !prev);
+    }
+  };
 
   const handleNavClick = () => {
     setMobileOpen(false);
@@ -57,10 +79,16 @@ export default function AdminSidebar() {
     <>
       {/* Mobile Top Bar */}
       <div className={styles.mobileTopBar}>
+<<<<<<< HEAD
         <Link href="/admin" className={styles.logo}>
           <BrandLogo size={28} />
           <span className={styles.brandTitle} style={{ fontSize: '1.15rem' }}>ATLYX</span>
           <span className={styles.adminBadge}>Admin Hub</span>
+=======
+        <Link href="/admin" className={styles.logo} onClick={handleNavClick}>
+          <BrandLogo size={24} />
+          <span className={styles.brandTitle}>ATLYX Admin</span>
+>>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
         </Link>
 
         <button
@@ -87,16 +115,27 @@ export default function AdminSidebar() {
 
       {/* Sidebar Navigation */}
       <motion.aside
+<<<<<<< HEAD
         className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''} ${mobileOpen ? styles.mobileOpen : ''}`}
         animate={{ width: collapsed ? 76 : 270 }}
+=======
+        className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ''} ${mobileOpen ? styles.mobileOpen : ''}`}
+        animate={{ width: isCollapsed ? 76 : 270 }}
+>>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
       >
         {/* Header */}
         <div className={styles.header}>
           <Link href="/admin" className={styles.logo} onClick={handleNavClick}>
+<<<<<<< HEAD
             <BrandLogo size={collapsed ? 28 : 30} />
             <AnimatePresence>
               {!collapsed && (
+=======
+            <BrandLogo size={isCollapsed ? 28 : 30} />
+            <AnimatePresence>
+              {(!isCollapsed || mobileOpen) && (
+>>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
                 <motion.div
                   className={styles.logoTextWrap}
                   initial={{ opacity: 0, width: 0 }}
@@ -113,10 +152,14 @@ export default function AdminSidebar() {
 
           <button
             className={styles.collapseBtn}
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={handleToggle}
             aria-label="Toggle sidebar desktop width"
           >
+<<<<<<< HEAD
             {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+=======
+            {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+>>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
           </button>
 
           {/* Mobile Close Button */}
@@ -144,7 +187,11 @@ export default function AdminSidebar() {
                 href={item.href}
                 onClick={handleNavClick}
                 className={`${styles.navItem} ${isActive ? styles.active : ''}`}
+<<<<<<< HEAD
                 title={collapsed ? item.label : undefined}
+=======
+                title={isCollapsed ? item.label : undefined}
+>>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
               >
                 {isActive && (
                   <motion.div
@@ -155,7 +202,7 @@ export default function AdminSidebar() {
                 )}
                 <Icon size={18} className={styles.navIcon} />
                 <AnimatePresence>
-                  {(!collapsed || mobileOpen) && (
+                  {(!isCollapsed || mobileOpen) && (
                     <motion.span
                       className={styles.navLabel}
                       initial={{ opacity: 0 }}
@@ -174,10 +221,14 @@ export default function AdminSidebar() {
 
         {/* Footer */}
         <div className={styles.footer}>
+<<<<<<< HEAD
           <Link href="/" className={styles.footerLink} onClick={handleNavClick} title={collapsed ? 'Back to Site' : undefined}>
+=======
+          <Link href="/" className={styles.footerLink} onClick={handleNavClick} title={isCollapsed ? 'Back to Site' : undefined}>
+>>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
             <Home size={18} />
             <AnimatePresence>
-              {(!collapsed || mobileOpen) && (
+              {(!isCollapsed || mobileOpen) && (
                 <motion.span
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -194,11 +245,15 @@ export default function AdminSidebar() {
               signOut({ callbackUrl: '/' });
             }}
             className={`${styles.footerLink} ${styles.logoutBtn}`}
+<<<<<<< HEAD
             title={collapsed ? 'Logout' : undefined}
+=======
+            title={isCollapsed ? 'Logout' : undefined}
+>>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
           >
             <LogOut size={18} />
             <AnimatePresence>
-              {(!collapsed || mobileOpen) && (
+              {(!isCollapsed || mobileOpen) && (
                 <motion.span
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

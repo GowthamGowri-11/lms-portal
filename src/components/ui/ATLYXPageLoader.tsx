@@ -54,6 +54,8 @@ export default function ATLYXPageLoader() {
         !href.startsWith('//') &&
         !href.startsWith('/api') &&
         !href.startsWith('#') &&
+        !href.startsWith('/admin') &&
+        !window.location.pathname.startsWith('/admin') &&
         targetAttr !== '_blank' &&
         !e.ctrlKey &&
         !e.metaKey &&

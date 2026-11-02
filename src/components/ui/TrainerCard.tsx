@@ -20,33 +20,34 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { Trainer } from '@/generated/prisma/client';
+import TechLogo from './TechLogo';
 import styles from './TrainerCard.module.css';
 
 type Course = { id: string; title: string; logo: string; trainerId: string };
 
 // ── SKILL DETECTION ──────────────────────────────────────────────────────────
-const SKILL_MAP: { keyword: string; label: string; icon: string; color: string }[] = [
-  { keyword: 'python',           label: 'Python',           icon: '🐍', color: '#3b82f6' },
-  { keyword: 'react',            label: 'React.js',         icon: '⚛️', color: '#06b6d4' },
-  { keyword: 'node',             label: 'Node.js',          icon: '🟢', color: '#22c55e' },
-  { keyword: 'java',             label: 'Java Enterprise',  icon: '☕', color: '#ea580c' },
-  { keyword: 'javascript',       label: 'JavaScript',       icon: '🟡', color: '#eab308' },
-  { keyword: 'typescript',       label: 'TypeScript',       icon: '🔷', color: '#2563eb' },
-  { keyword: 'django',           label: 'Django',           icon: '🎸', color: '#16a34a' },
-  { keyword: 'spring',           label: 'Spring Boot',      icon: '🍃', color: '#22c55e' },
-  { keyword: 'machine learning', label: 'Machine Learning', icon: '🤖', color: '#8b5cf6' },
-  { keyword: 'data science',     label: 'Data Science',     icon: '📊', color: '#0284c7' },
-  { keyword: 'aws',              label: 'AWS Cloud',        icon: '☁️', color: '#f59e0b' },
-  { keyword: 'docker',           label: 'Docker & K8s',     icon: '🐳', color: '#0284c7' },
-  { keyword: 'c++',              label: 'C++ Systems',      icon: '⚙️', color: '#0ea5e9' },
-  { keyword: 'devops',           label: 'DevOps & CI/CD',   icon: '🔧', color: '#6366f1' },
-  { keyword: 'next',             label: 'Next.js',          icon: '▲',  color: '#0f172a' },
-  { keyword: 'fullstack',        label: 'Full Stack Web',   icon: '💻', color: '#2563eb' },
-  { keyword: 'full stack',       label: 'Full Stack Web',   icon: '💻', color: '#2563eb' },
-  { keyword: 'web developer',    label: 'Modern Web Dev',   icon: '🌐', color: '#0284c7' },
-  { keyword: 'database',         label: 'SQL & Databases',  icon: '🗄️', color: '#d97706' },
-  { keyword: 'backend',          label: 'Backend Arch',     icon: '🛠️', color: '#475569' },
-  { keyword: 'frontend',         label: 'Frontend UI/UX',   icon: '🎨', color: '#ec4899' },
+const SKILL_MAP: { keyword: string; label: string; color: string }[] = [
+  { keyword: 'python',           label: 'Python',           color: '#3b82f6' },
+  { keyword: 'react',            label: 'React.js',         color: '#06b6d4' },
+  { keyword: 'node',             label: 'Node.js',          color: '#22c55e' },
+  { keyword: 'java',             label: 'Java Enterprise',  color: '#ea580c' },
+  { keyword: 'javascript',       label: 'JavaScript',       color: '#eab308' },
+  { keyword: 'typescript',       label: 'TypeScript',       color: '#2563eb' },
+  { keyword: 'django',           label: 'Django',           color: '#16a34a' },
+  { keyword: 'spring',           label: 'Spring Boot',      color: '#22c55e' },
+  { keyword: 'machine learning', label: 'Machine Learning', color: '#8b5cf6' },
+  { keyword: 'data science',     label: 'Data Science',     color: '#0284c7' },
+  { keyword: 'aws',              label: 'AWS Cloud',        color: '#f59e0b' },
+  { keyword: 'docker',           label: 'Docker & K8s',     color: '#0284c7' },
+  { keyword: 'c++',              label: 'C++ Systems',      color: '#0ea5e9' },
+  { keyword: 'devops',           label: 'DevOps & CI/CD',   color: '#6366f1' },
+  { keyword: 'next',             label: 'Next.js',          color: '#0f172a' },
+  { keyword: 'fullstack',        label: 'Full Stack Web',   color: '#2563eb' },
+  { keyword: 'full stack',       label: 'Full Stack Web',   color: '#2563eb' },
+  { keyword: 'web developer',    label: 'Modern Web Dev',   color: '#0284c7' },
+  { keyword: 'database',         label: 'SQL & Databases',  color: '#d97706' },
+  { keyword: 'backend',          label: 'Backend Arch',     color: '#475569' },
+  { keyword: 'frontend',         label: 'Frontend UI/UX',   color: '#ec4899' },
 ];
 
 function getSkills(trainer: Trainer) {
@@ -56,9 +57,9 @@ function getSkills(trainer: Trainer) {
     return detected.slice(0, 3);
   }
   return [
-    { label: trainer.specialization || 'Software Engineering', icon: '💻', color: '#2563eb' },
-    { label: 'System Architecture', icon: '⚙️', color: '#0284c7' },
-    { label: 'Mentorship', icon: '🎯', color: '#8b5cf6' },
+    { label: trainer.specialization || 'Software Engineering', color: '#2563eb' },
+    { label: 'System Architecture', color: '#0284c7' },
+    { label: 'Mentorship', color: '#8b5cf6' },
   ];
 }
 
@@ -294,8 +295,10 @@ export default function TrainerCard({
             <div className={styles.skillsList}>
               {skills.map((s) => (
                 <span key={s.label} className={styles.skillPill}>
-                  <span className={styles.skillEmoji}>{s.icon}</span>
-                  <span>{s.label}</span>
+                  <span className={styles.techLogoBox}>
+                    <TechLogo name={s.label} size={16} />
+                  </span>
+                  <span className={styles.skillLabel}>{s.label}</span>
                 </span>
               ))}
             </div>
@@ -322,7 +325,9 @@ export default function TrainerCard({
                   className={styles.courseLinkPill}
                   title={c.title}
                 >
-                  <BookOpen size={11} className={styles.courseIcon} />
+                  <span className={styles.courseLogoBox}>
+                    <TechLogo name={c.title} size={15} />
+                  </span>
                   <span>{c.title}</span>
                 </Link>
               ))}

@@ -7,23 +7,27 @@ import { ReactNode } from 'react';
 export function FadeInUp({
   children,
   delay = 0,
-  duration = 0.5,
+  duration = 0.45,
   className = '',
+  style,
 }: {
   children: ReactNode;
   delay?: number;
   duration?: number;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
+    <div
       className={className}
+      style={{
+        animation: `motionFadeInUp ${duration}s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s forwards`,
+        opacity: 1,
+        ...style,
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -31,23 +35,27 @@ export function FadeInUp({
 export function FadeIn({
   children,
   delay = 0,
-  duration = 0.5,
+  duration = 0.4,
   className = '',
+  style,
 }: {
   children: ReactNode;
   delay?: number;
   duration?: number;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration, delay }}
+    <div
       className={className}
+      style={{
+        animation: `motionFadeIn ${duration}s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s forwards`,
+        opacity: 1,
+        ...style,
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -56,20 +64,24 @@ export function ScaleIn({
   children,
   delay = 0,
   className = '',
+  style,
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+    <div
       className={className}
+      style={{
+        animation: `motionScaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s forwards`,
+        opacity: 1,
+        ...style,
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -78,20 +90,24 @@ export function SlideInLeft({
   children,
   delay = 0,
   className = '',
+  style,
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+    <div
       className={className}
+      style={{
+        animation: `motionSlideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s forwards`,
+        opacity: 1,
+        ...style,
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -100,20 +116,24 @@ export function SlideInRight({
   children,
   delay = 0,
   className = '',
+  style,
 }: {
   children: ReactNode;
   delay?: number;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 60 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+    <div
       className={className}
+      style={{
+        animation: `motionSlideInRight 0.45s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s forwards`,
+        opacity: 1,
+        ...style,
+      }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -151,29 +171,32 @@ export function StaggerContainer({
   style?: React.CSSProperties;
 }) {
   return (
-    <motion.div
-      variants={staggerContainer}
-      initial="hidden"
-      animate="show"
-      className={className}
-      style={style}
-    >
+    <div className={className} style={style}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
 export function StaggerItem({
   children,
   className = '',
+  style,
 }: {
   children: ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
-    <motion.div variants={staggerItem} className={className}>
+    <div
+      className={className}
+      style={{
+        animation: 'motionFadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        opacity: 1,
+        ...style,
+      }}
+    >
       {children}
-    </motion.div>
+    </div>
   );
 }
 

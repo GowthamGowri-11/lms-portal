@@ -26,6 +26,7 @@ import Navbar from '@/components/ui/Navbar';
 import { FadeInUp, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import Footer from '@/components/ui/Footer';
 import CourseBanner from '@/components/ui/CourseBanner';
+import AcademicBackground from '@/components/ui/backgrounds/AcademicBackground';
 import styles from './page.module.css';
 import { CourseWithArrays } from '@/lib/utils';
 import { Trainer } from '@/generated/prisma/client';
@@ -175,6 +176,9 @@ export default function CoursesClient({
     <>
       <Navbar />
       <main className={styles.main}>
+        {/* ── ACADEMIC INSTITUTIONAL BACKGROUND LAYER ── */}
+        <AcademicBackground accent="blue" />
+
         {/* ── ACADEMIC HERO SECTION ── */}
         <section className={styles.hero}>
           <div className="container">

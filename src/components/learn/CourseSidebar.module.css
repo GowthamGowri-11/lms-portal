@@ -1,51 +1,81 @@
+/* ===================================================================
+   ATLYX COURSE SIDEBAR — MASTER PREMIUM EDTECH CURRICULUM NAVIGATION
+   =================================================================== */
+
 .sidebar {
-  width: var(--sidebar-width);
-  min-width: var(--sidebar-width);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  width: var(--sidebar-width, 320px);
+  min-width: var(--sidebar-width, 320px);
+  border-right: 1px solid rgba(226, 232, 240, 0.9);
   display: flex;
   flex-direction: column;
   position: sticky;
   top: 0;
   height: 100vh;
   overflow: hidden;
-  transition: width 0.3s ease, min-width 0.3s ease;
-  z-index: 10;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgba(0, 0, 0, 0.7);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), min-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 20;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 2px 0 16px rgba(15, 23, 42, 0.03);
 }
 
 .sidebarCollapsed {
   width: 0;
   min-width: 0;
+  border-right: none;
 }
 
+/* ── HEADER: COURSE BACK & TITLE ── */
 .sidebarHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  min-height: 64px;
-  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+  min-height: 70px;
+  gap: 0.75rem;
+  background: #ffffff;
 }
 
 .sidebarBack {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #F8FAFC; /* Main heading text */
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0f172a;
   overflow: hidden;
   flex: 1;
   min-width: 0;
+  text-decoration: none;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.sidebarBack:hover {
+  color: #2563eb;
+  transform: translateX(-2px);
+}
+
+.sidebarLogoBadge {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
 }
 
 .sidebarCourseName {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  letter-spacing: -0.01em;
 }
 
 .sidebarToggle {
@@ -55,24 +85,25 @@
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  color: #CBD5E1; /* Icon color */
-  transition: all 0.2s;
+  color: #64748b;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
-  background: transparent;
-  border: none;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   cursor: pointer;
 }
 
 .sidebarToggle:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #F8FAFC;
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
 }
 
-/* Progress Widget */
+/* ── PROGRESS WIDGET ── */
 .progressWidget {
-  padding: 1.25rem 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(255, 255, 255, 0.02);
+  padding: 1.15rem 1.25rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -82,30 +113,38 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #CBD5E1; /* Secondary text */
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .progressPercentage {
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 800;
-  color: #3B82F6; /* Blue percentage */
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  background: linear-gradient(135deg, #2563eb, #38bdf8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .progressBar {
   width: 100%;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
+  height: 7px;
+  background: #e2e8f0;
   border-radius: 99px;
   overflow: hidden;
+  position: relative;
 }
 
 .progressFill {
   height: 100%;
-  background: #F8FAFC;
+  background: linear-gradient(90deg, #2563eb 0%, #38bdf8 100%);
   border-radius: 99px;
-  transition: width 0.4s ease;
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
 }
 
 .progressStats {
@@ -115,139 +154,216 @@
 }
 
 .statCard {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
-  padding: 8px;
+  padding: 6px 10px;
   display: flex;
   flex-direction: column;
   gap: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .statValue {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: #F8FAFC; /* White */
+  color: #1e293b;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
 }
 
 .statLabel {
-  font-size: 0.65rem;
-  color: #94A3B8; /* Secondary text */
+  font-size: 0.68rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-family: var(--font-body, 'Inter', sans-serif);
 }
 
 .timeRemaining {
-  font-size: 0.7rem;
-  color: #94A3B8;
+  font-size: 0.74rem;
+  color: #475569;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  background: rgba(37, 99, 235, 0.04);
+  padding: 4px 9px;
+  border-radius: 7px;
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  width: fit-content;
+  font-family: var(--font-body, 'Inter', sans-serif);
 }
 
+.timeRemaining strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+/* ── CURRICULUM MODULES LIST ── */
 .sidebarContent {
   flex: 1;
   overflow-y: auto;
-  padding: 0.75rem 0;
+  padding: 1rem 0.75rem 2rem;
+}
+
+.sidebarContent::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebarContent::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 99px;
 }
 
 .sidebarLabel {
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #94A3B8;
-  padding: 0 1rem 0.5rem;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  padding: 0 0.5rem 0.65rem;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
 }
 
 .sidebarModule {
-  margin-bottom: 2px;
+  margin-bottom: 0.65rem;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebarModule:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
 }
 
 .sidebarModuleHeader {
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
-  padding: 10px 1rem;
+  padding: 9px 12px;
   font-size: 0.82rem;
-  font-weight: 700;
-  color: #CBD5E1; /* Module header */
-  transition: all 0.2s;
+  font-weight: 650;
+  color: #1e293b;
+  transition: all 0.2s ease;
   text-align: left;
   cursor: pointer;
-  background: transparent;
+  background: #f8fafc;
   border: none;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
 }
 
 .sidebarModuleHeader:hover {
-  color: #F8FAFC;
-  background: rgba(255, 255, 255, 0.05);
+  background: #f1f5f9;
+  color: #2563eb;
 }
 
+.moduleHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.moduleTitleText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moduleCountBadge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 99px;
+  background: #e2e8f0;
+  color: #475569;
+  flex-shrink: 0;
+}
+
+/* ── INDIVIDUAL LESSON ITEMS ── */
 .sidebarLessons {
-  padding-left: 1.25rem;
   display: flex;
   flex-direction: column;
+  padding: 4px;
   gap: 2px;
+  background: #ffffff;
 }
 
 .sidebarLesson {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 1rem 8px 8px;
-  font-size: 0.82rem;
-  color: #CBD5E1; /* Lesson title */
-  transition: all 0.2s;
+  padding: 8px 10px;
   border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #475569;
   text-decoration: none;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 
 .sidebarLesson:hover {
-  color: #F8FAFC;
-  background: rgba(255, 255, 255, 0.05);
+  background: #f1f5f9;
+  color: #0f172a;
 }
 
+/* Active State: ATLYX Blue Accent, Subtle Blue Background */
 .sidebarLessonActive {
-  color: #FFFFFF;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: inset 3px 0 0 #F8FAFC;
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  font-weight: 700;
+  border: 1px solid #bfdbfe;
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.08);
 }
 
-.sidebarLessonLocked {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 1rem 8px 8px;
-  font-size: 0.82rem;
-  color: #94A3B8; /* Locked text */
-  cursor: not-allowed;
-  opacity: 0.6;
+.sidebarLessonDone {
+  color: #64748b;
 }
 
 .sidebarLessonIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
 }
 
 .doneIcon {
-  color: #10B981; /* Green check */
+  color: #16a34a;
 }
 
 .activeIcon {
-  color: #FFFFFF; /* White active icon */
+  color: #2563eb;
 }
 
 .pendingIcon {
-  color: #94A3B8; /* Default icon */
+  color: #94a3b8;
 }
 
-.lockedIcon {
-  color: #94A3B8;
+.pendingDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #cbd5e1;
+}
+
+.activePulseBadge {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #dbeafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebarLessonTitle {
@@ -255,54 +371,63 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: inherit;
 }
 
 .sidebarLessonDur {
-  font-size: 0.72rem;
-  color: #94A3B8; /* Duration text */
+  font-size: 0.7rem;
+  color: #94a3b8;
   flex-shrink: 0;
 }
 
-/* Mobile Sidebar Specific */
+.sidebarLessonLocked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+  opacity: 0.65;
+}
+
+.lockedIcon {
+  color: #94a3b8;
+}
+
+/* Mobile Sidebar Overlay */
 .mobileOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 200;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 99;
 }
 
-.mobileSidebar {
+.mobileSidebarDrawer {
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   bottom: 0;
-  width: 300px;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 201;
-  overflow: hidden;
+  width: 85%;
+  max-width: 320px;
+  background: #ffffff;
+  z-index: 100;
   display: flex;
   flex-direction: column;
-  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.5);
-  border-left: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.15);
 }
 
-.mobileSidebarHeader {
+.mobileDrawerHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #F8FAFC;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.mobileClose {
+.mobileCloseBtn {
   background: transparent;
   border: none;
-  color: #CBD5E1;
+  color: #64748b;
   cursor: pointer;
 }

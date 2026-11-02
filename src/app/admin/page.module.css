@@ -67,13 +67,24 @@
   max-width: 620px;
 }
 
+<<<<<<< HEAD
 /* User Profile Cell for Admin Subpages */
 .cellUser {
+=======
+.headerRight {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+.headerBadge {
+>>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+<<<<<<< HEAD
 .cellAvatar {
   width: 36px;
   height: 36px;
@@ -100,6 +111,13 @@
 }
 
 .headerRight {
+=======
+.headerBadge svg {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.cellUser {
+>>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
   display: flex;
   align-items: center;
   gap: 12px;

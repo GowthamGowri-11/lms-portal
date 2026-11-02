@@ -7,6 +7,8 @@ import Footer from '@/components/ui/Footer';
 import { prisma } from '@/lib/prisma';
 import SuccessRoadmap from '@/components/ui/SuccessRoadmap';
 import WhyChooseUs from '@/components/ui/WhyChooseUs';
+import HeroBackground from '@/components/ui/backgrounds/HeroBackground';
+import DarkCTABackground from '@/components/ui/backgrounds/DarkCTABackground';
 import styles from './page.module.css';
 import { ArrowRight } from 'lucide-react';
 
@@ -28,6 +30,9 @@ export default async function Home() {
             1. HERO SECTION
             ================================================================= */}
         <section className={styles.hero}>
+          {/* Reusable Coordinated Hero Background Layer */}
+          <HeroBackground />
+
           <div className={styles.heroContainer}>
             {/* Left Side: Copy, CTA & Stats */}
             <div className={styles.heroContent}>
@@ -54,17 +59,17 @@ export default async function Home() {
               <div className={styles.heroStats}>
                 <div className={styles.heroStat}>
                   <strong>{studentsCount}</strong>
-                  <span>Students</span>
+                  <span>STUDENTS</span>
                 </div>
                 <div className={styles.heroStatDivider} />
                 <div className={styles.heroStat}>
                   <strong>{coursesCount}</strong>
-                  <span>Courses</span>
+                  <span>COURSES</span>
                 </div>
                 <div className={styles.heroStatDivider} />
                 <div className={styles.heroStat}>
                   <strong>{trainersCount}</strong>
-                  <span>Expert Trainers</span>
+                  <span>EXPERT TRAINERS</span>
                 </div>
               </div>
             </div>
@@ -86,33 +91,34 @@ export default async function Home() {
             ================================================================= */}
         <WhyChooseUs />
 
-
         {/* =================================================================
-            6. FINAL CALL TO ACTION
+            4. FINAL CALL TO ACTION (DEEP NAVY CONTRAST)
             ================================================================= */}
         <section className={styles.ctaSection}>
           <div className={styles.ctaContainer}>
             <div className={styles.ctaCard}>
-              <div className={styles.ctaGlow} />
-              <span className={styles.ctaTag}>ACCELERATE YOUR LEARNING</span>
-              <h2 className={styles.ctaTitle}>Ready to Build Your Future?</h2>
-              <p className={styles.ctaDesc}>
-                Start learning practical skills and turn knowledge into real-world experience.
-                Join our verified academic community today.
-              </p>
+              <DarkCTABackground />
+              <div className={styles.ctaContentWrap}>
+                <span className={styles.ctaTag}>ACCELERATE YOUR LEARNING</span>
+                <h2 className={styles.ctaTitle}>Ready to Build Your Future?</h2>
+                <p className={styles.ctaDesc}>
+                  Start learning practical skills and turn knowledge into real-world experience.
+                  Join our verified academic community today.
+                </p>
 
-              <div className={styles.ctaActionRow}>
-                <Link href="/courses" className={styles.ctaPrimaryBtn}>
-                  <span>Explore Courses</span>
-                  <ArrowRight size={16} />
-                </Link>
+                <div className={styles.ctaActionRow}>
+                  <Link href="/courses" className={styles.ctaPrimaryBtn}>
+                    <span>Explore Courses</span>
+                    <ArrowRight size={16} />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
         {/* =================================================================
-            7. FOOTER
+            5. FOOTER
             ================================================================= */}
         <Footer />
       </main>

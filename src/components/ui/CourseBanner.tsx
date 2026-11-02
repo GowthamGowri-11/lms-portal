@@ -32,7 +32,7 @@ export default function CourseBanner({
       className={`${styles.bannerContainer} ${className}`}
       style={{ background: visual.gradient }}
     >
-      {/* Visual Artwork Image */}
+      {/* Visual Tech Artwork Image */}
       {!imgError && (
         <img
           src={visual.imageSrc}
@@ -43,10 +43,11 @@ export default function CourseBanner({
         />
       )}
 
-      {/* Ambient Gradient Shade for badge readability */}
+      {/* Atmospheric Multi-Layered Gradient Shade */}
       <div className={styles.bannerGradientShade} />
+      <div className={styles.bannerCornerGlow} />
 
-      {/* Top Row: Category Tech Badge & Frosted Rating */}
+      {/* Top Row: Category Tech Badge & Frosted Rating Pill */}
       <div className={styles.bannerTopRow}>
         <div className={styles.floatingTechBadge}>
           <span className={styles.techEmoji}>{visual.icon}</span>
@@ -60,11 +61,15 @@ export default function CourseBanner({
         </div>
       </div>
 
-      {/* Bottom Row: Level Pill & Accredited Chip */}
+      {/* Bottom Row: Level Pill & Accredited Tag */}
       <div className={styles.bannerBottomRow}>
-        <span className={styles.levelPill}>{level}</span>
+        <span className={styles.levelPill}>
+          <span className={styles.levelDot} />
+          {level}
+        </span>
         <span className={styles.accreditedTag}>
-          <ShieldCheck size={11} /> Accredited
+          <ShieldCheck size={12} className={styles.shieldIcon} />
+          <span>Accredited</span>
         </span>
       </div>
     </div>

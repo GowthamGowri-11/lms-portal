@@ -111,7 +111,7 @@
 .pageSubtitle { color: var(--text-secondary); margin: 0; font-size: 0.95rem; }
 
 /* ===== STATS ===== */
-.statsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+.statsGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
 
 .statCard {
   background: var(--bg-card); border: 1px solid var(--border-color);

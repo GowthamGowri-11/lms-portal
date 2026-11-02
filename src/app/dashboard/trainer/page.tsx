@@ -55,7 +55,6 @@ export default async function TrainerDashboardPage() {
     if ((prisma as any).quizRetakeRequest) {
       retakeRequests = await (prisma as any).quizRetakeRequest.findMany({
         where: {
-          status: 'PENDING',
           quiz: { courseId: { in: courseIds } },
         },
         include: {
@@ -76,6 +75,30 @@ export default async function TrainerDashboardPage() {
     console.error('Error fetching retake requests:', err);
   }
 
+  let recentQuizAttempts: any[] = [];
+  try {
+    if ((prisma as any).quizAttempt) {
+      recentQuizAttempts = await (prisma as any).quizAttempt.findMany({
+        where: {
+          quiz: { courseId: { in: courseIds } },
+        },
+        include: {
+          student: { select: { id: true, name: true, email: true, avatar: true } },
+          quiz: {
+            select: {
+              id: true,
+              title: true,
+              course: { select: { id: true, title: true } },
+            },
+          },
+        },
+        orderBy: { startedAt: 'desc' },
+        take: 6,
+      });
+    }
+  } catch (err) {
+    console.error('Error fetching quiz attempts:', err);
+  }
 
   const coursesWithParsed = trainer.courses.map((c) => ({
     ...parseCourse(c),
@@ -89,6 +112,7 @@ export default async function TrainerDashboardPage() {
       trainer={trainer}
       courses={coursesWithParsed as any}
       retakeRequests={retakeRequests}
+      recentQuizAttempts={recentQuizAttempts}
     />
   );
 }

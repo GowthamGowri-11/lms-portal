@@ -1,5 +1,4 @@
-import AdminSidebar from '@/components/admin/AdminSidebar';
-import styles from './layout.module.css';
+import AdminShell from '@/components/admin/AdminShell';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
@@ -16,12 +15,5 @@ export default async function AdminLayout({
     redirect('/');
   }
 
-  return (
-    <div className={styles.adminLayout}>
-      <AdminSidebar />
-      <main className={styles.adminMain}>
-        {children}
-      </main>
-    </div>
-  );
+  return <AdminShell>{children}</AdminShell>;
 }

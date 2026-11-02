@@ -151,7 +151,7 @@ export default function AdminQueriesClient({ queries: initial }: { queries: Quer
                           <div className={styles.replyActions}>
                             <button
                               className={styles.replyBtn}
-                              style={{ background: 'rgba(108,92,231,0.15)', color: 'var(--accent-primary)' }}
+                              style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe' }}
                               onClick={() => handleReply(q.id, 'IN_PROGRESS')}
                               disabled={saving === q.id}
                             >
@@ -159,7 +159,7 @@ export default function AdminQueriesClient({ queries: initial }: { queries: Quer
                             </button>
                             <button
                               className={styles.replyBtn}
-                              style={{ background: 'rgba(0,184,148,0.15)', color: '#00b894' }}
+                              style={{ background: '#16a34a', color: '#ffffff', border: 'none' }}
                               onClick={() => handleReply(q.id, 'RESOLVED')}
                               disabled={saving === q.id}
                             >

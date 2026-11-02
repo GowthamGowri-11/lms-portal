@@ -7,7 +7,8 @@ import {
   BookOpen, Users, BarChart3, Settings, LogOut,
   ChevronRight, Edit2, Save, X, Eye, EyeOff,
   Layers, FileText, Clock, CheckCircle,
-  CircleHelp, Plus, Trash2, Edit3, ChevronDown, RotateCcw, Check, XCircle as XCircleIcon, GraduationCap
+  CircleHelp, Plus, Trash2, Edit3, ChevronDown, RotateCcw, Check, XCircle as XCircleIcon, GraduationCap,
+  AlertCircle, Award, TrendingUp
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import styles from './trainer.module.css';
@@ -43,6 +44,7 @@ type Course = {
   isPublished: boolean;
   modules: Module[];
   enrollments: any[];
+  quizzes?: any[];
 };
 
 type Trainer = {
@@ -69,15 +71,19 @@ export default function TrainerDashboardClient({
   trainer: initialTrainer,
   courses: initialCourses,
   retakeRequests: initialRetakes = [],
+  recentQuizAttempts: initialAttempts = [],
 }: {
   trainer: Trainer;
   courses: Course[];
   retakeRequests?: any[];
+  recentQuizAttempts?: any[];
 }) {
   const [activeTab, setActiveTab] = useState('overview');
   const [trainer, setTrainer] = useState(initialTrainer);
   const [courses, setCourses] = useState(initialCourses);
   const [retakes, setRetakes] = useState<any[]>(initialRetakes);
+  const [recentAttempts, setRecentAttempts] = useState<any[]>(initialAttempts);
+  const [retakeFilter, setRetakeFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'>('PENDING');
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(
     initialCourses.length > 0 ? initialCourses[0].id : null
   );
@@ -189,13 +195,86 @@ export default function TrainerDashboardClient({
         body: JSON.stringify({ id, status }),
       });
       if (res.ok) {
-        setRetakes((prev) => prev.filter((r) => r.id !== id));
+        setRetakes((prev) =>
+          prev.map((r) =>
+            r.id === id ? { ...r, status, resolvedAt: new Date().toISOString() } : r
+          )
+        );
       } else {
         const data = await res.json();
         alert(data.error || 'Failed to resolve request');
       }
     } catch {
       alert('Error resolving request');
+    }
+  };
+
+  // Lesson creation state
+  const [addingLessonModuleId, setAddingLessonModuleId] = useState<string | null>(null);
+  const [newLessonTitle, setNewLessonTitle] = useState('');
+  const [newLessonDuration, setNewLessonDuration] = useState('');
+  const [newLessonVideo, setNewLessonVideo] = useState('');
+  const [newLessonDesc, setNewLessonDesc] = useState('');
+  const [newLessonIsFree, setNewLessonIsFree] = useState(false);
+  const [isCreatingLesson, setIsCreatingLesson] = useState(false);
+
+  const handleCreateLesson = async (moduleId: string) => {
+    if (!newLessonTitle.trim()) return;
+    setIsCreatingLesson(true);
+    try {
+      const res = await fetch('/api/trainer/lessons', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          moduleId,
+          title: newLessonTitle.trim(),
+          duration: parseInt(newLessonDuration) || (newLessonDuration ? 10 : null),
+          videoUrl: newLessonVideo.trim() || null,
+          description: newLessonDesc.trim() || null,
+          isFree: newLessonIsFree,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const createdLesson: Lesson = {
+          id: data.lesson.id,
+          title: data.lesson.title,
+          description: data.lesson.description || '',
+          videoUrl: data.lesson.videoUrl || '',
+          notes: data.lesson.notes || '',
+          duration: data.lesson.duration ? String(data.lesson.duration) : '',
+          isFree: Boolean(data.lesson.isFree),
+          order: data.lesson.order,
+        };
+
+        setCourses((prevCourses) =>
+          prevCourses.map((c) => ({
+            ...c,
+            modules: c.modules.map((m) =>
+              m.id === moduleId
+                ? { ...m, lessons: [...m.lessons, createdLesson] }
+                : m
+            ),
+          }))
+        );
+
+        setSelectedLessonId(createdLesson.id);
+        setAddingLessonModuleId(null);
+        setNewLessonTitle('');
+        setNewLessonDuration('');
+        setNewLessonVideo('');
+        setNewLessonDesc('');
+        setNewLessonIsFree(false);
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Failed to create lesson');
+      }
+    } catch (err) {
+      console.error('Error creating lesson:', err);
+      alert('Error creating lesson');
+    } finally {
+      setIsCreatingLesson(false);
     }
   };
 
@@ -251,16 +330,45 @@ export default function TrainerDashboardClient({
     .flatMap((m) => m.lessons)
     .find((l) => l.id === selectedLessonId) || null;
 
-  const totalStudents = courses.reduce((s, c) => s + c.enrollments.length, 0);
+  const totalStudents = courses.reduce((s, c) => s + (c.enrollments?.length || 0), 0);
   const totalLessons = courses.reduce((s, c) =>
     s + c.modules.reduce((ms, m) => ms + m.lessons.length, 0), 0);
+  const totalQuizzes = courses.reduce((s, c) => s + (c.quizzes?.length || 0), 0);
+  const pendingRetakes = retakes.filter((r) => r.status === 'PENDING').length;
 
   const stats = [
-    { label: 'My Courses', value: courses.length, icon: BookOpen, color: '#6c5ce7', bg: 'rgba(108,92,231,0.15)' },
-    { label: 'Total Students', value: totalStudents, icon: Users, color: '#00b894', bg: 'rgba(0,184,148,0.15)' },
-    { label: 'Total Lessons', value: totalLessons, icon: Layers, color: '#fd79a8', bg: 'rgba(253,121,168,0.15)' },
-    { label: 'Published', value: courses.filter((c) => c.isPublished).length, icon: CheckCircle, color: '#e17055', bg: 'rgba(225,112,85,0.15)' },
+    { label: 'Total Courses', value: courses.length, icon: BookOpen, color: '#6c5ce7', bg: 'rgba(108,92,231,0.15)', onClick: () => setActiveTab('courses') },
+    { label: 'Total Lessons', value: totalLessons, icon: Layers, color: '#fd79a8', bg: 'rgba(253,121,168,0.15)', onClick: () => setActiveTab('editor') },
+    { label: 'Total Students', value: totalStudents, icon: Users, color: '#00b894', bg: 'rgba(0,184,148,0.15)', onClick: () => setActiveTab('students') },
+    { label: 'Total Quizzes', value: totalQuizzes, icon: CircleHelp, color: '#0984e3', bg: 'rgba(9,132,227,0.15)', onClick: () => setActiveTab('quizzes') },
+    { label: 'Pending Retakes', value: pendingRetakes, icon: RotateCcw, color: pendingRetakes > 0 ? '#e17055' : '#636e72', bg: pendingRetakes > 0 ? 'rgba(225,112,85,0.15)' : 'rgba(99,110,114,0.15)', onClick: () => setActiveTab('retakes') },
   ];
+
+  const recentEnrollments = courses
+    .flatMap((c) => (c.enrollments || []).map((e: any) => ({ ...e, courseTitle: c.title, courseId: c.id })))
+    .sort((a: any, b: any) => new Date(b.enrolledAt || 0).getTime() - new Date(a.enrolledAt || 0).getTime())
+    .slice(0, 6);
+
+  const courseProgressList = courses.map((c) => {
+    const totalEnrolled = c.enrollments?.length || 0;
+    const avgProgress = totalEnrolled > 0
+      ? Math.round(c.enrollments.reduce((sum: number, e: any) => sum + (e.progress || 0), 0) / totalEnrolled)
+      : 0;
+    const completedCount = c.enrollments?.filter((e: any) => (e.progress || 0) >= 100 || e.completedAt).length || 0;
+    const totalLessons = c.modules.reduce((sum, m) => sum + m.lessons.length, 0);
+    return {
+      id: c.id,
+      title: c.title,
+      category: c.category,
+      level: c.level,
+      isPublished: c.isPublished,
+      totalEnrolled,
+      avgProgress,
+      completedCount,
+      totalLessons,
+      quizzesCount: c.quizzes?.length || 0,
+    };
+  });
 
   const handleSaveCourse = async () => {
     if (!editingCourse) return;
@@ -380,33 +488,279 @@ export default function TrainerDashboardClient({
             <motion.div key="overview" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
               <div className={styles.pageHeader}>
                 <h1 className={styles.pageTitle}>Trainer Dashboard</h1>
-                <p className={styles.pageSubtitle}>Welcome back, {trainer.name.split(' ')[0]}! Here's your summary.</p>
+                <p className={styles.pageSubtitle}>Welcome back, {trainer.name.split(' ')[0]}! Here's your curriculum performance and active learners.</p>
               </div>
 
+              {/* Pending Retakes Alert Banner */}
+              {pendingRetakes > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '14px 20px',
+                    marginBottom: '24px',
+                    background: 'rgba(225, 112, 85, 0.1)',
+                    border: '1px solid rgba(225, 112, 85, 0.3)',
+                    borderRadius: '12px',
+                    gap: '12px',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <AlertCircle size={20} color="#e17055" />
+                    <div>
+                      <span style={{ fontWeight: 700, color: '#e17055' }}>
+                        {pendingRetakes} Pending Quiz Retake Request{pendingRetakes !== 1 ? 's' : ''}
+                      </span>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginLeft: '8px' }}>
+                        Students are waiting for your review.
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('retakes')}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '8px',
+                      background: '#e17055',
+                      color: '#fff',
+                      border: 'none',
+                      fontWeight: 600,
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
+                    Review Requests <ChevronRight size={14} />
+                  </button>
+                </motion.div>
+              )}
+
+              {/* 5 Stats Cards */}
               <div className={styles.statsGrid}>
                 {stats.map((s, i) => {
                   const Icon = s.icon;
                   return (
-                    <motion.div key={i} className={styles.statCard}
-                      initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }} whileHover={{ y: -4 }}>
-                      <div className={styles.statIcon} style={{ background: s.bg, color: s.color }}>
-                        <Icon size={22} />
+                    <motion.div
+                      key={i}
+                      className={styles.statCard}
+                      style={{ cursor: 'pointer' }}
+                      onClick={s.onClick}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.08 }}
+                      whileHover={{ y: -4 }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div className={styles.statIcon} style={{ background: s.bg, color: s.color }}>
+                          <Icon size={20} />
+                        </div>
+                        <ChevronRight size={14} style={{ color: 'var(--text-muted)' }} />
                       </div>
-                      <div className={styles.statValue}>{s.value}</div>
+                      <div className={styles.statValue} style={{ marginTop: '8px' }}>{s.value}</div>
                       <div className={styles.statLabel}>{s.label}</div>
                     </motion.div>
                   );
                 })}
               </div>
 
+              {/* Grid: Course Progress Overview & Recently Enrolled Students */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px', marginBottom: '32px' }}>
+                
+                {/* Course Progress Breakdown */}
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <TrendingUp size={18} color="#6c5ce7" />
+                      <h2 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>Course Progress</h2>
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('courses')}
+                      style={{ background: 'none', border: 'none', color: '#6c5ce7', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      View All <ChevronRight size={12} />
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    {courseProgressList.map((cp) => (
+                      <div key={cp.id} style={{ padding: '12px', borderRadius: '10px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                          <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{cp.title}</span>
+                          <span className={`${styles.badge} ${cp.isPublished ? styles.badgeSuccess : styles.badgeWarning}`}>
+                            {cp.isPublished ? 'Published' : 'Draft'}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                          <span>{cp.totalEnrolled} enrolled · {cp.totalLessons} lessons</span>
+                          <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Avg: {cp.avgProgress}%</span>
+                        </div>
+                        <div style={{ width: '100%', height: '6px', background: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>
+                          <div
+                            style={{
+                              width: `${cp.avgProgress}%`,
+                              height: '100%',
+                              background: cp.avgProgress >= 70 ? '#00b894' : cp.avgProgress >= 40 ? '#0984e3' : '#fdcb6e',
+                              borderRadius: '4px',
+                              transition: 'width 0.4s ease',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    {courseProgressList.length === 0 && (
+                      <p style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem', textAlign: 'center', padding: '1.5rem 0' }}>No courses assigned yet.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Recently Enrolled Students */}
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Users size={18} color="#00b894" />
+                      <h2 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>Recently Enrolled Students</h2>
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('students')}
+                      style={{ background: 'none', border: 'none', color: '#00b894', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      View All <ChevronRight size={12} />
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {recentEnrollments.map((e, idx) => (
+                      <div
+                        key={e.id || idx}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '10px 12px',
+                          borderRadius: '10px',
+                          background: 'var(--bg-primary)',
+                          border: '1px solid var(--border-color)',
+                          gap: '12px',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                          <div className={styles.profileAvatar} style={{ width: '36px', height: '36px', fontSize: '0.9rem', flexShrink: 0 }}>
+                            {e.student?.avatar ? (
+                              <img src={e.student.avatar} alt="" referrerPolicy="no-referrer" crossOrigin="anonymous" loading="lazy" />
+                            ) : (
+                              <span>{(e.student?.name || 'S').charAt(0).toUpperCase()}</span>
+                            )}
+                          </div>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {e.student?.name || 'Student'}
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {e.courseTitle}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                          <div style={{ fontWeight: 700, fontSize: '0.82rem', color: (e.progress || 0) >= 70 ? '#00b894' : '#6c5ce7' }}>
+                            {e.progress || 0}%
+                          </div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                            {e.enrolledAt ? new Date(e.enrolledAt).toLocaleDateString() : 'Active'}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    {recentEnrollments.length === 0 && (
+                      <p style={{ color: 'var(--text-tertiary)', fontSize: '0.85rem', textAlign: 'center', padding: '1.5rem 0' }}>No enrollments recorded yet.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Recent Quiz Activity */}
+              {recentAttempts.length > 0 && (
+                <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '20px', marginBottom: '32px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Award size={18} color="#0984e3" />
+                      <h2 style={{ fontSize: '1.05rem', fontWeight: 700, margin: 0 }}>Recent Quiz Activity</h2>
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('quizzes')}
+                      style={{ background: 'none', border: 'none', color: '#0984e3', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      Manage Quizzes <ChevronRight size={12} />
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px' }}>
+                    {recentAttempts.map((att: any) => (
+                      <div
+                        key={att.id}
+                        style={{
+                          padding: '12px 14px',
+                          borderRadius: '10px',
+                          background: 'var(--bg-primary)',
+                          border: '1px solid var(--border-color)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '6px',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                          <div style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--text-primary)' }}>
+                            {att.student?.name || 'Student'}
+                          </div>
+                          <span
+                            style={{
+                              fontSize: '0.7rem',
+                              fontWeight: 700,
+                              padding: '2px 8px',
+                              borderRadius: '12px',
+                              background: att.passed ? 'rgba(0,184,148,0.15)' : 'rgba(239,68,68,0.15)',
+                              color: att.passed ? '#00b894' : '#ef4444',
+                            }}
+                          >
+                            {att.passed ? 'Passed' : 'Failed'} ({att.score}%)
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                          {att.quiz?.title}
+                        </div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', justifyContent: 'space-between', marginTop: '2px' }}>
+                          <span>{att.quiz?.course?.title}</span>
+                          <span>{att.startedAt ? new Date(att.startedAt).toLocaleDateString() : ''}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Assigned Courses Section with Quick Edit */}
               <div className={styles.section}>
-                <h2>My Assigned Courses</h2>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <h2>Assigned Courses</h2>
+                  <button
+                    onClick={() => setActiveTab('courses')}
+                    style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  >
+                    View All ({courses.length}) <ChevronRight size={14} />
+                  </button>
+                </div>
                 <div className={styles.courseGrid}>
                   {courses.map((c, i) => (
                     <motion.div key={c.id} className={styles.courseCard}
                       initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1 }} whileHover={{ y: -4 }}>
+                      transition={{ delay: i * 0.08 }} whileHover={{ y: -4 }}>
                       <div className={styles.courseCardTop}>
                         <div className={styles.courseLogo}>
                           {c.logo ? <img src={c.logo} alt="" referrerPolicy="no-referrer" crossOrigin="anonymous" loading="lazy" /> : <BookOpen size={24} />}
@@ -420,6 +774,7 @@ export default function TrainerDashboardClient({
                       <div className={styles.courseStats}>
                         <span><Users size={12} /> {c.enrollments.length} students</span>
                         <span><Layers size={12} /> {c.modules.reduce((s, m) => s + m.lessons.length, 0)} lessons</span>
+                        <span><CircleHelp size={12} /> {c.quizzes?.length || 0} quizzes</span>
                       </div>
                       <button
                         className={styles.editCourseBtn}
@@ -672,10 +1027,109 @@ export default function TrainerDashboardClient({
                         <h3 style={{ marginBottom: '16px' }}>Modules & Lessons</h3>
                         {selectedCourse.modules.map((mod) => (
                           <div key={mod.id} className={styles.moduleBlock}>
-                            <div className={styles.moduleTitle}>
-                              <Layers size={16} />
-                              Module {mod.order}: {mod.title}
+                            <div className={styles.moduleTitle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Layers size={16} />
+                                <span>Module {mod.order}: {mod.title}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (addingLessonModuleId === mod.id) {
+                                    setAddingLessonModuleId(null);
+                                  } else {
+                                    setAddingLessonModuleId(mod.id);
+                                    setNewLessonTitle('');
+                                    setNewLessonDuration('');
+                                    setNewLessonVideo('');
+                                    setNewLessonDesc('');
+                                    setNewLessonIsFree(false);
+                                  }
+                                }}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  padding: '4px 10px',
+                                  borderRadius: '6px',
+                                  background: addingLessonModuleId === mod.id ? 'var(--border-color)' : 'rgba(225, 112, 85, 0.12)',
+                                  color: addingLessonModuleId === mod.id ? 'var(--text-secondary)' : '#e17055',
+                                  border: 'none',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                <Plus size={13} /> {addingLessonModuleId === mod.id ? 'Cancel' : 'Add Lesson'}
+                              </button>
                             </div>
+
+                            {/* Inline Add Lesson Form */}
+                            {addingLessonModuleId === mod.id && (
+                              <div style={{ padding: '14px', margin: '8px 0 12px 8px', borderRadius: '10px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                <h4 style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>New Lesson for Module {mod.order}</h4>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 120px', gap: '10px' }}>
+                                  <input
+                                    type="text"
+                                    className={styles.input}
+                                    placeholder="Lesson Title *"
+                                    value={newLessonTitle}
+                                    onChange={(e) => setNewLessonTitle(e.target.value)}
+                                    autoFocus
+                                  />
+                                  <input
+                                    type="text"
+                                    className={styles.input}
+                                    placeholder="Duration (mins)"
+                                    value={newLessonDuration}
+                                    onChange={(e) => setNewLessonDuration(e.target.value)}
+                                  />
+                                </div>
+                                <input
+                                  type="text"
+                                  className={styles.input}
+                                  placeholder="Video URL (optional, e.g. https://...)"
+                                  value={newLessonVideo}
+                                  onChange={(e) => setNewLessonVideo(e.target.value)}
+                                />
+                                <textarea
+                                  className={styles.textarea}
+                                  rows={2}
+                                  placeholder="Brief description or outline (optional)..."
+                                  value={newLessonDesc}
+                                  onChange={(e) => setNewLessonDesc(e.target.value)}
+                                />
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
+                                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                                    <input
+                                      type="checkbox"
+                                      checked={newLessonIsFree}
+                                      onChange={(e) => setNewLessonIsFree(e.target.checked)}
+                                    />
+                                    Free preview lesson
+                                  </label>
+                                  <div style={{ display: 'flex', gap: '8px' }}>
+                                    <button
+                                      type="button"
+                                      onClick={() => setAddingLessonModuleId(null)}
+                                      style={{ padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'transparent', color: 'var(--text-secondary)', fontSize: '0.8rem', cursor: 'pointer' }}
+                                    >
+                                      Cancel
+                                    </button>
+                                    <button
+                                      type="button"
+                                      disabled={isCreatingLesson || !newLessonTitle.trim()}
+                                      onClick={() => handleCreateLesson(mod.id)}
+                                      className={styles.saveBtn}
+                                      style={{ padding: '6px 14px', fontSize: '0.8rem' }}
+                                    >
+                                      {isCreatingLesson ? 'Creating...' : 'Create Lesson'}
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
                             <div className={styles.lessonList}>
                               {mod.lessons.map((lesson) => (
                                 <div
@@ -945,56 +1399,125 @@ export default function TrainerDashboardClient({
           )}
 
           {/* RETAKE REQUESTS */}
-          {activeTab === 'retakes' && (
-            <motion.div key="retakes" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
-              <div className={styles.pageHeader}>
-                <h1 className={styles.pageTitle}>Quiz Retake Requests</h1>
-                <p className={styles.pageSubtitle}>Review and approve student requests to retake course quizzes.</p>
-              </div>
+          {activeTab === 'retakes' && (() => {
+            const pendingCount = retakes.filter((r) => r.status === 'PENDING').length;
+            const approvedCount = retakes.filter((r) => r.status === 'APPROVED').length;
+            const rejectedCount = retakes.filter((r) => r.status === 'REJECTED').length;
+            const filteredRetakes = retakes.filter((r) => retakeFilter === 'ALL' ? true : r.status === retakeFilter);
 
-              {retakes.length === 0 ? (
-                <div style={{ padding: '3rem', textAlign: 'center', background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: 16 }}>
-                  <CheckCircle size={48} style={{ color: 'var(--accent-success)', margin: '0 auto 1rem' }} />
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 8 }}>All Caught Up!</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>No pending retake requests for your assigned courses.</p>
+            return (
+              <motion.div key="retakes" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
+                <div className={styles.pageHeader}>
+                  <h1 className={styles.pageTitle}>Quiz Retake Requests</h1>
+                  <p className={styles.pageSubtitle}>Review and approve student requests to retake course quizzes.</p>
                 </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {retakes.map((req) => (
-                    <div key={req.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 1.5rem', background: 'var(--bg-card)', border: '1px solid var(--glass-border)', borderRadius: 16, flexWrap: 'wrap', gap: '1rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.1rem', color: 'var(--accent-primary)' }}>
-                          {req.student?.avatar ? <img src={req.student.avatar} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} referrerPolicy="no-referrer" crossOrigin="anonymous" loading="lazy" /> : (req.student?.name?.[0] || 'S')}
-                        </div>
-                        <div>
-                          <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 2 }}>{req.student?.name}</h4>
-                          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                            Requested to retake <strong style={{ color: 'var(--text-primary)' }}>{req.quiz?.title}</strong> in <em>{req.quiz?.course?.title}</em>
-                          </p>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Requested on {new Date(req.requestedAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
 
-                      <div style={{ display: 'flex', gap: '10px' }}>
-                        <button
-                          onClick={() => handleResolveRetake(req.id, 'REJECTED')}
-                          style={{ padding: '8px 16px', borderRadius: 10, background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#f87171', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-                        >
-                          <XCircleIcon size={16} /> Reject
-                        </button>
-                        <button
-                          onClick={() => handleResolveRetake(req.id, 'APPROVED')}
-                          style={{ padding: '8px 18px', borderRadius: 10, background: 'var(--accent-success)', border: 'none', color: '#fff', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)' }}
-                        >
-                          <Check size={16} /> Approve Retake
-                        </button>
-                      </div>
-                    </div>
+                {/* Filter Tabs */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+                  {[
+                    { id: 'PENDING', label: `Pending (${pendingCount})` },
+                    { id: 'APPROVED', label: `Approved (${approvedCount})` },
+                    { id: 'REJECTED', label: `Rejected (${rejectedCount})` },
+                    { id: 'ALL', label: `All (${retakes.length})` },
+                  ].map((f) => (
+                    <button
+                      key={f.id}
+                      onClick={() => setRetakeFilter(f.id as any)}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: '10px',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        border: '1px solid var(--border-color)',
+                        cursor: 'pointer',
+                        background: retakeFilter === f.id ? 'var(--accent-primary)' : 'var(--bg-card)',
+                        color: retakeFilter === f.id ? '#fff' : 'var(--text-primary)',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      {f.label}
+                    </button>
                   ))}
                 </div>
-              )}
-            </motion.div>
-          )}
+
+                {filteredRetakes.length === 0 ? (
+                  <div style={{ padding: '3rem', textAlign: 'center', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16 }}>
+                    <CheckCircle size={48} style={{ color: 'var(--accent-success)', margin: '0 auto 1rem' }} />
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: 8 }}>No Requests in this Filter</h3>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                      {retakeFilter === 'PENDING'
+                        ? 'All pending requests have been reviewed!'
+                        : `No ${retakeFilter.toLowerCase()} retake requests found.`}
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {filteredRetakes.map((req) => (
+                      <div key={req.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem 1.5rem', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 16, flexWrap: 'wrap', gap: '1rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.1rem', color: 'var(--accent-primary)' }}>
+                            {req.student?.avatar ? <img src={req.student.avatar} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} referrerPolicy="no-referrer" crossOrigin="anonymous" loading="lazy" /> : (req.student?.name?.[0] || 'S')}
+                          </div>
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: 2 }}>
+                              <h4 style={{ fontSize: '1rem', fontWeight: 700, margin: 0 }}>{req.student?.name}</h4>
+                              <span
+                                style={{
+                                  fontSize: '0.7rem',
+                                  fontWeight: 700,
+                                  padding: '2px 8px',
+                                  borderRadius: '12px',
+                                  background:
+                                    req.status === 'APPROVED'
+                                      ? 'rgba(0,184,148,0.15)'
+                                      : req.status === 'REJECTED'
+                                      ? 'rgba(239,68,68,0.15)'
+                                      : 'rgba(245,158,11,0.15)',
+                                  color:
+                                    req.status === 'APPROVED'
+                                      ? '#00b894'
+                                      : req.status === 'REJECTED'
+                                      ? '#ef4444'
+                                      : '#f59e0b',
+                                }}
+                              >
+                                {req.status === 'PENDING' ? 'Pending Review' : req.status}
+                              </span>
+                            </div>
+                            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: '2px 0' }}>
+                              Requested to retake <strong style={{ color: 'var(--text-primary)' }}>{req.quiz?.title}</strong> in <em>{req.quiz?.course?.title}</em>
+                            </p>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>Requested on {new Date(req.requestedAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+
+                        {req.status === 'PENDING' ? (
+                          <div style={{ display: 'flex', gap: '10px' }}>
+                            <button
+                              onClick={() => handleResolveRetake(req.id, 'REJECTED')}
+                              style={{ padding: '8px 16px', borderRadius: 10, background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#f87171', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                            >
+                              <XCircleIcon size={16} /> Reject
+                            </button>
+                            <button
+                              onClick={() => handleResolveRetake(req.id, 'APPROVED')}
+                              style={{ padding: '8px 18px', borderRadius: 10, background: 'var(--accent-success)', border: 'none', color: '#fff', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.25)' }}
+                            >
+                              <Check size={16} /> Approve Retake
+                            </button>
+                          </div>
+                        ) : (
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                            Resolved on {req.resolvedAt ? new Date(req.resolvedAt).toLocaleDateString() : 'Previously'}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            );
+          })()}
         </AnimatePresence>
       </main>
 

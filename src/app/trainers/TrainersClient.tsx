@@ -6,6 +6,7 @@ import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/compo
 import TrainerCard from '@/components/ui/TrainerCard';
 import JoinRequestButton from '@/components/ui/JoinRequestButton';
 import Footer from '@/components/ui/Footer';
+import AcademicBackground from '@/components/ui/backgrounds/AcademicBackground';
 import styles from './page.module.css';
 import { Trainer } from '@/generated/prisma/client';
 import {
@@ -62,6 +63,9 @@ export default function TrainersClient({
     <PageTransition>
       <Navbar />
       <main className={styles.main}>
+        {/* ── ACADEMIC INSTITUTIONAL BACKGROUND LAYER ── */}
+        <AcademicBackground accent="purple" />
+
         {/* ── MINIMALIST ACADEMIC HERO ── */}
         <section className={styles.hero}>
           <div className="container">
