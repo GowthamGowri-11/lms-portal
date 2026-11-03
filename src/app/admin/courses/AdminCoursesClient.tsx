@@ -4,10 +4,6 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-<<<<<<< HEAD
-  Plus, Search, Edit3, Trash2, X,
-  Eye, EyeOff, Star, BookOpen, ArrowRight,
-=======
   Plus,
   Search,
   Edit3,
@@ -28,7 +24,6 @@ import {
   AlertCircle,
   ExternalLink,
   Sparkles,
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
 } from 'lucide-react';
 import { PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import { createCourse, updateCourse, deleteCourse } from '@/lib/actions';
@@ -54,10 +49,7 @@ const emptyForm = {
   trainerId: '',
   category: 'Web Development',
   level: 'Beginner',
-  duration: '40 Hours',
   lessonsCount: 10,
-  tags: [] as string[],
-  syllabus: [] as string[],
   isPublished: true,
 };
 
@@ -82,8 +74,6 @@ export default function AdminCoursesClient({
   const [showCourseModal, setShowCourseModal] = useState(false);
   const [editingCourse, setEditingCourse] = useState<CourseWithArrays | null>(null);
   const [courseForm, setCourseForm] = useState(emptyForm);
-  const [tagsInput, setTagsInput] = useState('');
-  const [syllabusInput, setSyllabusInput] = useState('');
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -184,8 +174,6 @@ export default function AdminCoursesClient({
   const openAddModal = () => {
     setEditingCourse(null);
     setCourseForm(emptyForm);
-    setTagsInput('');
-    setSyllabusInput('');
     setShowCourseModal(true);
   };
 
@@ -194,22 +182,17 @@ export default function AdminCoursesClient({
     setEditingCourse(course);
     setCourseForm({
       title: course.title,
-      description: course.description,
-      shortDescription: course.shortDescription || '',
+      description: course.shortDescription || course.description || '',
+      shortDescription: course.shortDescription || course.description || '',
       logo: course.logo || '📘',
       price: course.price,
       discountPrice: course.discountPrice || undefined,
       trainerId: course.trainerId || '',
       category: course.category || 'Web Development',
       level: course.level || 'Beginner',
-      duration: course.duration || '40 Hours',
       lessonsCount: course.lessonsCount || 10,
-      tags: course.tags || [],
-      syllabus: course.syllabus || [],
       isPublished: course.isPublished,
     });
-    setTagsInput((course.tags || []).join(', '));
-    setSyllabusInput((course.syllabus || []).join('\n'));
     setShowCourseModal(true);
   };
 
@@ -217,8 +200,8 @@ export default function AdminCoursesClient({
   const handleSaveCourse = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const tags = tagsInput.split(',').map((t) => t.trim()).filter(Boolean);
-    const syllabus = syllabusInput.split('\n').map((s) => s.trim()).filter(Boolean);
+    const tags = editingCourse?.tags || [];
+    const syllabus = editingCourse?.syllabus || [];
 
     try {
       if (editingCourse) {
@@ -735,46 +718,6 @@ export default function AdminCoursesClient({
                   const visual = getCourseVisual(course.category, course.title, course.logo);
                   const enrollCount = getEnrollmentCount(course.id);
 
-<<<<<<< HEAD
-                  {/* ── CARD BODY (same as user side) ── */}
-                  <div className={courseStyles.cardInner}>
-                    {/* LEFT TEXT */}
-                    <div className={courseStyles.cardLeft}>
-                      <div className={courseStyles.cardTopRow}>
-                        <span className={courseStyles.cardCategory}>{course.category}</span>
-                        <span style={{
-                          fontSize: '0.68rem', fontWeight: 700,
-                          color: accent, textTransform: 'uppercase', letterSpacing: '0.06em',
-                        }}>
-                          {course.level}
-                        </span>
-                      </div>
-
-                      <h3 className={courseStyles.cardTitle}>{course.title}</h3>
-                      <p className={courseStyles.cardDesc}>{course.shortDescription}</p>
-
-                      <div className={courseStyles.cardMeta}>
-                        <div className={courseStyles.rating}>
-                          <Star size={13} fill="#eab308" stroke="#eab308" />
-                          <span>{course.rating || '0'}</span>
-                        </div>
-                        
-                        <span>•</span>
-                        <BookOpen size={12} style={{ opacity: 0.5 }} />
-                        <span>{course.lessonsCount} lessons</span>
-                      </div>
-
-                      <div className={courseStyles.cardBottom}>
-                        {trainer ? (
-                          <div className={courseStyles.cardTrainer}>
-                            <div className={courseStyles.trainerDot} style={{ background: accent }}>
-                              {trainer.name.charAt(0)}
-                            </div>
-                            <div className={courseStyles.trainerInfo}>
-                              <span className={courseStyles.trainerName}>{trainer.name}</span>
-                              <span className={courseStyles.trainerLabel}>Instructor</span>
-                            </div>
-=======
                   return (
                     <tr key={course.id} className={styles.tableRow}>
                       <td>
@@ -784,7 +727,6 @@ export default function AdminCoursesClient({
                             style={{ background: visual.gradient }}
                           >
                             {visual.icon}
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
                           </div>
                           <div>
                             <Link
@@ -883,30 +825,6 @@ export default function AdminCoursesClient({
             5. STUDENT ASSIGNMENT MODAL
             ────────────────────────────────────────────────────────────────── */}
         <AnimatePresence>
-<<<<<<< HEAD
-          {showModal && (
-            <motion.div
-              className={styles.modalOverlay}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => !isLoading && setShowModal(false)}
-            >
-              <motion.div
-                className={styles.modalCard}
-                initial={{ opacity: 0, scale: 0.95, y: 15 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 15 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Fixed Header */}
-                <div className={styles.modalHeader}>
-                  <div>
-                    <h2 className={styles.modalTitle}>{editingCourse ? 'Edit Course' : 'Add New Course'}</h2>
-                    <p style={{ margin: '2px 0 0', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                      Fill in the course details, instructor, and pricing
-=======
           {assignModalCourse && (
             <div
               className={styles.modalBackdrop}
@@ -924,166 +842,16 @@ export default function AdminCoursesClient({
                     <h3 className={styles.modalTitle}>Assign Course Access</h3>
                     <p style={{ margin: '2px 0 0', fontSize: '0.8rem', color: '#64748b' }}>
                       Course: <strong>{assignModalCourse.title}</strong>
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
                     </p>
                   </div>
                   <button
                     className={styles.modalCloseBtn}
-<<<<<<< HEAD
-                    onClick={() => !isLoading && setShowModal(false)}
-                    aria-label="Close"
-                    type="button"
-=======
                     onClick={() => !isAssigning && setAssignModalCourse(null)}
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
                   >
                     <X size={18} />
                   </button>
                 </div>
 
-<<<<<<< HEAD
-                {/* Form Body with Fixed Footer */}
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-                  <div className={styles.modalBody}>
-                    <div className={styles.formGrid}>
-                      <div className="input-group">
-                        <label>Course Title *</label>
-                        <input
-                          type="text"
-                          className="input-field"
-                          value={form.title}
-                          onChange={(e) => setForm({ ...form, title: e.target.value })}
-                          required
-                          disabled={isLoading}
-                          placeholder="e.g. Master Python Programming"
-                        />
-                      </div>
-
-                      <div className="input-group">
-                        <label>Category</label>
-                        <select
-                          className="input-field"
-                          value={form.category}
-                          onChange={(e) => setForm({ ...form, category: e.target.value })}
-                          disabled={isLoading}
-                        >
-                          {['Web Development','Python','Java','C++','Data Science','Cloud Computing','DevOps','Cybersecurity','Other'].map((c) => (
-                            <option key={c}>{c}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="input-group">
-                        <label>Assign Trainer *</label>
-                        <select
-                          className="input-field"
-                          value={form.trainerId}
-                          onChange={(e) => setForm({ ...form, trainerId: e.target.value })}
-                          required
-                          disabled={isLoading}
-                        >
-                          <option value="">Select trainer...</option>
-                          {trainers.map((t) => (
-                            <option key={t.id} value={t.id}>{t.name} — {t.specialization}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div className="input-group">
-                        <label>Level</label>
-                        <select
-                          className="input-field"
-                          value={form.level}
-                          onChange={(e) => setForm({ ...form, level: e.target.value })}
-                          disabled={isLoading}
-                        >
-                          <option>Beginner</option>
-                          <option>Intermediate</option>
-                          <option>Advanced</option>
-                        </select>
-                      </div>
-
-                      <div className="input-group">
-                        <label>Price (₹) *</label>
-                        <input
-                          type="number"
-                          className="input-field"
-                          value={form.price || ''}
-                          onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
-                          required
-                          disabled={isLoading}
-                          placeholder="0"
-                        />
-                      </div>
-
-                      <div className="input-group">
-                        <label>Discount Price (₹)</label>
-                        <input
-                          type="number"
-                          className="input-field"
-                          value={form.discountPrice || ''}
-                          onChange={(e) => setForm({ ...form, discountPrice: e.target.value ? Number(e.target.value) : undefined })}
-                          disabled={isLoading}
-                          placeholder="Optional"
-                        />
-                      </div>
-
-                      <div className="input-group">
-                        <label>Lessons Count</label>
-                        <input
-                          type="number"
-                          className="input-field"
-                          value={form.lessonsCount || ''}
-                          onChange={(e) => setForm({ ...form, lessonsCount: Math.max(0, Number(e.target.value)) })}
-                          disabled={isLoading}
-                          min="0"
-                        />
-                      </div>
-
-                      <div className="input-group">
-                        <label>Status</label>
-                        <select
-                          className="input-field"
-                          value={form.isPublished ? 'yes' : 'no'}
-                          onChange={(e) => setForm({ ...form, isPublished: e.target.value === 'yes' })}
-                          disabled={isLoading}
-                        >
-                          <option value="yes">Published</option>
-                          <option value="no">Draft</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="input-group">
-                      <label>Course Description</label>
-                      <textarea
-                        className="input-field textarea-field"
-                        style={{ minHeight: 80, maxHeight: 150, resize: 'vertical' }}
-                        value={form.shortDescription}
-                        onChange={(e) => setForm({ ...form, shortDescription: e.target.value })}
-                        disabled={isLoading}
-                        placeholder="Brief summary of what this course covers..."
-                      />
-                    </div>
-                  </div>
-
-                  {/* Fixed Footer */}
-                  <div className={styles.modalFooter}>
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={() => setShowModal(false)}
-                      disabled={isLoading}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? 'Saving...' : editingCourse ? 'Update Course' : 'Create Course'}
-=======
                 <div className={styles.modalBody}>
                   {assignAlert && (
                     <div
@@ -1259,31 +1027,41 @@ export default function AdminCoursesClient({
           {showCourseModal && (
             <div
               className={styles.modalBackdrop}
+              style={{ position: 'fixed', inset: 0, width: '100vw', height: '100vh', zIndex: 9999, background: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.25rem' }}
               onClick={() => !isSubmitting && setShowCourseModal(false)}
             >
               <motion.div
-                className={`${styles.modalBox} ${styles.modalWide}`}
+                className={styles.modalBox}
+                style={{ width: '100%', maxWidth: '580px', maxHeight: '88vh', background: '#ffffff', borderRadius: '18px', boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.3)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
                 initial={{ opacity: 0, scale: 0.95, y: 15 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 15 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className={styles.modalHeader}>
-                  <h3 className={styles.modalTitle}>
-                    {editingCourse ? 'Edit Course Details' : 'Create New Learning Course'}
-                  </h3>
+                {/* Fixed Header */}
+                <div className={styles.modalHeader} style={{ padding: '1.25rem 1.75rem', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', flexShrink: 0 }}>
+                  <div>
+                    <h3 className={styles.modalTitle} style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                      {editingCourse ? 'Edit Course Details' : 'Create New Learning Course'}
+                    </h3>
+                    <p style={{ margin: '2px 0 0', fontSize: '0.82rem', color: '#64748b' }}>
+                      Fill in the primary course information, instructor, and pricing
+                    </p>
+                  </div>
                   <button
                     className={styles.modalCloseBtn}
                     onClick={() => !isSubmitting && setShowCourseModal(false)}
+                    style={{ width: '32px', height: '32px', borderRadius: '8px', border: 'none', background: '#f1f5f9', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                   >
                     <X size={18} />
                   </button>
                 </div>
 
-                <form onSubmit={handleSaveCourse}>
-                  <div className={styles.modalBody}>
+                {/* Form with Scrollable Body and Fixed Footer */}
+                <form onSubmit={handleSaveCourse} style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+                  <div className={styles.modalBody} style={{ padding: '1.5rem 1.75rem', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
                     <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Course Title *</label>
+                      <label className={styles.formLabel} style={{ fontSize: '0.88rem', fontWeight: 600, color: '#334155', marginBottom: '6px', display: 'block' }}>Course Title *</label>
                       <input
                         type="text"
                         required
@@ -1295,9 +1073,9 @@ export default function AdminCoursesClient({
                       />
                     </div>
 
-                    <div className={styles.formGrid}>
+                    <div className={styles.formGrid} style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
                       <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>Category *</label>
+                        <label className={styles.formLabel} style={{ fontSize: '0.88rem', fontWeight: 600, color: '#334155', marginBottom: '6px', display: 'block' }}>Category *</label>
                         <select
                           className={styles.formInput}
                           value={courseForm.category}
@@ -1309,11 +1087,14 @@ export default function AdminCoursesClient({
                           <option value="Database Engineering">Database Engineering</option>
                           <option value="Programming Languages">Programming Languages</option>
                           <option value="Web Development">Web Development</option>
+                          <option value="Cloud Computing">Cloud Computing</option>
+                          <option value="Cybersecurity">Cybersecurity</option>
+                          <option value="Other">Other</option>
                         </select>
                       </div>
 
                       <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>Difficulty Level *</label>
+                        <label className={styles.formLabel} style={{ fontSize: '0.88rem', fontWeight: 600, color: '#334155', marginBottom: '6px', display: 'block' }}>Difficulty Level *</label>
                         <select
                           className={styles.formInput}
                           value={courseForm.level}
@@ -1327,9 +1108,9 @@ export default function AdminCoursesClient({
                       </div>
                     </div>
 
-                    <div className={styles.formGrid}>
+                    <div className={styles.formGrid} style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
                       <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>Price (₹) *</label>
+                        <label className={styles.formLabel} style={{ fontSize: '0.88rem', fontWeight: 600, color: '#334155', marginBottom: '6px', display: 'block' }}>Price (₹) *</label>
                         <input
                           type="number"
                           required
@@ -1344,7 +1125,7 @@ export default function AdminCoursesClient({
                       </div>
 
                       <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>Discounted Price (₹)</label>
+                        <label className={styles.formLabel} style={{ fontSize: '0.88rem', fontWeight: 600, color: '#334155', marginBottom: '6px', display: 'block' }}>Discounted Price (₹)</label>
                         <input
                           type="number"
                           min={0}
@@ -1362,22 +1143,9 @@ export default function AdminCoursesClient({
                       </div>
                     </div>
 
-                    <div className={styles.formGrid}>
+                    <div className={styles.formGrid} style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
                       <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>Duration *</label>
-                        <input
-                          type="text"
-                          required
-                          className={styles.formInput}
-                          value={courseForm.duration}
-                          onChange={(e) => setCourseForm({ ...courseForm, duration: e.target.value })}
-                          placeholder="e.g. 48 Hours"
-                          disabled={isSubmitting}
-                        />
-                      </div>
-
-                      <div className={styles.formGroup}>
-                        <label className={styles.formLabel}>Assigned Trainer</label>
+                        <label className={styles.formLabel} style={{ fontSize: '0.88rem', fontWeight: 600, color: '#334155', marginBottom: '6px', display: 'block' }}>Assigned Trainer</label>
                         <select
                           className={styles.formInput}
                           value={courseForm.trainerId}
@@ -1392,52 +1160,30 @@ export default function AdminCoursesClient({
                           ))}
                         </select>
                       </div>
+
+                      <div className={styles.formGroup}>
+                        <label className={styles.formLabel} style={{ fontSize: '0.88rem', fontWeight: 600, color: '#334155', marginBottom: '6px', display: 'block' }}>Lessons Count</label>
+                        <input
+                          type="number"
+                          min={0}
+                          className={styles.formInput}
+                          value={courseForm.lessonsCount || 0}
+                          onChange={(e) => setCourseForm({ ...courseForm, lessonsCount: Math.max(0, parseInt(e.target.value) || 0) })}
+                          disabled={isSubmitting}
+                        />
+                      </div>
                     </div>
 
                     <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Short Description</label>
-                      <input
-                        type="text"
-                        className={styles.formInput}
+                      <label className={styles.formLabel} style={{ fontSize: '0.88rem', fontWeight: 600, color: '#334155', marginBottom: '6px', display: 'block' }}>Course Description</label>
+                      <textarea
+                        className={styles.formTextarea}
+                        style={{ minHeight: '85px', maxHeight: '160px', resize: 'vertical' }}
                         value={courseForm.shortDescription}
                         onChange={(e) =>
                           setCourseForm({ ...courseForm, shortDescription: e.target.value })
                         }
-                        placeholder="Brief summary for card display..."
-                        disabled={isSubmitting}
-                      />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Comprehensive Description</label>
-                      <textarea
-                        className={styles.formTextarea}
-                        value={courseForm.description}
-                        onChange={(e) => setCourseForm({ ...courseForm, description: e.target.value })}
-                        placeholder="Full course overview, objectives, and curriculum breakdown..."
-                        disabled={isSubmitting}
-                      />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Tags (comma separated)</label>
-                      <input
-                        type="text"
-                        className={styles.formInput}
-                        value={tagsInput}
-                        onChange={(e) => setTagsInput(e.target.value)}
-                        placeholder="e.g. AI, Machine Learning, Python, PyTorch"
-                        disabled={isSubmitting}
-                      />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>Syllabus Modules (one per line)</label>
-                      <textarea
-                        className={styles.formTextarea}
-                        value={syllabusInput}
-                        onChange={(e) => setSyllabusInput(e.target.value)}
-                        placeholder="Module 1: Foundations\nModule 2: Neural Networks\nModule 3: Transformers"
+                        placeholder="Brief overview of curriculum and learning objectives..."
                         disabled={isSubmitting}
                       />
                     </div>
@@ -1463,13 +1209,14 @@ export default function AdminCoursesClient({
                         }
                         style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                       />
-                      <label htmlFor="publishToggle" style={{ fontSize: '0.88rem', fontWeight: 600, color: '#0f172a', cursor: 'pointer' }}>
+                      <label htmlFor="publishToggle" style={{ fontSize: '0.88rem', fontWeight: 600, color: '#0f172a', cursor: 'pointer', margin: 0 }}>
                         Publish Course immediately (Visible in Public Course Discovery)
                       </label>
                     </div>
                   </div>
 
-                  <div className={styles.modalFooter}>
+                  {/* Fixed Footer */}
+                  <div className={styles.modalFooter} style={{ padding: '1rem 1.75rem', borderTop: '1px solid #f1f5f9', background: '#fafbfc', display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', flexShrink: 0 }}>
                     <button
                       type="button"
                       className={styles.secondaryBtn}
@@ -1484,7 +1231,6 @@ export default function AdminCoursesClient({
                         : editingCourse
                         ? 'Update Course'
                         : 'Create Course'}
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
                     </button>
                   </div>
                 </form>
@@ -1497,19 +1243,6 @@ export default function AdminCoursesClient({
             7. DELETE CONFIRMATION DIALOG
             ────────────────────────────────────────────────────────────────── */}
         <AnimatePresence>
-<<<<<<< HEAD
-          {deleteConfirm && (
-            <motion.div
-              className={styles.modalOverlay}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => !isLoading && setDeleteConfirm(null)}
-            >
-              <motion.div
-                className={styles.modalCard}
-                style={{ maxWidth: 420 }}
-=======
           {deleteConfirmId && (
             <div
               className={styles.modalBackdrop}
@@ -1518,33 +1251,11 @@ export default function AdminCoursesClient({
               <motion.div
                 className={styles.modalBox}
                 style={{ maxWidth: '440px', textAlign: 'center' }}
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 onClick={(e) => e.stopPropagation()}
               >
-<<<<<<< HEAD
-                <div className={styles.deleteModal}>
-                  <div className={styles.deleteIcon}><Trash2 size={28} /></div>
-                  <h3>Delete Course?</h3>
-                  <p>This action cannot be undone. The course will be permanently removed.</p>
-                  <div className={styles.deleteActions}>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => setDeleteConfirm(null)}
-                      disabled={isLoading}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => handleDelete(deleteConfirm)}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? 'Deleting...' : 'Delete Course'}
-                    </button>
-=======
                 <div style={{ padding: '32px 24px 20px' }}>
                   <div
                     style={{
@@ -1560,7 +1271,6 @@ export default function AdminCoursesClient({
                     }}
                   >
                     <Trash2 size={26} />
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
                   </div>
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', margin: '0 0 8px' }}>
                     Delete Course?

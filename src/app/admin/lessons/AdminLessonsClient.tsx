@@ -1,10 +1,8 @@
 'use client';
 
-<<<<<<< HEAD
-import { useState, useRef } from 'react';
-=======
-import React, { useState, useMemo } from 'react';
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
+
+import { useState, useRef, useMemo } from 'react';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus,
@@ -35,7 +33,7 @@ import ReactMarkdown from 'react-markdown';
 import { Module, Lesson, Course } from '@/generated/prisma/client';
 import { parseLessonContent, serializeLessonContent, getDocumentType, LessonDocument } from '@/lib/lessonContent';
 import DocumentViewer from '@/components/common/DocumentViewer';
-import { FileUp, Image as ImageIcon, FileText, Presentation, CheckCircle2, Upload, Trash } from 'lucide-react';
+import { FileUp, Image as ImageIcon, Presentation, Upload, Trash } from 'lucide-react';
 import LessonContentManager from '@/components/admin/LessonContentManager';
 import { getCourseVisual, CourseThemeInfo } from '@/lib/courseImages';
 import styles from './lessons.module.css';
@@ -487,8 +485,8 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
                 >
                   All Tracks ({courses.length})
                 </button>
-                {availableCategories.map((cat) => {
-                  const count = courses.filter((c) => {
+                {availableCategories.map((cat: string) => {
+                  const count = courses.filter((c: CourseWithData) => {
                     const v = getCourseVisual(c.category, c.title, c.logo);
                     return v.tag === cat;
                   }).length;
@@ -509,10 +507,10 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
 
             {/* 4. Course Cards Grid */}
             <div className={styles.coursesGrid}>
-              {filteredCourses.map((course) => {
+              {filteredCourses.map((course: CourseWithData) => {
                 const visual = getCourseVisual(course.category, course.title, course.logo);
                 const totalLessonsInCourse = course.modules.reduce(
-                  (acc, m) => acc + m.lessons.length,
+                  (acc: number, m: any) => acc + m.lessons.length,
                   0
                 );
                 const hasModules = course.modules.length > 0;
@@ -957,21 +955,17 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
               onClick={() => !isLoading && setShowLessonModal(false)}
             >
               <motion.div
-<<<<<<< HEAD
+
                 className="modal-content"
                 style={{ width: '92vw', maxWidth: 1400, maxHeight: '92vh', overflowY: 'auto', background: '#0b0b12', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)' }}
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
-=======
-                className={styles.modalContent}
-                style={{ maxWidth: 860 }}
-                initial={{ opacity: 0, scale: 0.95, y: 15 }}
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
+
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 15 }}
                 transition={{ type: 'spring', stiffness: 350, damping: 28 }}
                 onClick={(e) => e.stopPropagation()}
               >
-<<<<<<< HEAD
+
                 {/* Hidden File Inputs */}
                 <input
                   ref={docFileInputRef}
@@ -1231,42 +1225,7 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
                     <div className="input-group" style={{ flex: 1 }}>
                       <label>Order</label>
                       <input type="number" className="input-field" value={lessonForm.order} onChange={(e) => setLessonForm({ ...lessonForm, order: Number(e.target.value) })} />
-=======
-                <div className={styles.modalHeader}>
-                  <h2 className={styles.modalTitle}>
-                    {editingLesson ? 'Edit Lesson Content' : 'Add Lesson Content'}
-                  </h2>
-                  <button
-                    className={styles.iconActionBtn}
-                    onClick={() => setShowLessonModal(false)}
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
 
-                <form onSubmit={handleLessonSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <div className={styles.modalBody}>
-                    <div className={styles.formGroup}>
-                      <label className={styles.formLabel}>
-                        Lesson Content (Markdown Supported) *
-                      </label>
-                      <textarea
-                        className="input-field textarea-field"
-                        style={{
-                          minHeight: 280,
-                          maxHeight: '50vh',
-                          fontFamily: 'monospace',
-                          fontSize: '0.92rem',
-                          lineHeight: '1.6',
-                        }}
-                        value={lessonForm.notes}
-                        onChange={(e) =>
-                          setLessonForm({ ...lessonForm, notes: e.target.value })
-                        }
-                        required
-                        placeholder="Write or paste your comprehensive curriculum lesson notes in Markdown..."
-                      />
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -1338,17 +1297,12 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
                     </div>
                   </div>
 
-<<<<<<< HEAD
+
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                     <button 
                       type="button" 
                       className="btn btn-secondary" 
-=======
-                  <div className={styles.modalFooter}>
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
+
                       onClick={() => setPreviewMode(true)}
                     >
                       <Play size={15} /> Preview Markdown
@@ -1371,15 +1325,14 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
                         ? 'Update Lesson'
                         : 'Create Lesson'}
                     </button>
-<<<<<<< HEAD
+
                     <div style={{ display: 'flex', gap: 12 }}>
                       <button type="button" className="btn btn-secondary" onClick={() => setShowLessonModal(false)}>Cancel</button>
                       <button type="submit" className="btn btn-primary" disabled={isLoading || docUploading || imageUploading}>
                         {isLoading ? 'Saving...' : (editingLesson ? 'Update' : 'Create Content')}
                       </button>
                     </div>
-=======
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
+
                   </div>
                 </form>
               </motion.div>
@@ -1394,7 +1347,7 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
           {previewMode && (
             <div className={styles.modalBackdrop} style={{ zIndex: 1200 }}>
               <motion.div
-<<<<<<< HEAD
+
                 className="modal-content"
                 style={{ width: '92vw', maxWidth: 1200, height: '90vh', background: '#07070a', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.9)', display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -1411,19 +1364,7 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
                         {attachedDoc.name} ({attachedDoc.type.toUpperCase()})
                       </span>
                     )}
-=======
-                className={styles.modalContent}
-                style={{ maxWidth: 900, height: '85vh' }}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-              >
-                <div className={styles.modalHeader}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <FileText size={18} style={{ color: '#2563eb' }} />
-                    <h2 className={styles.modalTitle}>Markdown Notes Preview</h2>
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
+
                   </div>
                   <button
                     className="btn btn-primary btn-sm"
@@ -1432,29 +1373,12 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
                     <ArrowLeft size={15} /> Back to Editor
                   </button>
                 </div>
-<<<<<<< HEAD
+
                 <div className={lessonStyles.notesBody} style={{ flex: 1, overflowY: 'auto', padding: '2.5rem 3.5rem' }}>
                   {attachedDoc && (
                     <div style={{ marginBottom: lessonForm.notes?.trim() ? '2.5rem' : 0 }}>
                       <DocumentViewer document={attachedDoc} />
-=======
-                <div
-                  className={lessonStyles.notesBody}
-                  style={{ flex: 1, overflowY: 'auto', padding: '28px 36px', background: '#ffffff' }}
-                >
-                  {lessonForm.notes ? (
-                    <ReactMarkdown>{lessonForm.notes}</ReactMarkdown>
-                  ) : (
-                    <div style={{ textAlign: 'center', color: '#94a3b8', padding: '40px 0' }}>
-                      <p>No content written yet.</p>
-                      <button
-                        className="btn btn-secondary btn-sm"
-                        onClick={() => setPreviewMode(false)}
-                        style={{ marginTop: 12 }}
-                      >
-                        Start Writing
-                      </button>
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
+
                     </div>
                   )}
                   {lessonForm.notes?.trim() ? (

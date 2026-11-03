@@ -243,68 +243,8 @@ export default function LessonClient({
             </div>
           </div>
 
-<<<<<<< HEAD
-        {/* Tabs */}
-        <div className={styles.tabs}>
-          {[
-            { key: 'notes', label: 'Lesson Notes', icon: <FileText size={15} /> },
-            ...(lessonNotes.length > 0 ? [{ key: 'docs', label: `Notes (${lessonNotes.length})`, icon: <Download size={15} /> }] : []),
-            ...(lessonResources.length > 0 ? [{ key: 'resources', label: `Resources (${lessonResources.length})`, icon: <BookOpen size={15} /> }] : []),
-            ...(lessonAssignments.length > 0 ? [{ key: 'assignments', label: `Assignments (${lessonAssignments.length})`, icon: <ClipboardList size={15} /> }] : []),
-            ...(lessonPracticeFiles.length > 0 ? [{ key: 'practice', label: `Practice (${lessonPracticeFiles.length})`, icon: <FileCode size={15} /> }] : []),
-            ...(codingProblems.length > 0
-              ? [{ key: 'coding', label: `Problems (${codingProblems.length})`, icon: <Code size={15} /> }]
-              : []),
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              className={`${styles.tab} ${activeTab === tab.key ? styles.tabActive : ''}`}
-              onClick={() => setActiveTab(tab.key as typeof activeTab)}
-            >
-              {tab.icon}
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Tab Content */}
-        <div className={styles.tabContent}>
-          {activeTab === 'notes' && (
-            <div className={styles.notesContent}>
-              {parsedContent.document && (
-                <div style={{ marginBottom: parsedContent.markdown ? '2.5rem' : 0 }}>
-                  <DocumentViewer document={parsedContent.document} />
-                </div>
-=======
-          {/* Hero Overview Card */}
-          <div className={styles.heroCard}>
-            <div className={styles.heroCardAccentGlow} />
-            <div className={styles.heroPillRow}>
-              <span className={styles.lessonTagPill}>
-                <Sparkles size={13} className={styles.tagSparkle} />
-                <span>CORE LEARNING MODULE</span>
-              </span>
-              {completed ? (
-                <span className={`${styles.statusPill} ${styles.statusPillCompleted}`}>
-                  <CheckCircle size={12} />
-                  <span>LESSON FINISHED</span>
-                </span>
-              ) : (
-                <span className={`${styles.statusPill} ${styles.statusPillInProgress}`}>
-                  <span className={styles.inProgressDot} />
-                  <span>IN PROGRESS</span>
-                </span>
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
-              )}
-              {parsedContent.markdown ? (
-                <div className={styles.notesBody}>
-                  <ReactMarkdown>{parsedContent.markdown}</ReactMarkdown>
-                </div>
-              ) : !parsedContent.document ? (
-                <p className={styles.emptyState}>No lesson notes available.</p>
-              ) : null}
-            </div>
-
+          {/* Lesson Hero Banner */}
+          <div className={styles.heroSection}>
             <h1 className={styles.lessonTitle}>{lesson.title}</h1>
 
             {lesson.description && <p className={styles.lessonDesc}>{lesson.description}</p>}
@@ -359,14 +299,19 @@ export default function LessonClient({
           <div className={styles.tabContentCard}>
             {activeTab === 'notes' && (
               <div className={styles.notesContent}>
-                {lesson.notes ? (
+                {parsedContent.document && (
+                  <div style={{ marginBottom: parsedContent.markdown ? '2.5rem' : 0 }}>
+                    <DocumentViewer document={parsedContent.document} />
+                  </div>
+                )}
+                {parsedContent.markdown ? (
                   <div className={styles.notesBody}>
                     <ReactMarkdown
                       components={{
                         code: CodeBlockComponent,
                       }}
                     >
-                      {lesson.notes}
+                      {parsedContent.markdown}
                     </ReactMarkdown>
 
                     {/* Key Takeaways Card */}
@@ -391,9 +336,9 @@ export default function LessonClient({
                       </div>
                     </div>
                   </div>
-                ) : (
+                ) : !parsedContent.document ? (
                   <p className={styles.emptyState}>No written notes available for this lesson.</p>
-                )}
+                ) : null}
               </div>
             )}
 

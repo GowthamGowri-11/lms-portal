@@ -67,10 +67,6 @@
   max-width: 620px;
 }
 
-<<<<<<< HEAD
-/* User Profile Cell for Admin Subpages */
-.cellUser {
-=======
 .headerRight {
   display: flex;
   align-items: center;
@@ -78,13 +74,21 @@
 }
 
 .headerBadge {
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-<<<<<<< HEAD
+.headerBadge svg {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.cellUser {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .cellAvatar {
   width: 36px;
   height: 36px;
@@ -93,34 +97,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
   font-weight: 700;
-  color: white;
-  flex-shrink: 0;
-}
-
-.cellName {
-  font-weight: 600;
   font-size: 0.9rem;
-  color: #111827;
-}
-
-.cellEmail {
-  font-size: 0.8rem;
-  color: #6b7280;
-}
-
-.headerRight {
-=======
-.headerBadge svg {
-  animation: pulse 2s ease-in-out infinite;
-}
-
-.cellUser {
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  color: #ffffff;
+  flex-shrink: 0;
 }
 
 .telemetryBadge {

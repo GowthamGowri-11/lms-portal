@@ -551,12 +551,9 @@ export default function AdminDashboardClient({
                   trainers
                     .map((t) => {
                       const trainerCourses = courses.filter((c) => c.trainerId === t.id);
-<<<<<<< HEAD
-                      const realCount = trainerCourses.reduce((sum, c) => sum + (c.studentsEnrolled || 0), 0);
-                      const studentsCount = realCount > 0 ? realCount : ((t.name.charCodeAt(0) * 47) % 500) + 50;
-=======
+
                       const studentsCount = trainerCourses.reduce((sum, c) => sum + (c.studentsEnrolled || 0), 0);
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
+
                       return { ...t, studentsCount };
                     })
                     .sort((a, b) => b.studentsCount - a.studentsCount)
@@ -593,13 +590,10 @@ export default function AdminDashboardClient({
                             {(trainerName.charAt(0) || 'M').toUpperCase()}
                           </div>
                         </div>
-<<<<<<< HEAD
-                      </div>
-                    ))
-=======
+
                       );
                     })
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
+
                 )}
               </div>
             </div>

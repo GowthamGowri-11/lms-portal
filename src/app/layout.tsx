@@ -2,19 +2,11 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-<<<<<<< HEAD
 import GalaxyBackground from "@/components/animations/GalaxyBackground";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import AuthModal from "@/components/auth/AuthModal";
 import ATLYXPageLoader from "@/components/ui/ATLYXPageLoader";
-
-
-=======
-import { AuthProvider } from "@/components/providers/AuthProvider";
-import AuthModal from "@/components/auth/AuthModal";
-import ATLYXPageLoader from "@/components/ui/ATLYXPageLoader";
 import AmbientShutterBackground from "@/components/ui/AmbientShutterBackground";
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
 
 const inter = Inter({
   variable: "--font-inter",

@@ -474,7 +474,7 @@
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-<<<<<<< HEAD
+
 /* ── Modern Structured Modal ── */
 .modalOverlay {
   position: fixed;
@@ -574,11 +574,7 @@
   width: 64px; height: 64px; border-radius: 50%;
   background: rgba(239,68,68,0.12); color: var(--accent-danger);
   display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;
-=======
-.courseCard:hover .bannerIllustration {
-  transform: scale(1.08) rotate(-2deg);
-  opacity: 0.55;
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
+
 }
 
 .cardCategoryBadge {

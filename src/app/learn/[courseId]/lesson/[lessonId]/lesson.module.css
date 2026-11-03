@@ -660,7 +660,7 @@
   border-color: #334155;
 }
 
-<<<<<<< HEAD
+
 /* Document Images & Proper Spacing */
 .notesBody img {
   display: block;
@@ -707,9 +707,7 @@
 }
 
 .resourceItem {
-=======
-.codeEditorHeader {
->>>>>>> bc92108d881e72d607877eada892e52f9fd54b11
+
   display: flex;
   align-items: center;
   justify-content: space-between;
