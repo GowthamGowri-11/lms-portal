@@ -56,6 +56,13 @@ export default function AdminDevelopersClient({
       d.role.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
+  // Statistics
+  const totalDevs = initialDevelopers.length;
+  const recentDevs = initialDevelopers.filter((d) => {
+    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    return new Date(d.createdAt).getTime() >= weekAgo;
+  }).length;
+
   // ── open modals ────────────────────────────────────────────────────────────
   const openAddModal = () => {
     setEditingDev(null);
@@ -220,8 +227,22 @@ export default function AdminDevelopersClient({
           </div>
         </FadeInUp>
 
-        {/* ── SEARCH ── */}
+        {/* ── STATISTICS CARDS ── */}
         <FadeInUp delay={0.1}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 16 }}>
+            <div style={{ background: '#fff', border: '1px solid #E5EAF2', borderRadius: 14, padding: '14px 16px' }}>
+              <div style={{ fontSize: 22, fontWeight: 800 }}>{totalDevs}</div>
+              <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Total Developers</div>
+            </div>
+            <div style={{ background: '#fff', border: '1px solid #E5EAF2', borderRadius: 14, padding: '14px 16px' }}>
+              <div style={{ fontSize: 22, fontWeight: 800 }}>{recentDevs}</div>
+              <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Joined This Week</div>
+            </div>
+          </div>
+        </FadeInUp>
+
+        {/* ── SEARCH ── */}
+        <FadeInUp delay={0.15}>
           <div className={styles.searchBar}>
             <Search size={18} className={styles.searchIcon} />
             <input

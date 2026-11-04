@@ -1,6 +1,7 @@
 .page {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 .header {
@@ -23,6 +24,20 @@
   gap: 1rem;
   margin-bottom: 2rem;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .filterNav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .searchBox {
+    min-width: 100%;
+  }
+  .courseSelect {
+    width: 100%;
+  }
 }
 
 .searchBox {

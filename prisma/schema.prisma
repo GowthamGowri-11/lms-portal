@@ -7,22 +7,20 @@ datasource db {
   provider = "postgresql"
 }
 
-// ===== NextAuth & Auth.js =====
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -36,23 +34,23 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
-  role          String    @default("STUDENT") // STUDENT, TRAINER, ADMIN
-  phone         String?   @default("")
+  role          String        @default("STUDENT")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   age           Int?
-  education     String?   @default("") // School Student | Undergraduate | Postgraduate | Professional | Trainer
-  isOnboarded   Boolean   @default(false)
+  education     String?       @default("")
+  isOnboarded   Boolean       @default(false)
+  phone         String?       @default("")
   accounts      Account[]
-  sessions      Session[]
   requests      JoinRequest[]
+  sessions      Session[]
   student       Student?
   trainer       Trainer?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
 }
 
 model VerificationToken {
@@ -63,19 +61,17 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// ===== Join Requests (For Students and Trainers) =====
 model JoinRequest {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   // "COURSE_ENROLLMENT" | "TRAINER_APPLICATION"
-  targetId  String?  // courseId if it's an enrollment
-  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  type      String
+  targetId  String?
+  status    String   @default("PENDING")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// ===== Trainers =====
 model Trainer {
   id             String   @id @default(cuid())
   name           String
@@ -85,138 +81,131 @@ model Trainer {
   avatar         String   @default("")
   rating         Float    @default(0)
   experience     String   @default("")
-  courses        Course[]
   userId         String?  @unique
-  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  courses        Course[]
+  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// ===== Courses =====
 model Course {
-  id               String       @id @default(cuid())
+  id               String        @id @default(cuid())
   title            String
-  description      String       @default("")
-  shortDescription String       @default("")
-  logo             String       @default("")
+  description      String        @default("")
+  shortDescription String        @default("")
+  logo             String        @default("")
   price            Float
   discountPrice    Float?
-  category         String       @default("General")
-  level            String       @default("Beginner")
-  duration         String       @default("0 hours")
-  lessonsCount     Int          @default(0)
-  studentsEnrolled Int          @default(0)
-  rating           Float        @default(0)
-  tags             String       @default("[]")
-  syllabus         String       @default("[]")
-  isPublished      Boolean      @default(false)
+  category         String        @default("General")
+  level            String        @default("Beginner")
+  duration         String        @default("0 hours")
+  lessonsCount     Int           @default(0)
+  studentsEnrolled Int           @default(0)
+  rating           Float         @default(0)
+  tags             String        @default("[]")
+  syllabus         String        @default("[]")
+  isPublished      Boolean       @default(false)
   trainerId        String
-  trainer          Trainer      @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  certificates     Certificate[]
+  trainer          Trainer       @relation(fields: [trainerId], references: [id], onDelete: Cascade)
   enrollments      Enrollment[]
   modules          Module[]
   quizzes          Quiz[]
-  certificates     Certificate[]
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
 }
 
-// ===== Modules =====
 model Module {
   id          String   @id @default(cuid())
   title       String
   description String   @default("")
   order       Int      @default(0)
   courseId    String
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  lessons     Lesson[]
-  quizzes     Quiz[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  lessons     Lesson[]
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  quizzes     Quiz[]
 }
 
-// ===== Lessons =====
 model Lesson {
-  id             String               @id @default(cuid())
-  title          String
-  description    String               @default("")
-  videoUrl       String               @default("")
-  notes          String               @default("")
-  resources      String               @default("[]")
-  order          Int                  @default(0)
-  duration       String               @default("")
-  isFree         Boolean              @default(false)
-  moduleId       String
-  module         Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  progresses     LessonProgress[]
-  problems       CodingProblem[]
-  files          LessonFile[]
-  lessonNotes    LessonNote[]
+  id              String               @id @default(cuid())
+  title           String
+  description     String               @default("")
+  videoUrl        String               @default("")
+  notes           String               @default("")
+  resources       String               @default("[]")
+  order           Int                  @default(0)
+  duration        String               @default("")
+  isFree          Boolean              @default(false)
+  moduleId        String
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  problems        CodingProblem[]
+  module          Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  assignments     LessonAssignment[]
+  files           LessonFile[]
+  lessonNotes     LessonNote[]
+  practiceFiles   LessonPracticeFile[]
+  progresses      LessonProgress[]
   lessonResources LessonResource[]
-  assignments    LessonAssignment[]
-  practiceFiles  LessonPracticeFile[]
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
 }
 
-// ===== Lesson Files (Cloudinary uploads) =====
 model LessonFile {
   id          String   @id @default(cuid())
   title       String
   description String   @default("")
   secureUrl   String
   publicId    String   @unique
-  fileType    String   // image | video | pdf | docx | pptx | file
+  fileType    String
   mimeType    String   @default("")
   fileSize    Int      @default(0)
   lessonId    String?
-  lesson      Lesson?  @relation(fields: [lessonId], references: [id], onDelete: SetNull)
   courseId    String   @default("")
   uploadedAt  DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  lesson      Lesson?  @relation(fields: [lessonId], references: [id])
 }
 
-// ===== Lesson Notes =====
 model LessonNote {
-  id               String      @id @default(cuid())
+  id               String       @id @default(cuid())
   title            String
-  description      String      @default("")
-  category         String      @default("Theory")   // Theory | Practical | Assignment | Cheat Sheet | Reference | Project
-  visibility       String      @default("Public")   // Public | Private | Draft
-  studentAccess    String      @default("Everyone") // Everyone | Only Enrolled Students | Only Premium Students
+  description      String       @default("")
+  category         String       @default("Theory")
+  visibility       String       @default("Public")
+  studentAccess    String       @default("Everyone")
   secureUrl        String
-  publicId         String      @unique
-  fileType         String      // pdf | pptx | docx | zip | txt | file
-  mimeType         String      @default("")
-  fileSize         Int         @default(0)
-  version          Int         @default(1)
-  parentId         String?     // points to the first/root note for version chains
-  parent           LessonNote? @relation("NoteVersions", fields: [parentId], references: [id], onDelete: SetNull)
-  versions         LessonNote[] @relation("NoteVersions")
-  downloadCount    Int         @default(0)
+  publicId         String       @unique
+  fileType         String
+  mimeType         String       @default("")
+  fileSize         Int          @default(0)
+  version          Int          @default(1)
+  parentId         String?
+  downloadCount    Int          @default(0)
   lastDownloadedAt DateTime?
-  uploadedBy       String      @default("Admin")
+  uploadedBy       String       @default("Admin")
   lessonId         String
-  lesson           Lesson      @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  courseId         String      @default("")
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  courseId         String       @default("")
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  lesson           Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  parent           LessonNote?  @relation("NoteVersions", fields: [parentId], references: [id])
+  versions         LessonNote[] @relation("NoteVersions")
 }
 
-// ===== Lesson Resources (External Links) =====
 model LessonResource {
-  id           String   @id @default(cuid())
-  title        String
-  url          String
-  type         String   @default("Link") // GitHub | Documentation | Official Website | Reference | YouTube | Blog | Article | Research Paper | External URL
-  description  String   @default("")
-  lessonId     String
-  lesson       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  courseId     String   @default("")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id          String   @id @default(cuid())
+  title       String
+  url         String
+  type        String   @default("Link")
+  description String   @default("")
+  lessonId    String
+  courseId    String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
-// ===== Lesson Assignments =====
 model LessonAssignment {
   id           String    @id @default(cuid())
   title        String
@@ -224,172 +213,162 @@ model LessonAssignment {
   instructions String    @default("")
   deadline     DateTime?
   maxMarks     Int       @default(100)
-  secureUrl    String    @default("") // PDF attachment (Cloudinary)
+  secureUrl    String    @default("")
   publicId     String    @default("")
   fileType     String    @default("")
   mimeType     String    @default("")
   fileSize     Int       @default(0)
   lessonId     String
-  lesson       Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   courseId     String    @default("")
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  lesson       Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
-// ===== Lesson Practice Files =====
 model LessonPracticeFile {
   id          String   @id @default(cuid())
   title       String
   description String   @default("")
-  type        String   @default("Starter Code") // Starter Code | Completed Code | ZIP Project | Source Code | Sample Project
+  type        String   @default("Starter Code")
   secureUrl   String
   publicId    String   @unique
-  fileType    String   // zip | file | pdf | etc.
+  fileType    String
   mimeType    String   @default("")
   fileSize    Int      @default(0)
   lessonId    String
-  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   courseId    String   @default("")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
-// ===== Students =====
 model Student {
-  id              String           @id @default(cuid())
-  name            String
-  email           String           @unique
-  avatar          String           @default("")
-  enrollments     Enrollment[]
-  lessonProgresses LessonProgress[]
-  courseProgresses CourseProgress[]
+  id                String              @id @default(cuid())
+  name              String
+  email             String              @unique
+  avatar            String              @default("")
+  userId            String?             @unique
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  certificates      Certificate[]
   codingSubmissions CodingSubmission[]
-  quizAttempts    QuizAttempt[]
-  retakeRequests  QuizRetakeRequest[]
-  certificates    Certificate[]
-  queries         StudentQuery[]
-  userId          String?          @unique
-  user            User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  courseProgresses  CourseProgress[]
+  enrollments       Enrollment[]
+  lessonProgresses  LessonProgress[]
+  quizAttempts      QuizAttempt[]
+  retakeRequests    QuizRetakeRequest[]
+  user              User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  queries           StudentQuery[]
 }
 
-// ===== Enrollments =====
 model Enrollment {
   id            String   @id @default(cuid())
   studentId     String
-  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   courseId      String
-  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   paymentStatus String   @default("pending")
   progress      Int      @default(0)
   enrolledAt    DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, courseId])
 }
 
-// ===== Lesson Progress =====
 model LessonProgress {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   studentId   String
-  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   lessonId    String
-  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  completed   Boolean  @default(false)
+  completed   Boolean   @default(false)
   completedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lesson      Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, lessonId])
 }
 
-// ===== Course Progress =====
 model CourseProgress {
-  id                String   @id @default(cuid())
-  studentId         String
-  student           Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  courseId          String
-  completedLessons  Int      @default(0)
-  totalLessons      Int      @default(0)
-  percentage        Float    @default(0)
-  lastLessonId      String   @default("")
-  isCompleted       Boolean  @default(false)
-  completedAt       DateTime?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id               String    @id @default(cuid())
+  studentId        String
+  courseId         String
+  completedLessons Int       @default(0)
+  totalLessons     Int       @default(0)
+  percentage       Float     @default(0)
+  lastLessonId     String    @default("")
+  isCompleted      Boolean   @default(false)
+  completedAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  student          Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, courseId])
 }
 
-// ===== Coding Problems =====
 model CodingProblem {
-  id            String             @id @default(cuid())
-  title         String
-  difficulty    String             @default("Easy")
-  description   String             @default("")
-  inputFormat   String             @default("")
-  outputFormat  String             @default("")
-  constraints   String             @default("")
-  examples      String             @default("[]")
-  hiddenTests   String             @default("[]")
-  visibleTests  String             @default("[]")
-  starterCode   String             @default("{}")
-  languages     String             @default("[]")
-  timeLimit     Int                @default(2)
-  memoryLimit   Int                @default(256)
-  points        Int                @default(10)
-  lessonId      String?
-  lesson        Lesson?            @relation(fields: [lessonId], references: [id])
-  submissions   CodingSubmission[]
-  createdAt     DateTime           @default(now())
-  updatedAt     DateTime           @updatedAt
+  id           String             @id @default(cuid())
+  title        String
+  difficulty   String             @default("Easy")
+  description  String             @default("")
+  inputFormat  String             @default("")
+  outputFormat String             @default("")
+  constraints  String             @default("")
+  examples     String             @default("[]")
+  hiddenTests  String             @default("[]")
+  visibleTests String             @default("[]")
+  starterCode  String             @default("{}")
+  languages    String             @default("[]")
+  timeLimit    Int                @default(2)
+  memoryLimit  Int                @default(256)
+  points       Int                @default(10)
+  lessonId     String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  lesson       Lesson?            @relation(fields: [lessonId], references: [id])
+  submissions  CodingSubmission[]
 }
 
-// ===== Coding Submissions =====
 model CodingSubmission {
-  id           String        @id @default(cuid())
-  studentId    String
-  student      Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  problemId    String
-  problem      CodingProblem @relation(fields: [problemId], references: [id])
-  language     String        @default("python")
-  code         String        @default("")
-  status       String        @default("pending")
-  output       String        @default("")
-  timeTaken    Float         @default(0)
-  memoryUsed   Float         @default(0)
-  passedTests  Int           @default(0)
-  totalTests   Int           @default(0)
-  submittedAt  DateTime      @default(now())
+  id          String        @id @default(cuid())
+  studentId   String
+  problemId   String
+  language    String        @default("python")
+  code        String        @default("")
+  status      String        @default("pending")
+  output      String        @default("")
+  timeTaken   Float         @default(0)
+  memoryUsed  Float         @default(0)
+  passedTests Int           @default(0)
+  totalTests  Int           @default(0)
+  submittedAt DateTime      @default(now())
+  problem     CodingProblem @relation(fields: [problemId], references: [id])
+  student     Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
 
-// ===== Quizzes =====
 model Quiz {
-  id                String        @id @default(cuid())
+  id                String              @id @default(cuid())
   title             String
-  description       String        @default("")
+  description       String              @default("")
   courseId          String?
-  course            Course?       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   moduleId          String?
-  module            Module?       @relation(fields: [moduleId], references: [id])
-  afterLessonId     String?       // Place quiz dynamically right after this lesson ID
-  isFinalAssessment Boolean       @default(false) // If true (or afterLessonId is null and moduleId is null), place at the end of course
-  timeLimit         Int           @default(0)
-  passMark          Int           @default(70)
-  isPublished       Boolean       @default(true)
-  questions         QuizQuestion[]
+  timeLimit         Int                 @default(0)
+  passMark          Int                 @default(70)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  afterLessonId     String?
+  isFinalAssessment Boolean             @default(false)
+  isPublished       Boolean             @default(true)
+  course            Course?             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  module            Module?             @relation(fields: [moduleId], references: [id])
   attempts          QuizAttempt[]
+  questions         QuizQuestion[]
   retakeRequests    QuizRetakeRequest[]
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
 }
 
-// ===== Quiz Questions =====
 model QuizQuestion {
   id            String   @id @default(cuid())
   quizId        String
-  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
   question      String
   type          String   @default("mcq")
   options       String   @default("[]")
@@ -397,15 +376,13 @@ model QuizQuestion {
   explanation   String   @default("")
   order         Int      @default(0)
   createdAt     DateTime @default(now())
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
 }
 
-// ===== Quiz Attempts =====
 model QuizAttempt {
   id          String   @id @default(cuid())
   studentId   String
-  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   quizId      String
-  quiz        Quiz     @relation(fields: [quizId], references: [id])
   answers     String   @default("{}")
   score       Int      @default(0)
   totalMarks  Int      @default(0)
@@ -413,47 +390,44 @@ model QuizAttempt {
   passed      Boolean  @default(false)
   timeTaken   Int      @default(0)
   completedAt DateTime @default(now())
+  quiz        Quiz     @relation(fields: [quizId], references: [id])
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
 
-// ===== Quiz Retake Requests =====
 model QuizRetakeRequest {
   id          String    @id @default(cuid())
   studentId   String
-  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
   quizId      String
-  quiz        Quiz      @relation(fields: [quizId], references: [id])
-  status      String    @default("PENDING") // PENDING | APPROVED | REJECTED
-  resolvedBy  String?   // userId of admin/trainer who resolved
+  status      String    @default("PENDING")
+  resolvedBy  String?
   requestedAt DateTime  @default(now())
   resolvedAt  DateTime?
+  quiz        Quiz      @relation(fields: [quizId], references: [id])
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
 
-// ===== Certificates =====
 model Certificate {
   id            String   @id @default(cuid())
   studentId     String
-  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   courseId      String
-  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   certificateId String   @unique @default(cuid())
   issuedAt      DateTime @default(now())
+  course        Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
 
-// ===== Developers =====
-// ===== Student Queries =====
 model StudentQuery {
   id         String   @id @default(cuid())
   studentId  String
-  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   subject    String
   message    String
-  status     String   @default("OPEN") // OPEN | IN_PROGRESS | RESOLVED
+  status     String   @default("OPEN")
   adminReply String   @default("")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
 }
 
-// ===== Developers =====
 model Developer {
   id        String   @id @default(cuid())
   name      String
@@ -467,21 +441,20 @@ model Developer {
   updatedAt DateTime @updatedAt
 }
 
-// ===== Notifications =====
 model Notification {
   id             String    @id @default(cuid())
   recipientEmail String
   recipientName  String?
   userId         String?
   studentId      String?
-  type           String    // COURSE_ASSIGNMENT | NEW_LESSON | NEW_NOTES | NEW_QUIZ | COURSE_PUBLISHED | ANNOUNCEMENT
+  type           String
   title          String
   subject        String
-  message        String    @db.Text
-  htmlContent    String?   @db.Text
-  metadata       String?   @db.Text // JSON string: { courseId, lessonId, quizId, noteId, actionUrl }
-  status         String    @default("PENDING") // PENDING | SENT | FAILED
-  error          String?   @db.Text
+  message        String
+  htmlContent    String?
+  metadata       String?
+  status         String    @default("PENDING")
+  error          String?
   sentAt         DateTime?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
@@ -490,4 +463,3 @@ model Notification {
   @@index([type])
   @@index([status])
 }
-

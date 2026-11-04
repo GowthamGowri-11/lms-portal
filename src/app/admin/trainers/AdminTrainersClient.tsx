@@ -22,9 +22,13 @@ const emptyForm = {
 export default function AdminTrainersClient({
   initialTrainers,
   courses,
+  pendingTrainers = 0,
+  enrollments = [],
 }: {
   initialTrainers: Trainer[];
   courses: { id: string; title: string; logo: string; trainerId: string }[];
+  pendingTrainers?: number;
+  enrollments?: { courseId: string; studentId: string }[];
 }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -105,6 +109,24 @@ export default function AdminTrainersClient({
             </button>
           </div>
         </FadeInUp>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 16 }}>
+          <div style={{ background: '#fff', border: '1px solid #E5EAF2', borderRadius: 14, padding: '14px 16px' }}>
+            <div style={{ fontSize: 22, fontWeight: 800 }}>{initialTrainers.length}</div>
+            <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Total trainers</div>
+          </div>
+          <div style={{ background: '#fff', border: '1px solid #E5EAF2', borderRadius: 14, padding: '14px 16px' }}>
+            <div style={{ fontSize: 22, fontWeight: 800 }}>{initialTrainers.filter((t) => t.userId).length}</div>
+            <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Linked accounts</div>
+          </div>
+          <div style={{ background: '#fff', border: '1px solid #E5EAF2', borderRadius: 14, padding: '14px 16px' }}>
+            <div style={{ fontSize: 22, fontWeight: 800 }}>{pendingTrainers}</div>
+            <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Pending applications</div>
+          </div>
+          <div style={{ background: '#fff', border: '1px solid #E5EAF2', borderRadius: 14, padding: '14px 16px' }}>
+            <div style={{ fontSize: 22, fontWeight: 800 }}>{courses.length}</div>
+            <div style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Assigned courses</div>
+          </div>
+        </div>
 
         {/* Search */}
         <FadeInUp delay={0.1}>

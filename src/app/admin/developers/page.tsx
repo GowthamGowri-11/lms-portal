@@ -5,6 +5,10 @@ export default async function AdminDevelopersPage() {
   const developers = await prisma.developer.findMany({
     orderBy: { createdAt: 'desc' },
   });
-  
-  return <AdminDevelopersClient initialDevelopers={developers} />;
+
+  return (
+    <AdminDevelopersClient
+      initialDevelopers={developers}
+    />
+  );
 }

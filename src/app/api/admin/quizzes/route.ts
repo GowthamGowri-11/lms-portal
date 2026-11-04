@@ -30,27 +30,29 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   const { id, questions, ...data } = await req.json();
-  // Delete old questions and recreate
-  await prisma.quizQuestion.deleteMany({ where: { quizId: id } });
+  const updateData: Record<string, unknown> = { ...data };
+  if (data.courseId !== undefined) updateData.courseId = data.courseId || null;
+  if (data.moduleId !== undefined) updateData.moduleId = data.moduleId || null;
+  if (data.afterLessonId !== undefined) updateData.afterLessonId = data.afterLessonId || null;
+  if (data.isFinalAssessment !== undefined) updateData.isFinalAssessment = Boolean(data.isFinalAssessment);
+
+  if (questions !== undefined) {
+    await prisma.quizQuestion.deleteMany({ where: { quizId: id } });
+    updateData.questions = {
+      create: (questions ?? []).map((q: Record<string, unknown>, i: number) => ({
+        question: q.question as string,
+        type: (q.type as string) ?? 'mcq',
+        options: typeof q.options === 'string' ? q.options : JSON.stringify(q.options || []),
+        correctAnswer: q.correctAnswer as string,
+        explanation: (q.explanation as string) ?? '',
+        order: i,
+      })),
+    };
+  }
+
   const quiz = await prisma.quiz.update({
     where: { id },
-    data: {
-      ...data,
-      courseId: data.courseId || null,
-      moduleId: data.moduleId || null,
-      afterLessonId: data.afterLessonId || null,
-      isFinalAssessment: Boolean(data.isFinalAssessment),
-      questions: {
-        create: (questions ?? []).map((q: Record<string, unknown>, i: number) => ({
-          question: q.question as string,
-          type: (q.type as string) ?? 'mcq',
-          options: typeof q.options === 'string' ? q.options : JSON.stringify(q.options || []),
-          correctAnswer: q.correctAnswer as string,
-          explanation: (q.explanation as string) ?? '',
-          order: i,
-        })),
-      },
-    },
+    data: updateData,
   });
   return NextResponse.json(quiz);
 }

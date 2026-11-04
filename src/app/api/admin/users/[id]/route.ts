@@ -3,6 +3,36 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
+export async function PATCH(
+  req: Request,
+  context: any
+) {
+  try {
+    const params = await context.params;
+    const session = await getServerSession(authOptions);
+    const currentUser = session?.user as any;
+
+    if (!currentUser || currentUser.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = params;
+    const body = await req.json();
+    const data: { isOnboarded?: boolean } = {};
+    if (typeof body.isOnboarded === 'boolean') data.isOnboarded = body.isOnboarded;
+
+    if (Object.keys(data).length === 0) {
+      return NextResponse.json({ error: 'No supported fields to update' }, { status: 400 });
+    }
+
+    const user = await prisma.user.update({ where: { id }, data });
+    return NextResponse.json({ success: true, user });
+  } catch (error) {
+    console.error('Patch User Error:', error);
+    return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
+  }
+}
+
 export async function DELETE(
   req: Request,
   context: any

@@ -1,604 +1,716 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen,
   Users,
   GraduationCap,
   IndianRupee,
+  PlayCircle,
+  Activity,
+  Plus,
+  UserPlus,
+  BarChart3,
+  Clock,
+  CheckCircle2,
+  CreditCard,
+  UserCircle,
   TrendingUp,
   TrendingDown,
-  Plus,
-  ExternalLink,
-  Search,
-  CheckCircle2,
-  Clock,
-  Award,
-  Sparkles,
-  ArrowRight,
-  Filter,
-  Layers,
-  CheckCircle,
-  AlertCircle,
-  MoreVertical,
-  Activity,
-  UserCheck,
-  ChevronRight,
 } from 'lucide-react';
-import { FadeInUp, StaggerContainer, StaggerItem, PageTransition } from '@/components/animations/MotionWrappers';
-import styles from './page.module.css';
-import { CourseWithArrays, formatDate } from '@/lib/utils';
-import { Trainer, Student, Enrollment } from '@/generated/prisma/client';
+import { PageTransition } from '@/components/animations/MotionWrappers';
+import hub from '@/components/admin/hub/hub.module.css';
+import { BarChart, DonutChart, LineChart, ProgressList, Sparkline } from '@/components/admin/hub/HubCharts';
+import {
+  RANGE_OPTIONS,
+  RangeKey,
+  bucketCounts,
+  bucketSums,
+  comparePeriod,
+  formatINR,
+  formatPct,
+  relativeTime,
+  sparklineFromSeries,
+} from '@/lib/adminAnalytics';
 
-export default function AdminDashboardClient({
-  courses,
-  trainers,
-  students,
-  enrollments,
-}: {
-  courses: CourseWithArrays[];
-  trainers: Trainer[];
-  students: Student[];
-  enrollments: Enrollment[];
-}) {
-  const [searchFilter, setSearchFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'pending'>('all');
+type CourseRow = {
+  id: string;
+  title: string;
+  logo: string;
+  category: string;
+  isPublished: boolean;
+  trainerId: string;
+  trainerName: string;
+  studentsEnrolled: number;
+  price: number;
+  discountPrice: number | null;
+  createdAt: string;
+  lessonsCount: number;
+};
 
-  const totalRevenue = useMemo(() => {
-    return enrollments
+type Props = {
+  admin: { name: string; email: string; image: string };
+  courses: CourseRow[];
+  trainers: { id: string; name: string; email: string; createdAt: string }[];
+  students: { id: string; name: string; email: string; avatar: string; createdAt: string; isOnboarded: boolean }[];
+  enrollments: {
+    id: string;
+    studentId: string;
+    courseId: string;
+    paymentStatus: string;
+    progress: number;
+    enrolledAt: string;
+  }[];
+  lessons: { id: string; title: string; createdAt: string; coursePublished: boolean }[];
+  users: { id: string; name: string | null; email: string | null; role: string; createdAt: string; isOnboarded: boolean }[];
+  developers: { id: string; name: string; createdAt: string }[];
+  courseProgress: { courseId: string; percentage: number; isCompleted: boolean; studentId: string }[];
+};
+
+const paid = (status: string) => status === 'completed' || status === 'assigned';
+
+function avatarColor(seed: string) {
+  const colors = ['#2563EB', '#8B5CF6', '#16A34A', '#F59E0B', '#0EA5E9'];
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+  return colors[Math.abs(hash) % colors.length];
+}
+
+export default function AdminDashboardClient(props: Props) {
+  const {
+    admin,
+    courses,
+    trainers,
+    students,
+    enrollments,
+    lessons,
+    users,
+    developers,
+    courseProgress,
+  } = props;
+
+  const [range, setRange] = useState<RangeKey>('30d');
+  const [activityFilter, setActivityFilter] = useState<'ALL' | 'REGISTRATIONS' | 'CONTENT' | 'PAYMENTS'>('ALL');
+  const today = useMemo(
+    () =>
+      new Date().toLocaleDateString('en-IN', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }),
+    []
+  );
+
+  const greeting = useMemo(() => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
+  }, []);
+
+  const coursePrice = (courseId: string) => {
+    const course = courses.find((c) => c.id === courseId);
+    return course?.discountPrice || course?.price || 0;
+  };
+
+  const totalRevenue = enrollments.filter((e) => e.paymentStatus === 'completed').reduce((sum, e) => sum + coursePrice(e.courseId), 0);
+  const activeStudentIds = new Set(
+    enrollments.filter((e) => paid(e.paymentStatus)).map((e) => e.studentId)
+  );
+
+  const courseDelta = comparePeriod(courses.map((c) => c.createdAt), range);
+  const trainerDelta = comparePeriod(trainers.map((t) => t.createdAt), range);
+  const studentDelta = comparePeriod(students.map((s) => s.createdAt), range);
+  const lessonDelta = comparePeriod(lessons.map((l) => l.createdAt), range);
+  const enrollmentDelta = comparePeriod(enrollments.map((e) => e.enrolledAt), range);
+  const revenueSeries = bucketSums(
+    enrollments
       .filter((e) => e.paymentStatus === 'completed')
-      .reduce((sum, e) => {
-        const course = courses.find((c) => c.id === e.courseId);
-        return sum + (course?.discountPrice || course?.price || 0);
-      }, 0);
-  }, [enrollments, courses]);
+      .map((e) => ({ at: e.enrolledAt, amount: coursePrice(e.courseId) })),
+    range
+  );
+  const revenueCurrent = revenueSeries.reduce((s, p) => s + p.value, 0);
+  const revenueDelta = comparePeriod(
+    enrollments.filter((e) => e.paymentStatus === 'completed').map((e) => e.enrolledAt),
+    range
+  );
 
-  // Master Stat Cards Definition
-  const stats = [
+  const kpis = [
     {
       id: 'courses',
       label: 'Total Courses',
-      value: courses.length.toString(),
-      subLabel: 'Active curriculum',
-      change: '+12.4%',
-      positive: true,
-      timeframe: 'vs last month',
+      value: String(courses.length),
       icon: BookOpen,
-      accentColor: '#2563eb',
-      accentBg: 'rgba(37, 99, 235, 0.08)',
-      accentBorder: 'rgba(37, 99, 235, 0.2)',
-      sparkline: 'M0 25 C 20 22, 40 10, 60 18 C 80 24, 100 8, 120 5 L 120 30 L 0 30 Z',
-      sparklinePath: 'M0 25 C 20 22, 40 10, 60 18 C 80 24, 100 8, 120 5',
+      color: '#2563EB',
+      series: sparklineFromSeries(bucketCounts(courses.map((c) => c.createdAt), range)),
+      change: formatPct(courseDelta.pct),
+      positive: (courseDelta.pct ?? 0) >= 0,
+      note: courseDelta.pct === null && courseDelta.current > 0 ? 'No prior-period data' : 'vs previous period',
     },
     {
       id: 'trainers',
-      label: 'Faculty Mentors',
-      value: trainers.length.toString(),
-      subLabel: 'Verified instructors',
-      change: '+5.2%',
-      positive: true,
-      timeframe: 'vs last month',
+      label: 'Total Faculty Mentors',
+      value: String(trainers.length),
       icon: Users,
-      accentColor: '#7c3aed',
-      accentBg: 'rgba(124, 58, 237, 0.08)',
-      accentBorder: 'rgba(124, 58, 237, 0.2)',
-      sparkline: 'M0 20 C 25 15, 50 25, 75 10 C 95 5, 110 12, 120 4 L 120 30 L 0 30 Z',
-      sparklinePath: 'M0 20 C 25 15, 50 25, 75 10 C 95 5, 110 12, 120 4',
+      color: '#8B5CF6',
+      series: sparklineFromSeries(bucketCounts(trainers.map((t) => t.createdAt), range)),
+      change: formatPct(trainerDelta.pct),
+      positive: (trainerDelta.pct ?? 0) >= 0,
+      note: trainerDelta.pct === null && trainerDelta.current > 0 ? 'No prior-period data' : 'vs previous period',
     },
     {
       id: 'students',
-      label: 'Enrolled Students',
-      value: students.length.toString(),
-      subLabel: 'Active learners',
-      change: '+18.7%',
-      positive: true,
-      timeframe: 'vs last month',
+      label: 'Total Enrolled Students',
+      value: String(students.length),
       icon: GraduationCap,
-      accentColor: '#059669',
-      accentBg: 'rgba(5, 150, 105, 0.08)',
-      accentBorder: 'rgba(5, 150, 105, 0.2)',
-      sparkline: 'M0 28 C 30 20, 60 22, 80 12 C 100 6, 110 10, 120 2 L 120 30 L 0 30 Z',
-      sparklinePath: 'M0 28 C 30 20, 60 22, 80 12 C 100 6, 110 10, 120 2',
+      color: '#16A34A',
+      series: sparklineFromSeries(bucketCounts(students.map((s) => s.createdAt), range)),
+      change: formatPct(studentDelta.pct),
+      positive: (studentDelta.pct ?? 0) >= 0,
+      note: studentDelta.pct === null && studentDelta.current > 0 ? 'No prior-period data' : 'vs previous period',
     },
     {
       id: 'revenue',
       label: 'Total Revenue',
-      value: `₹${totalRevenue.toLocaleString()}`,
-      subLabel: 'Gross platform earnings',
-      change: '+24.1%',
-      positive: true,
-      timeframe: 'vs last month',
+      value: formatINR(totalRevenue),
       icon: IndianRupee,
-      accentColor: '#0284c7',
-      accentBg: 'rgba(2, 132, 199, 0.08)',
-      accentBorder: 'rgba(2, 132, 199, 0.2)',
-      sparkline: 'M0 26 C 25 24, 50 14, 75 18 C 95 12, 110 6, 120 2 L 120 30 L 0 30 Z',
-      sparklinePath: 'M0 26 C 25 24, 50 14, 75 18 C 95 12, 110 6, 120 2',
+      color: '#0EA5E9',
+      series: sparklineFromSeries(revenueSeries),
+      change: formatPct(revenueDelta.pct),
+      positive: (revenueDelta.pct ?? 0) >= 0,
+      note: 'Completed enrollments only',
+    },
+    {
+      id: 'lessons',
+      label: 'Total Lessons',
+      value: String(lessons.length),
+      icon: PlayCircle,
+      color: '#F59E0B',
+      series: sparklineFromSeries(bucketCounts(lessons.map((l) => l.createdAt), range)),
+      change: formatPct(lessonDelta.pct),
+      positive: (lessonDelta.pct ?? 0) >= 0,
+      note: lessonDelta.pct === null && lessonDelta.current > 0 ? 'No prior-period data' : 'vs previous period',
+    },
+    {
+      id: 'active',
+      label: 'Active Students',
+      value: String(activeStudentIds.size),
+      icon: Activity,
+      color: '#16A34A',
+      series: sparklineFromSeries(bucketCounts(enrollments.filter((e) => paid(e.paymentStatus)).map((e) => e.enrolledAt), range)),
+      change: formatPct(enrollmentDelta.pct),
+      positive: (enrollmentDelta.pct ?? 0) >= 0,
+      note: 'Students with a paid or assigned enrollment',
     },
   ];
 
-  const filteredEnrollments = useMemo(() => {
-    const query = searchFilter.trim().toLowerCase();
-    return enrollments.filter((e) => {
+  const enrollmentTrend = bucketCounts(enrollments.map((e) => e.enrolledAt), range);
+  const activitySeries = bucketCounts(
+    [
+      ...enrollments.map((e) => e.enrolledAt),
+    ],
+    range
+  );
+
+  const courseDistribution = [...courses]
+    .map((c) => ({
+      label: c.title,
+      value: enrollments.filter((e) => e.courseId === c.id).length,
+    }))
+    .filter((c) => c.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 6);
+
+  const completion = [...courses]
+    .map((c) => {
+      const rows = courseProgress.filter((p) => p.courseId === c.id);
+      const avg = rows.length ? rows.reduce((s, r) => s + r.percentage, 0) / rows.length : 0;
+      return { label: c.title, value: avg };
+    })
+    .filter((c) => courseProgress.some((p) => courses.find((x) => x.id === p.courseId)?.title === c.label))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 6);
+
+  const recentStudents = students.slice(0, 6);
+  const popularCourses = [...courses]
+    .map((c) => {
+      const enrolled = enrollments.filter((e) => e.courseId === c.id);
+      const rows = courseProgress.filter((p) => p.courseId === c.id);
+      const completionPct = rows.length ? rows.reduce((s, r) => s + r.percentage, 0) / rows.length : 0;
+      return { ...c, enrolledCount: enrolled.length || c.studentsEnrolled || 0, completionPct };
+    })
+    .sort((a, b) => b.enrolledCount - a.enrolledCount)
+    .slice(0, 6);
+
+  const activities = [
+    ...students.map((s) => ({
+      at: s.createdAt,
+      title: `${s.name} registered as a student`,
+      icon: GraduationCap,
+      color: '#16A34A',
+      category: 'REGISTRATIONS',
+    })),
+    ...courses.map((c) => ({
+      at: c.createdAt,
+      title: `Course created: ${c.title}`,
+      icon: BookOpen,
+      color: '#2563EB',
+      category: 'CONTENT',
+    })),
+    ...lessons.map((l) => ({
+      at: l.createdAt,
+      title: `Lesson added: ${l.title}`,
+      icon: PlayCircle,
+      color: '#F59E0B',
+      category: 'CONTENT',
+    })),
+    ...enrollments.filter((e) => e.paymentStatus === 'completed').map((e) => {
       const student = students.find((s) => s.id === e.studentId);
       const course = courses.find((c) => c.id === e.courseId);
-      
-      const matchesSearch =
-        !query ||
-        Boolean(student?.name && student.name.toLowerCase().includes(query)) ||
-        Boolean(student?.email && student.email.toLowerCase().includes(query)) ||
-        Boolean(course?.title && course.title.toLowerCase().includes(query));
+      return {
+        at: e.enrolledAt,
+        title: `Payment completed${student ? ` by ${student.name}` : ''}${course ? ` · ${course.title}` : ''}`,
+        icon: CreditCard,
+        color: '#16A34A',
+        category: 'PAYMENTS',
+      };
+    }),
+    ...trainers.map((t) => ({
+      at: t.createdAt,
+      title: `Trainer registered: ${t.name}`,
+      icon: Users,
+      color: '#8B5CF6',
+      category: 'REGISTRATIONS',
+    })),
+    ...developers.map((d) => ({
+      at: d.createdAt,
+      title: `Developer profile added: ${d.name}`,
+      icon: UserCircle,
+      color: '#111827',
+      category: 'REGISTRATIONS',
+    })),
+  ]
+    .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
 
-      const matchesStatus =
-        statusFilter === 'all'
-          ? true
-          : statusFilter === 'completed'
-          ? e.paymentStatus === 'completed'
-          : e.paymentStatus !== 'completed';
+  const filteredActivities = activities.filter((item) => {
+    if (activityFilter === 'ALL') return true;
+    return item.category === activityFilter;
+  }).slice(0, 12);
 
-      return matchesSearch && matchesStatus;
-    });
-  }, [enrollments, students, courses, searchFilter, statusFilter]);
+  const successful = enrollments.filter((e) => e.paymentStatus === 'completed').length;
+  const pendingPay = enrollments.filter((e) => e.paymentStatus === 'pending').length;
+  const failedPay = enrollments.filter((e) => !['completed', 'pending', 'assigned'].includes(e.paymentStatus)).length;
+  const recentTx = enrollments.slice(0, 6);
 
-  // Safe color generator for avatar initials
-  const getAvatarGradient = (str?: string | null) => {
-    const safeStr = str && str.trim().length > 0 ? str : 'Atlyx';
-    const gradients = [
-      'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-      'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
-      'linear-gradient(135deg, #06b6d4 0%, #0284c7 100%)',
-      'linear-gradient(135deg, #10b981 0%, #047857 100%)',
-      'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-    ];
-    let hash = 0;
-    for (let i = 0; i < safeStr.length; i++) {
-      hash = safeStr.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return gradients[Math.abs(hash) % gradients.length];
-  };
+  // Revenue by course breakdown
+  const revenueByCourse = [...courses]
+    .map((c) => {
+      const courseEnrollments = enrollments.filter((e) => e.courseId === c.id && e.paymentStatus === 'completed');
+      const revenue = courseEnrollments.reduce((sum, e) => sum + coursePrice(e.courseId), 0);
+      return { course: c, revenue, enrollments: courseEnrollments.length };
+    })
+    .filter((item) => item.revenue > 0)
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 6);
+
+  const publishedCourses = courses.filter((c) => c.isPublished).length;
 
   return (
     <PageTransition>
-      <div className={styles.dashboard}>
-        {/* ── MINIMALIST HERO / HEADER ── */}
-        <div className={styles.header}>
-          <div className={styles.headerLeft}>
-            <div className={styles.breadcrumb}>
-              <span className={styles.breadcrumbBrand}>ATLYX Hub</span>
-              <ChevronRight size={12} className={styles.breadcrumbChevron} />
-              <span className={styles.breadcrumbCurrent}>Overview</span>
-            </div>
-            <h1 className={styles.title}>System Overview</h1>
-            <p className={styles.subtitle}>
-              Real-time institutional performance, course enrollments, and academic intelligence.
+      <div className={hub.page}>
+        <div className={hub.welcomeCard}>
+          <div className={hub.welcomeMain}>
+            <div className={hub.kicker}>ATLYX Admin Hub</div>
+            <h1 className={hub.title}>
+              {greeting}, {admin.name.split(' ')[0]}
+            </h1>
+            <p className={hub.subtitle}>
+              Platform overview across courses, faculty, enrollments, assessments, and payments. All figures are computed from live records.
             </p>
-          </div>
-
-          <div className={styles.headerRight}>
-            <div className={styles.telemetryBadge}>
-              <span className={styles.telemetryDot} />
-              <span className={styles.telemetryText}>Live Telemetry</span>
+            <div className={hub.headerActions} style={{ marginTop: 16 }}>
+              <Link href="/admin/students" className={`${hub.quickAction} ${hub.quickActionPrimary}`}>
+                <UserPlus size={14} /> Add Student
+              </Link>
+              <Link href="/admin/courses" className={hub.quickAction}>
+                <Plus size={14} /> Create Course
+              </Link>
+              <Link href="/admin/trainers" className={hub.quickAction}>
+                <Users size={14} /> Add Trainer
+              </Link>
+              <Link href="/admin/payments" className={hub.quickAction}>
+                <BarChart3 size={14} /> View Reports
+              </Link>
             </div>
-
-            <Link href="/admin/courses" className={styles.primaryActionBtn}>
-              <Plus size={16} strokeWidth={2.5} />
-              <span>New Course</span>
-            </Link>
+          </div>
+          <div className={hub.profileCard}>
+            <div className={hub.avatar} style={{ background: avatarColor(admin.name) }}>
+              {admin.image ? <img src={admin.image} alt="" /> : (admin.name.charAt(0) || 'A').toUpperCase()}
+            </div>
+            <div className={hub.profileMeta}>
+              <div className={hub.profileName}>{admin.name}</div>
+              <div className={hub.profileRole}>{admin.email || 'Administrator'}</div>
+              <div className={hub.dateLine}>{today}</div>
+            </div>
           </div>
         </div>
 
-        {/* ── MASTER PREMIUM STATS CARDS ── */}
-        <StaggerContainer className={styles.statsGrid}>
-          {stats.map((stat, i) => {
-            const Icon = stat.icon;
+        <div className={hub.statsGrid}>
+          {kpis.map((kpi) => {
+            const Icon = kpi.icon;
             return (
-              <StaggerItem key={stat.id}>
-                <motion.div
-                  className={styles.statCard}
-                  whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                >
-                  {/* Subtle top indicator line on hover */}
+              <div key={kpi.id} className={hub.statCard}>
+                <div className={hub.statTop}>
                   <div
-                    className={styles.statGlowBar}
-                    style={{ background: stat.accentColor }}
-                  />
-
-                  {/* Top Bar: Icon + Trend Badge */}
-                  <div className={styles.statCardTop}>
-                    <div
-                      className={styles.statIconBadge}
-                      style={{
-                        backgroundColor: stat.accentBg,
-                        borderColor: stat.accentBorder,
-                        color: stat.accentColor,
-                      }}
-                    >
-                      <Icon size={20} strokeWidth={2} />
-                    </div>
-
-                    <div
-                      className={`${styles.trendBadge} ${
-                        stat.positive ? styles.trendPositive : styles.trendNegative
-                      }`}
-                    >
-                      {stat.positive ? (
-                        <TrendingUp size={13} strokeWidth={2.5} />
-                      ) : (
-                        <TrendingDown size={13} strokeWidth={2.5} />
-                      )}
-                      <span>{stat.change}</span>
-                    </div>
+                    className={hub.statIcon}
+                    style={{ background: `${kpi.color}14`, borderColor: `${kpi.color}33`, color: kpi.color }}
+                  >
+                    <Icon size={16} />
                   </div>
-                  {/* Middle: Metric Value */}
-                  <div className={styles.statValueWrap}>
-                    <div className={styles.statValue}>{stat.value}</div>
-                    <div className={styles.statLabel}>{stat.label}</div>
-                  </div>
-
-                  {/* Bottom: Sparkline & Context Note */}
-                  <div className={styles.statCardBottom}>
-                    <div className={styles.statSparklineWrap}>
-                      <svg
-                        viewBox="0 0 120 30"
-                        className={styles.statSparklineSvg}
-                        preserveAspectRatio="none"
-                      >
-                        <defs>
-                          <linearGradient
-                            id={`gradient-${stat.id}`}
-                            x1="0%"
-                            y1="0%"
-                            x2="0%"
-                            y2="100%"
-                          >
-                            <stop
-                              offset="0%"
-                              stopColor={stat.accentColor}
-                              stopOpacity="0.25"
-                            />
-                            <stop
-                              offset="100%"
-                              stopColor={stat.accentColor}
-                              stopOpacity="0"
-                            />
-                          </linearGradient>
-                        </defs>
-                        <path
-                          d={stat.sparkline}
-                          fill={`url(#gradient-${stat.id})`}
-                        />
-                        <path
-                          d={stat.sparklinePath}
-                          fill="none"
-                          stroke={stat.accentColor}
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </div>
-                    <div className={styles.statTimeframe}>
-                      <span className={styles.statSubLabel}>{stat.subLabel}</span>
-                      <span className={styles.statPeriod}>{stat.timeframe}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              </StaggerItem>
+                  <span className={`${hub.trend} ${kpi.change ? (kpi.positive ? hub.trendUp : hub.trendDown) : hub.trendFlat}`}>
+                    {kpi.change ? (kpi.positive ? <TrendingUp size={11} /> : <TrendingDown size={11} />) : null}
+                    {kpi.change || '—'}
+                  </span>
+                </div>
+                <div className={hub.statValue}>{kpi.value}</div>
+                <div className={hub.statLabel}>{kpi.label}</div>
+                <div className={hub.statFooter}>
+                  <Sparkline values={kpi.series} color={kpi.color} />
+                </div>
+                <div className={hub.itemMeta}>{kpi.note}</div>
+              </div>
             );
           })}
-        </StaggerContainer>
+        </div>
 
-        {/* ── RECENT ENROLLMENTS MASTER TABLE CARD ── */}
-        <div className={styles.masterCard}>
-          {/* Card Header */}
-          <div className={styles.masterCardHeader}>
-            <div className={styles.masterCardTitleGroup}>
-              <div className={styles.masterCardTitleRow}>
-                <h2 className={styles.masterCardTitle}>Recent Student Enrollments</h2>
-                <span className={styles.recordCounterBadge}>
-                  {filteredEnrollments.length} Total
-                </span>
+        <div className={hub.card} style={{ marginBottom: 14, padding: '10px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <strong style={{ fontSize: 13 }}>Analytics window</strong>
+          <div className={hub.rangeTabs}>
+            {RANGE_OPTIONS.map((opt) => (
+              <button
+                key={opt.key}
+                className={`${hub.rangeTab} ${range === opt.key ? hub.rangeTabActive : ''}`}
+                onClick={() => setRange(opt.key)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className={hub.chartsGrid}>
+          <section className={hub.card}>
+            <div className={hub.cardHeader}>
+              <div>
+                <h2 className={hub.cardTitle}>Student Enrollment Trends</h2>
+                <p className={hub.cardHint}>New enrollments in the selected window</p>
               </div>
-              <p className={styles.masterCardSubtitle}>
-                Real-time course admissions, learner progression, and verified payment statuses
-              </p>
             </div>
+            <div className={hub.chartBody}>
+              {enrollmentTrend.every((p) => p.value === 0) ? (
+                <div className={hub.empty}>No enrollments in this period.</div>
+              ) : (
+                <LineChart data={enrollmentTrend} color="#2563EB" />
+              )}
+            </div>
+          </section>
+          <section className={hub.card}>
+            <div className={hub.cardHeader}>
+              <div>
+                <h2 className={hub.cardTitle}>Revenue Analytics</h2>
+                <p className={hub.cardHint}>Completed payments · {formatINR(revenueCurrent)} this window</p>
+              </div>
+            </div>
+            <div className={hub.chartBody}>
+              {revenueSeries.every((p) => p.value === 0) ? (
+                <div className={hub.empty}>No completed payments in this period.</div>
+              ) : (
+                <LineChart data={revenueSeries} color="#16A34A" fill valuePrefix="₹" />
+              )}
+            </div>
+          </section>
+        </div>
 
-            {/* Filters and Search Bar */}
-            <div className={styles.filterControls}>
-              <div className={styles.statusTabGroup}>
+        <div className={hub.chartsRow3}>
+          <section className={hub.card}>
+            <div className={hub.cardHeader}>
+              <div>
+                <h2 className={hub.cardTitle}>Course Enrollment Distribution</h2>
+                <p className={hub.cardHint}>Top courses by recorded enrollments</p>
+              </div>
+            </div>
+            <DonutChart data={courseDistribution} />
+          </section>
+          <section className={hub.card}>
+            <div className={hub.cardHeader}>
+              <div>
+                <h2 className={hub.cardTitle}>Student Activity</h2>
+                <p className={hub.cardHint}>Enrollments, quiz attempts, and code submissions</p>
+              </div>
+            </div>
+            <div className={hub.chartBody}>
+              {activitySeries.every((p) => p.value === 0) ? (
+                <div className={hub.empty}>No activity in this period.</div>
+              ) : (
+                <BarChart data={activitySeries} color="#8B5CF6" />
+              )}
+            </div>
+          </section>
+        </div>
+
+        <section className={hub.card} style={{ marginBottom: 14 }}>
+          <div className={hub.cardHeader}>
+            <div>
+              <h2 className={hub.cardTitle}>Course Completion</h2>
+              <p className={hub.cardHint}>Average learner progress from CourseProgress records</p>
+            </div>
+          </div>
+          <ProgressList items={completion} />
+        </section>
+
+        <div className={hub.splitGrid}>
+          <section className={hub.card}>
+            <div className={hub.cardHeader}>
+              <div>
+                <h2 className={hub.cardTitle}>Recent Students</h2>
+                <p className={hub.cardHint}>Latest registrations</p>
+              </div>
+              <Link href="/admin/students" className={hub.linkBtn}>
+                View all
+              </Link>
+            </div>
+            <div className={hub.list}>
+              {recentStudents.length === 0 && <div className={hub.empty}>No students registered yet.</div>}
+              {recentStudents.map((s) => {
+                const enrolled = enrollments.filter((e) => e.studentId === s.id);
+                return (
+                  <div key={s.id} className={hub.listItem}>
+                    <div className={hub.thumb} style={{ background: avatarColor(s.name) }}>
+                      {s.avatar ? <img src={s.avatar} alt="" /> : s.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className={hub.itemTitle}>{s.name}</div>
+                      <div className={hub.itemMeta}>
+                        {s.email} · {enrolled.length} course{enrolled.length === 1 ? '' : 's'} · {new Date(s.createdAt).toLocaleDateString('en-IN')}
+                      </div>
+                    </div>
+                    <span className={hub.pill} style={{ background: s.isOnboarded ? '#f0fdf4' : '#fffbeb', color: s.isOnboarded ? '#16A34A' : '#F59E0B' }}>
+                      {s.isOnboarded ? 'Active' : 'Pending'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className={hub.card}>
+            <div className={hub.cardHeader}>
+              <div>
+                <h2 className={hub.cardTitle}>Popular Courses</h2>
+                <p className={hub.cardHint}>Ranked by enrollment count</p>
+              </div>
+              <Link href="/admin/courses" className={hub.linkBtn}>
+                View all
+              </Link>
+            </div>
+            <div className={hub.list}>
+              {popularCourses.length === 0 && <div className={hub.empty}>No courses yet.</div>}
+              {popularCourses.map((c) => (
+                <div key={c.id} className={hub.listItem}>
+                  <div className={hub.thumb} style={{ background: avatarColor(c.title) }}>
+                    {c.logo && (c.logo.startsWith('http') || c.logo.startsWith('/')) ? (
+                      <img src={c.logo} alt="" />
+                    ) : (
+                      (c.title.charAt(0) || 'C').toUpperCase()
+                    )}
+                  </div>
+                  <div>
+                    <div className={hub.itemTitle}>{c.title}</div>
+                    <div className={hub.itemMeta}>
+                      {c.trainerName} · {c.enrolledCount} enrolled · {Math.round(c.completionPct)}% avg completion
+                    </div>
+                  </div>
+                  <span className={hub.pill} style={{ background: c.isPublished ? '#eff6ff' : '#f8fafc', color: c.isPublished ? '#2563EB' : '#64748B' }}>
+                    {c.isPublished ? 'Published' : 'Draft'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <div className={hub.splitGrid}>
+          <section className={hub.card}>
+            <div className={hub.cardHeader}>
+              <div>
+                <h2 className={hub.cardTitle}>Recent Platform Activities</h2>
+                <p className={hub.cardHint}>Registrations, content, and payments</p>
+              </div>
+              <div className={hub.rangeTabs}>
                 <button
-                  onClick={() => setStatusFilter('all')}
-                  className={`${styles.statusTab} ${
-                    statusFilter === 'all' ? styles.statusTabActive : ''
-                  }`}
+                  className={`${hub.rangeTab} ${activityFilter === 'ALL' ? hub.rangeTabActive : ''}`}
+                  onClick={() => setActivityFilter('ALL')}
                 >
                   All
                 </button>
                 <button
-                  onClick={() => setStatusFilter('completed')}
-                  className={`${styles.statusTab} ${
-                    statusFilter === 'completed' ? styles.statusTabActive : ''
-                  }`}
+                  className={`${hub.rangeTab} ${activityFilter === 'REGISTRATIONS' ? hub.rangeTabActive : ''}`}
+                  onClick={() => setActivityFilter('REGISTRATIONS')}
                 >
-                  Completed
+                  Users
                 </button>
                 <button
-                  onClick={() => setStatusFilter('pending')}
-                  className={`${styles.statusTab} ${
-                    statusFilter === 'pending' ? styles.statusTabActive : ''
-                  }`}
+                  className={`${hub.rangeTab} ${activityFilter === 'CONTENT' ? hub.rangeTabActive : ''}`}
+                  onClick={() => setActivityFilter('CONTENT')}
                 >
-                  Pending
+                  Content
+                </button>
+                <button
+                  className={`${hub.rangeTab} ${activityFilter === 'PAYMENTS' ? hub.rangeTabActive : ''}`}
+                  onClick={() => setActivityFilter('PAYMENTS')}
+                >
+                  Payments
                 </button>
               </div>
+            </div>
+            <div className={hub.timeline}>
+              {filteredActivities.length === 0 && <div className={hub.empty}>No recorded activity yet.</div>}
+              {filteredActivities.map((item, i) => {
+                const Icon = item.icon;
+                return (
+                  <div key={`${item.at}-${i}`} className={hub.timelineItem}>
+                    <div className={hub.timelineIcon} style={{ background: `${item.color}18`, color: item.color }}>
+                      <Icon size={14} />
+                    </div>
+                    <div className={hub.itemTitle} style={{ fontWeight: 600 }}>
+                      {item.title}
+                    </div>
+                    <div className={hub.itemMeta}>{relativeTime(item.at)}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
 
-              <div className={styles.searchBox}>
-                <Search size={15} className={styles.searchIcon} />
-                <input
-                  type="text"
-                  placeholder="Search student, email, or course..."
-                  value={searchFilter}
-                  onChange={(e) => setSearchFilter(e.target.value)}
-                  className={styles.searchInput}
-                />
-                {searchFilter && (
-                  <button
-                    onClick={() => setSearchFilter('')}
-                    className={styles.clearSearchBtn}
-                  >
-                    ×
-                  </button>
-                )}
+          <section className={hub.card}>
+            <div className={hub.cardHeader}>
+              <div>
+                <h2 className={hub.cardTitle}>Payment Overview</h2>
+                <p className={hub.cardHint}>Enrollment payment statuses · method is not stored</p>
+              </div>
+              <Link href="/admin/payments" className={hub.linkBtn}>
+                View All Transactions
+              </Link>
+            </div>
+            <div className={hub.statsGrid} style={{ gridTemplateColumns: '1fr 1fr', padding: '0 12px', marginBottom: 0 }}>
+              <div>
+                <div className={hub.statValue} style={{ fontSize: '1.2rem' }}>{formatINR(totalRevenue)}</div>
+                <div className={hub.statLabel}>Total revenue</div>
+              </div>
+              <div>
+                <div className={hub.statValue} style={{ fontSize: '1.2rem' }}>{successful}</div>
+                <div className={hub.statLabel}>Successful</div>
+              </div>
+              <div>
+                <div className={hub.statValue} style={{ fontSize: '1.2rem' }}>{pendingPay}</div>
+                <div className={hub.statLabel}>Pending</div>
+              </div>
+              <div>
+                <div className={hub.statValue} style={{ fontSize: '1.2rem' }}>{failedPay}</div>
+                <div className={hub.statLabel}>Other / failed</div>
               </div>
             </div>
-          </div>
-
-          {/* Table Area */}
-          <div className={styles.tableContainer}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Student Profile</th>
-                  <th>Enrolled Course</th>
-                  <th>Payment Status</th>
-                  <th>Course Progress</th>
-                  <th>Date Registered</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredEnrollments.map((enrollment) => {
-                  const student = students.find((s) => s.id === enrollment.studentId);
-                  const course = courses.find((c) => c.id === enrollment.courseId);
-                  const isCompleted =
-                    enrollment.paymentStatus === 'completed' || enrollment.paymentStatus === 'assigned';
-                  const studentName = student?.name?.trim() || 'Anonymous Learner';
-                  const avatarGradient = getAvatarGradient(studentName);
-                  const initialChar = (studentName.charAt(0) || 'L').toUpperCase();
-                  const courseName = course?.title || 'Academic Course';
-                  const progressVal = typeof enrollment.progress === 'number' ? enrollment.progress : 0;
-                  const dateDisplay = enrollment.enrolledAt ? formatDate(enrollment.enrolledAt) : 'Recently';
-
-                  return (
-                    <tr key={enrollment.id} className={styles.tableRow}>
-                      <td>
-                        <div className={styles.studentProfileCell}>
-                          <div
-                            className={styles.studentAvatar}
-                            style={{ background: avatarGradient }}
-                          >
-                            {initialChar}
-                          </div>
-                          <div className={styles.studentDetails}>
-                            <span className={styles.studentName}>{studentName}</span>
-                            <span className={styles.studentEmail}>
-                              {student?.email || 'No email attached'}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className={styles.courseCell}>
-                          <div className={styles.courseIconWrap}>
-                            <BookOpen size={14} />
-                          </div>
-                          <span className={styles.courseName}>{courseName}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span
-                          className={`${styles.statusPill} ${
-                            isCompleted ? styles.statusSuccess : styles.statusWarning
-                          }`}
-                        >
-                          <span className={styles.statusPillDot} />
-                          {enrollment.paymentStatus}
-                        </span>
-                      </td>
-                      <td>
-                        <div className={styles.progressCell}>
-                          <div className={styles.progressTrack}>
-                            <motion.div
-                              className={styles.progressBar}
-                              initial={{ width: 0 }}
-                              animate={{ width: `${progressVal}%` }}
-                              transition={{ duration: 0.6, ease: 'easeOut' }}
-                            />
-                          </div>
-                          <span className={styles.progressValue}>
-                            {progressVal}%
-                          </span>
-                        </div>
-                      </td>
-                      <td>
-                        <div className={styles.dateCell}>
-                          <Clock size={13} className={styles.dateIcon} />
-                          <span>{dateDisplay}</span>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-                {filteredEnrollments.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className={styles.emptyState}>
-                      <div className={styles.emptyStateInner}>
-                        <div className={styles.emptyIconCircle}>
-                          <Search size={24} />
-                        </div>
-                        <h4 className={styles.emptyStateTitle}>No enrollments found</h4>
-                        <p className={styles.emptyStateText}>
-                          Try adjusting your search terms or status filters.
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+            <div className={hub.list}>
+              {recentTx.map((e) => {
+                const student = students.find((s) => s.id === e.studentId);
+                const course = courses.find((c) => c.id === e.courseId);
+                return (
+                  <div key={e.id} className={hub.listItem}>
+                    <div className={hub.thumb} style={{ background: '#eff6ff', color: '#2563EB' }}>
+                      <IndianRupee size={16} />
+                    </div>
+                    <div>
+                      <div className={hub.itemTitle}>{student?.name || 'Student'} · {course?.title || 'Course'}</div>
+                      <div className={hub.itemMeta}>{formatINR(coursePrice(e.courseId))} · {new Date(e.enrolledAt).toLocaleDateString('en-IN')}</div>
+                    </div>
+                    <span className={hub.pill}>{e.paymentStatus}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className={hub.chartBody} style={{ minHeight: 140 }}>
+              <LineChart data={revenueSeries} color="#16A34A" fill valuePrefix="₹" height={140} />
+            </div>
+          </section>
         </div>
 
-        {/* ── BENTO DUAL MASTER CARDS (TOP COURSES & FACULTY) ── */}
-        <div className={styles.bentoGrid}>
-            {/* Top Enrolled Courses Bento Card */}
-            <div className={styles.bentoCard}>
-              <div className={styles.bentoCardHeader}>
-                <div className={styles.bentoHeaderLeft}>
-                  <div className={styles.bentoIconBadgeBlue}>
-                    <BookOpen size={17} />
-                  </div>
-                  <div>
-                    <h3 className={styles.bentoTitle}>Top Enrolled Courses</h3>
-                    <span className={styles.bentoSubtitle}>Ranked by active enrollments</span>
-                  </div>
-                </div>
-                <Link href="/admin/courses" className={styles.bentoViewAll}>
-                  <span>View All</span>
-                  <ArrowRight size={13} className={styles.bentoArrow} />
-                </Link>
-              </div>
-
-              <div className={styles.bentoList}>
-                {courses.length === 0 ? (
-                  <div className={styles.bentoEmpty}>No courses available.</div>
-                ) : (
-                  [...courses]
-                    .sort((a, b) => (b.studentsEnrolled || 0) - (a.studentsEnrolled || 0))
-                    .slice(0, 4)
-                    .map((course, i) => {
-                      const courseTitle = course?.title || 'Academic Course';
-                      const enrolledCount = course?.studentsEnrolled || 0;
-                      return (
-                        <div key={course.id} className={styles.bentoItem}>
-                          <div
-                            className={`${styles.rankIndicator} ${
-                              i === 0
-                                ? styles.rankGold
-                                : i === 1
-                                ? styles.rankSilver
-                                : i === 2
-                                ? styles.rankBronze
-                                : styles.rankStandard
-                            }`}
-                          >
-                            {i + 1 < 10 ? `0${i + 1}` : i + 1}
-                          </div>
-
-                          <div className={styles.bentoItemInfo}>
-                            <span className={styles.bentoItemTitle}>{courseTitle}</span>
-                            <span className={styles.bentoItemMeta}>
-                              {enrolledCount} Active Learners
-                            </span>
-                          </div>
-
-                          <div
-                            className={styles.courseThumbAvatar}
-                            style={{ background: getAvatarGradient(courseTitle) }}
-                          >
-                            {(courseTitle.charAt(0) || 'C').toUpperCase()}
-                          </div>
-                        </div>
-                      );
-                    })
-                )}
-              </div>
-            </div>
-
-            {/* Top Faculty Mentors Bento Card */}
-            <div className={styles.bentoCard}>
-              <div className={styles.bentoCardHeader}>
-                <div className={styles.bentoHeaderLeft}>
-                  <div className={styles.bentoIconBadgePurple}>
-                    <Award size={17} />
-                  </div>
-                  <div>
-                    <h3 className={styles.bentoTitle}>Faculty Mentors</h3>
-                    <span className={styles.bentoSubtitle}>Verified instructors & mentors</span>
-                  </div>
-                </div>
-                <Link href="/admin/trainers" className={styles.bentoViewAll}>
-                  <span>View All</span>
-                  <ArrowRight size={13} className={styles.bentoArrow} />
-                </Link>
-              </div>
-
-              <div className={styles.bentoList}>
-                {trainers.length === 0 ? (
-                  <div className={styles.bentoEmpty}>No trainers registered.</div>
-                ) : (
-                  trainers
-                    .map((t) => {
-                      const trainerCourses = courses.filter((c) => c.trainerId === t.id);
-
-                      const studentsCount = trainerCourses.reduce((sum, c) => sum + (c.studentsEnrolled || 0), 0);
-
-                      return { ...t, studentsCount };
-                    })
-                    .sort((a, b) => b.studentsCount - a.studentsCount)
-                    .slice(0, 4)
-                    .map((trainer, i) => {
-                      const trainerName = trainer?.name?.trim() || 'Faculty Mentor';
-                      return (
-                        <div key={trainer.id} className={styles.bentoItem}>
-                          <div
-                            className={`${styles.rankIndicator} ${
-                              i === 0
-                                ? styles.rankGold
-                                : i === 1
-                                ? styles.rankSilver
-                                : i === 2
-                                ? styles.rankBronze
-                                : styles.rankStandard
-                            }`}
-                          >
-                            {i + 1 < 10 ? `0${i + 1}` : i + 1}
-                          </div>
-
-                          <div className={styles.bentoItemInfo}>
-                            <span className={styles.bentoItemTitle}>{trainerName}</span>
-                            <span className={styles.bentoItemMeta}>
-                              {trainer.studentsCount.toLocaleString()} Students Mentored
-                            </span>
-                          </div>
-
-                          <div
-                            className={styles.trainerThumbAvatar}
-                            style={{ background: getAvatarGradient(trainerName) }}
-                          >
-                            {(trainerName.charAt(0) || 'M').toUpperCase()}
-                          </div>
-                        </div>
-
-                      );
-                    })
-
-                )}
-              </div>
+        <section className={hub.card} style={{ marginBottom: 14 }}>
+          <div className={hub.cardHeader}>
+            <div>
+              <h2 className={hub.cardTitle}>Revenue by Course</h2>
+              <p className={hub.cardHint}>Top performing courses by completed payment revenue</p>
             </div>
           </div>
-        </div>
+          <div className={hub.list}>
+            {revenueByCourse.length === 0 && <div className={hub.empty}>No revenue data yet.</div>}
+            {revenueByCourse.map((item) => (
+              <div key={item.course.id} className={hub.listItem}>
+                <div className={hub.thumb} style={{ background: avatarColor(item.course.title) }}>
+                  {item.course.logo && (item.course.logo.startsWith('http') || item.course.logo.startsWith('/')) ? (
+                    <img src={item.course.logo} alt="" />
+                  ) : (
+                    (item.course.title.charAt(0) || 'C').toUpperCase()
+                  )}
+                </div>
+                <div>
+                  <div className={hub.itemTitle}>{item.course.title}</div>
+                  <div className={hub.itemMeta}>{item.enrollments} enrollments</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div className={hub.itemTitle} style={{ color: '#16A34A' }}>{formatINR(item.revenue)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className={hub.card}>
+          <div className={hub.cardHeader}>
+            <div>
+              <h2 className={hub.cardTitle}>System Overview</h2>
+              <p className={hub.cardHint}>Live counts from users, content, and requests</p>
+            </div>
+          </div>
+          <div className={hub.statsGrid} style={{ padding: '0 12px 16px' }}>
+            <OverviewMetric icon={Users} label="Registered users" value={users.length} />
+            <OverviewMetric icon={CheckCircle2} label="Onboarded users" value={users.filter((u) => u.isOnboarded).length} />
+            <OverviewMetric icon={BookOpen} label="Published courses" value={publishedCourses} />
+          </div>
+        </section>
+      </div>
     </PageTransition>
+  );
+}
+
+function OverviewMetric({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof Users;
+  label: string;
+  value: number;
+}) {
+  return (
+    <div className={hub.statCard} style={{ boxShadow: 'none' }}>
+      <div className={hub.statTop}>
+        <div className={hub.statIcon} style={{ background: '#eff6ff', borderColor: '#dbeafe', color: '#2563EB' }}>
+          <Icon size={16} />
+        </div>
+      </div>
+      <div className={hub.statValue}>{value}</div>
+      <div className={hub.statLabel}>{label}</div>
+    </div>
   );
 }

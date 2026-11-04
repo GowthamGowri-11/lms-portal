@@ -4,11 +4,9 @@
 
 .pageContainer {
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 32px;
-  background-color: #f8fafc;
-  min-height: 100vh;
+  max-width: none;
+  margin: 0;
+  padding: 0 0 24px;
   box-sizing: border-box;
 }
 

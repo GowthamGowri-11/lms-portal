@@ -1573,10 +1573,10 @@ export default function TrainerDashboardClient({
                       >
                         <option value="FINAL">At the end of the course (Final Assessment)</option>
                         {courses.find((c) => c.id === selectedQuizCourseId)?.modules?.map((m, mIdx) => (
-                          <optgroup key={m.id} label={`Module ${mIdx + 1}: ${m.title}`}>
+                          <optgroup key={`module-${m.id}`} label={`Module ${mIdx + 1}: ${m.title}`}>
                             <option value={`MOD_${m.id}`}>At Module end (General Module Quiz)</option>
                             {m.lessons?.map((les, lIdx) => (
-                              <option key={les.id} value={`LESSON_${les.id}`}>After Lesson {lIdx + 1}: {les.title}</option>
+                              <option key={`lesson-${les.id}`} value={`LESSON_${les.id}`}>After Lesson {lIdx + 1}: {les.title}</option>
                             ))}
                           </optgroup>
                         ))}

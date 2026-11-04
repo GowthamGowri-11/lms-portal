@@ -12,18 +12,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Home,
-  Code,
   LogOut,
   PlayCircle,
-  CircleHelp,
   UserCircle,
-  MessageSquare,
-
   CreditCard,
   Menu,
   X,
-  ShieldAlert,
-
+  Award,
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import BrandLogo from '@/components/ui/BrandLogo';
@@ -35,13 +30,9 @@ const menuItems = [
   { href: '/admin/payments', label: 'Payments', icon: CreditCard },
   { href: '/admin/courses', label: 'Courses', icon: BookOpen },
   { href: '/admin/lessons', label: 'Lessons', icon: PlayCircle },
-  { href: '/admin/quizzes', label: 'Quizzes', icon: CircleHelp },
-  { href: '/admin/problems', label: 'Coding Problems', icon: Code },
-  { href: '/admin/trainers', label: 'Trainers', icon: Users },
+  { href: '/admin/trainers', label: 'Trainers', icon: Award },
   { href: '/admin/students', label: 'Students', icon: GraduationCap },
   { href: '/admin/developers', label: 'Developers', icon: UserCircle },
-  { href: '/admin/requests', label: 'Requests', icon: ShieldAlert },
-  { href: '/admin/queries', label: 'Student Queries', icon: MessageSquare },
 ];
 
 interface AdminSidebarProps {

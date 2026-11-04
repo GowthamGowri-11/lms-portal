@@ -1,6 +1,6 @@
 /* ===== ADMIN TRAINERS PAGE ===== */
 
-.page { max-width: 1200px; margin: 0 auto; }
+.page { width: 100%; max-width: none; margin: 0; }
 
 .header {
   display: flex; align-items: flex-start;

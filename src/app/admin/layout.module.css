@@ -1,6 +1,6 @@
 .adminLayout {
   /* Master Premium Light Theme Variables */
-  --bg-primary: #fafbfc;
+  --bg-primary: #F4F7FC;
   --bg-secondary: #ffffff;
   --bg-tertiary: #f1f5f9;
   --bg-card: #ffffff;
@@ -25,8 +25,8 @@
 .adminMain {
   flex: 1;
   margin-left: 270px;
-  padding: 2.25rem 2.5rem;
-  background-color: #f8fafc;
+  padding: 1.35rem 1.5rem 2rem;
+  background-color: #F4F7FC;
   height: 100vh;
   overflow-y: auto;
   transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);

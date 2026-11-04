@@ -24,10 +24,11 @@ import {
   AlertCircle,
   ExternalLink,
   Sparkles,
+  Download,
 } from 'lucide-react';
 import { PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import { createCourse, updateCourse, deleteCourse } from '@/lib/actions';
-import { CourseWithArrays } from '@/lib/utils';
+import { CourseWithArrays, exportToCSV } from '@/lib/utils';
 import { Trainer, Student, Enrollment } from '@/generated/prisma/client';
 import { getCourseVisual } from '@/lib/courseImages';
 import styles from './page.module.css';
@@ -456,6 +457,47 @@ export default function AdminCoursesClient({
                 <List size={16} />
               </button>
             </div>
+
+            <button
+              onClick={() => exportToCSV(
+                filteredCourses.map(c => ({
+                  title: c.title,
+                  category: c.category,
+                  trainer: trainers.find(t => t.id === c.trainerId)?.name || 'Unassigned',
+                  studentsEnrolled: c.studentsEnrolled,
+                  price: c.price,
+                  status: c.isPublished ? 'Published' : 'Draft',
+                  lessons: c.lessonsCount,
+                  createdAt: new Date(c.createdAt).toLocaleDateString()
+                })),
+                'courses_export',
+                [
+                  { key: 'title', label: 'Title' },
+                  { key: 'category', label: 'Category' },
+                  { key: 'trainer', label: 'Trainer' },
+                  { key: 'studentsEnrolled', label: 'Students Enrolled' },
+                  { key: 'price', label: 'Price' },
+                  { key: 'status', label: 'Status' },
+                  { key: 'lessons', label: 'Lessons' },
+                  { key: 'createdAt', label: 'Created Date' }
+                ]
+              )}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                border: '1px solid #E5EAF2',
+                background: '#fff',
+                color: '#111827',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              <Download size={16} /> Export CSV
+            </button>
 
             <div className={styles.filterCountBadge}>
               Showing {filteredCourses.length} of {courses.length} courses

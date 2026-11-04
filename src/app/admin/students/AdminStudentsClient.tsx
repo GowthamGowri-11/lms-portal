@@ -2,24 +2,28 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GraduationCap, Mail, BookOpen, Award, Search, UserPlus, X, CheckCircle2, AlertCircle } from 'lucide-react';
+import { GraduationCap, Mail, BookOpen, Award, Search, UserPlus, X, CheckCircle2, AlertCircle, Download } from 'lucide-react';
 import { FadeInUp, PageTransition, StaggerContainer, StaggerItem } from '@/components/animations/MotionWrappers';
 import styles from './page.module.css';
-import { CourseWithArrays } from '@/lib/utils';
+import { CourseWithArrays, exportToCSV } from '@/lib/utils';
 import { Student, Enrollment } from '@/generated/prisma/client';
+
+type StudentRow = Student & { user?: { isOnboarded: boolean } | null };
 
 export default function AdminStudentsClient({
   students,
   courses,
   enrollments: initialEnrollments
 }: {
-  students: Student[],
+  students: StudentRow[],
   courses: CourseWithArrays[],
   enrollments: Enrollment[]
 }) {
   const [enrollments, setEnrollments] = useState<Enrollment[]>(initialEnrollments);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCourseId, setSelectedCourseId] = useState('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending'>('all');
+  const [selectedStudent, setSelectedStudent] = useState<StudentRow | null>(null);
 
   // Assign modal state
   const [assignStudent, setAssignStudent] = useState<Student | null>(null);
@@ -96,10 +100,17 @@ export default function AdminStudentsClient({
         const matchesEmail = student.email.toLowerCase().includes(query);
         if (!matchesName && !matchesEmail) return false;
       }
+
+      if (statusFilter === 'active' && student.user && !student.user.isOnboarded) return false;
+      if (statusFilter === 'pending' && student.user && student.user.isOnboarded) return false;
       
       return true;
     });
-  }, [students, enrollments, searchQuery, selectedCourseId]);
+  }, [students, enrollments, searchQuery, selectedCourseId, statusFilter]);
+
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const newStudents = students.filter((s) => new Date(s.createdAt).getTime() >= weekAgo).length;
+  const activeStudents = students.filter((s) => !s.user || s.user.isOnboarded).length;
 
   return (
     <PageTransition>
@@ -115,16 +126,16 @@ export default function AdminStudentsClient({
           <div className={styles.filterNav}>
             <div className={styles.searchBox}>
               <Search size={18} className={styles.searchIcon} />
-              <input 
-                type="text" 
-                placeholder="Search by student name or email (gmail)..." 
+              <input
+                type="text"
+                placeholder="Search by student name or email (gmail)..."
                 className={styles.searchInput}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            
-            <select 
+
+            <select
               className={styles.courseSelect}
               value={selectedCourseId}
               onChange={(e) => setSelectedCourseId(e.target.value)}
@@ -136,6 +147,41 @@ export default function AdminStudentsClient({
                 </option>
               ))}
             </select>
+
+            <button
+              onClick={() => exportToCSV(
+                filteredStudents.map(s => ({
+                  name: s.name,
+                  email: s.email,
+                  registered: new Date(s.createdAt).toLocaleDateString(),
+                  enrolledCourses: enrollments.filter(e => e.studentId === s.id).length,
+                  status: s.user?.isOnboarded ? 'Active' : 'Pending'
+                })),
+                'students_export',
+                [
+                  { key: 'name', label: 'Name' },
+                  { key: 'email', label: 'Email' },
+                  { key: 'registered', label: 'Registered Date' },
+                  { key: 'enrolledCourses', label: 'Enrolled Courses' },
+                  { key: 'status', label: 'Status' }
+                ]
+              )}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                border: '1px solid #E5EAF2',
+                background: '#fff',
+                color: '#111827',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              <Download size={16} /> Export CSV
+            </button>
           </div>
         </FadeInUp>
 

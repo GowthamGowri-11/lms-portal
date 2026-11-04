@@ -112,6 +112,18 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
     [courses]
   );
 
+  const lessonInventory = useMemo(() => {
+    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const rows = courses.flatMap((c) =>
+      c.modules.flatMap((m) => m.lessons.map((l) => ({ ...l, published: c.isPublished })))
+    );
+    return {
+      published: rows.filter((l) => l.published).length,
+      draft: rows.filter((l) => !l.published).length,
+      recent: rows.filter((l) => new Date(l.createdAt).getTime() >= weekAgo).length,
+    };
+  }, [courses]);
+
   // Filtered courses
   const filteredCourses = useMemo(() => {
     return courses.filter((c) => {
@@ -406,43 +418,41 @@ export default function AdminLessonsClient({ courses }: { courses: CourseWithDat
             <div className={styles.statsGrid}>
               <div className={styles.statCard}>
                 <div className={`${styles.statIconBox} ${styles.statIconBlue}`}>
-                  <BookOpen size={24} />
+                  <PlayCircle size={24} />
                 </div>
                 <div className={styles.statContent}>
-                  <div className={styles.statValue}>{totalCourses}</div>
-                  <div className={styles.statLabel}>Total Tracks</div>
+                  <div className={styles.statValue}>{totalLessons}</div>
+                  <div className={styles.statLabel}>Total Lessons</div>
                 </div>
               </div>
 
               <div className={styles.statCard}>
                 <div className={`${styles.statIconBox} ${styles.statIconEmerald}`}>
-                  <Layers size={24} />
+                  <CheckCircle2 size={24} />
                 </div>
                 <div className={styles.statContent}>
-                  <div className={styles.statValue}>{totalTopics}</div>
-                  <div className={styles.statLabel}>Course Topics</div>
+                  <div className={styles.statValue}>{lessonInventory.published}</div>
+                  <div className={styles.statLabel}>Published (on live courses)</div>
                 </div>
               </div>
 
               <div className={styles.statCard}>
                 <div className={`${styles.statIconBox} ${styles.statIconPurple}`}>
-                  <PlayCircle size={24} />
+                  <Layers size={24} />
                 </div>
                 <div className={styles.statContent}>
-                  <div className={styles.statValue}>{totalLessons}</div>
-                  <div className={styles.statLabel}>Active Lessons</div>
+                  <div className={styles.statValue}>{lessonInventory.draft}</div>
+                  <div className={styles.statLabel}>Draft (unpublished courses)</div>
                 </div>
               </div>
 
               <div className={styles.statCard}>
                 <div className={`${styles.statIconBox} ${styles.statIconAmber}`}>
-                  <CheckCircle2 size={24} />
+                  <BookOpen size={24} />
                 </div>
                 <div className={styles.statContent}>
-                  <div className={styles.statValue}>
-                    {activeSyllabusCount} / {totalCourses}
-                  </div>
-                  <div className={styles.statLabel}>Syllabi Ready</div>
+                  <div className={styles.statValue}>{lessonInventory.recent}</div>
+                  <div className={styles.statLabel}>Added in last 7 days · {totalTopics} topics</div>
                 </div>
               </div>
             </div>

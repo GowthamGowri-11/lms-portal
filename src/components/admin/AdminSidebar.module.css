@@ -116,15 +116,15 @@
 }
 
 .navItem.active {
-  color: #0f172a;
+  color: #1d4ed8;
   font-weight: 700;
 }
 
 .activeBg {
   position: absolute;
   inset: 0;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
   border-radius: 10px;
   z-index: -1;
 }
