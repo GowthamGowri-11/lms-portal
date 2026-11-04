@@ -243,7 +243,7 @@ class MeshBuilder:
         self.colors: list[list[float]] = []
         self.indices: list[int] = []
 
-    def add_face(self, verts: np.ndarray, normal: np.ndarray | None = None):
+    def add_face(self, verts: np.ndarray, normal: np.ndarray | None = None, is_grey: bool = False):
         """Add a triangle or quad (as two tris). verts shape (3 or 4, 3)."""
         if normal is None:
             e1 = verts[1] - verts[0]
@@ -257,13 +257,13 @@ class MeshBuilder:
         for v in verts:
             self.positions.append(v.tolist())
             self.normals.append(n.tolist())
-            self.colors.append(color_at(v[0], v[1], v[2]))
+            self.colors.append(color_at(v[0], v[1], v[2], is_grey=is_grey))
         if len(verts) == 3:
             self.indices.extend([base, base + 1, base + 2])
         else:
             self.indices.extend([base, base + 1, base + 2, base, base + 2, base + 3])
 
-    def add_tris(self, pts3: np.ndarray, faces: np.ndarray, z_normal_sign: float):
+    def add_tris(self, pts3: np.ndarray, faces: np.ndarray, z_normal_sign: float, is_grey: bool = False):
         for f in faces:
             v = pts3[list(f)]
             e1 = v[1] - v[0]
@@ -271,7 +271,7 @@ class MeshBuilder:
             n = np.cross(e1, e2)
             if n[2] * z_normal_sign < 0:
                 v = v[[0, 2, 1]]
-            self.add_face(v)
+            self.add_face(v, is_grey=is_grey)
 
     def add_strip_sides(self, a: np.ndarray, b: np.ndarray, za0, za1, zb0, zb1):
         """Connect two 2D rings at possibly different z values. a/b (N,2)."""
@@ -291,21 +291,53 @@ class MeshBuilder:
             self.add_face(np.stack([p0, p1, p2, p3]))
 
 
-def color_at(x: float, y: float, z: float) -> list[float]:
-    """Bright cyan (top / lightning) -> electric blue -> violet (bottom-left)."""
-    yn = float(np.clip((y + 1.05) / 2.15, 0, 1))
-    xn = float(np.clip((x + 1.35) / 2.7, 0, 1))
-    purple = np.array([0.72, 0.22, 1.00])
-    blue = np.array([0.12, 0.48, 1.00])
-    cyan = np.array([0.18, 0.95, 1.00])
-    t = yn ** 0.9
-    col = (1 - t) * ((1 - t) * purple + t * blue) + t * ((1 - t) * blue + t * cyan)
-    col = col * (1 - 0.45 * xn) + cyan * (0.45 * xn)
-    col = col * (1 - 0.35 * (1 - yn) * (1 - xn)) + purple * (0.35 * (1 - yn) * (1 - xn))
-    # Rim highlights on beveled z-extremes
+def color_at(x: float, y: float, z: float, is_grey: bool = False) -> list[float]:
+    """Main body: Vivid Cyan (#00F0FF) -> Electric Blue (#0875F5) -> Royal Blue (#2563EB) -> Royal Purple (#9333EA).
+    Detached component: Polished Platinum Silver -> Slate Grey."""
+    if is_grey:
+        yn = float(np.clip((y - (-0.78)) / ((-0.01) - (-0.78) + 1e-6), 0, 1))
+        top_silver = np.array([0.88, 0.92, 0.96])  # light platinum silver (#e2e8f0)
+        mid_silver = np.array([0.62, 0.68, 0.76])  # metallic slate silver (#94a3b8)
+        bot_slate  = np.array([0.38, 0.44, 0.52])  # deep slate grey (#475569)
+        col = (1 - yn) * ((1 - yn) * bot_slate + yn * mid_silver) + yn * ((1 - yn) * mid_silver + yn * top_silver)
+        rim = min(1.0, abs(abs(z) - THICKNESS * 0.5) / (FACET + BEVEL + 1e-6))
+        col = col * (1 - 0.18 * rim) + np.array([0.94, 0.98, 1.0]) * (0.18 * rim)
+        col = np.clip(col, 0, 1)
+        return [float(col[0]), float(col[1]), float(col[2]), 1.0]
+
+    # Vivid 4-stop gradient matching the original ATLYX logo reference
+    # y is in world-space: top apex ~0.98, bottom ~-1.05
+    yn = float(np.clip((y + 1.05) / 2.05, 0, 1))   # 0=bottom-purple .. 1=top-cyan
+    xn = float(np.clip((x + 1.35) / 2.7, 0, 1))    # 0=left .. 1=right
+
+    # Four key colours from the reference image
+    purple     = np.array([0.576, 0.200, 0.918])   # #9333EA royal purple
+    royal_blue = np.array([0.145, 0.388, 0.922])   # #2563EB deep royal blue
+    elec_blue  = np.array([0.031, 0.459, 0.961])   # #0875F5 electric blue
+    cyan       = np.array([0.000, 0.941, 1.000])   # #00F0FF bright cyan
+
+    # Piecewise lerp: purple->royal_blue (0..0.35), royal_blue->elec_blue (0.35..0.65), elec_blue->cyan (0.65..1.0)
+    if yn < 0.35:
+        t = yn / 0.35
+        col = (1 - t) * purple + t * royal_blue
+    elif yn < 0.65:
+        t = (yn - 0.35) / 0.30
+        col = (1 - t) * royal_blue + t * elec_blue
+    else:
+        t = (yn - 0.65) / 0.35
+        col = (1 - t) * elec_blue + t * cyan
+
+    # Slight horizontal cyan tilt on the right side (lightning slash)
+    col = col * (1 - 0.30 * xn) + cyan * (0.30 * xn)
+    # Extra purple push on bottom-left corner
+    col = col * (1 - 0.28 * (1 - yn) * (1 - xn)) + purple * (0.28 * (1 - yn) * (1 - xn))
+
+    # Thin bevel rim highlight — white-cyan sheen on edges (keep subtle)
     rim = min(1.0, abs(abs(z) - THICKNESS * 0.5) / (FACET + BEVEL + 1e-6))
-    col = col * (1 - 0.12 * rim) + np.array([0.75, 0.98, 1.0]) * (0.12 * rim)
-    col = np.clip(col * 1.12, 0, 1)
+    col = col * (1 - 0.12 * rim) + np.array([0.80, 0.97, 1.0]) * (0.12 * rim)
+
+    # No global brightness boost — keep colors saturated, not blown-out
+    col = np.clip(col, 0, 1)
     return [float(col[0]), float(col[1]), float(col[2]), 1.0]
 
 
@@ -325,7 +357,7 @@ def shapely_rings(geom):
     return ensure_ccw(exterior), [ensure_cw(h) for h in holes]
 
 
-def wall_ring(ring: np.ndarray, z0: float, z1: float, reverse: bool, mb: MeshBuilder):
+def wall_ring(ring: np.ndarray, z0: float, z1: float, reverse: bool, mb: MeshBuilder, is_grey: bool = False):
     n = len(ring)
     for i in range(n):
         j = (i + 1) % n
@@ -334,12 +366,12 @@ def wall_ring(ring: np.ndarray, z0: float, z1: float, reverse: bool, mb: MeshBui
         p2 = np.array([ring[j, 0], ring[j, 1], z1])
         p3 = np.array([ring[i, 0], ring[i, 1], z1])
         if reverse:
-            mb.add_face(np.stack([p0, p3, p2, p1]))
+            mb.add_face(np.stack([p0, p3, p2, p1]), is_grey=is_grey)
         else:
-            mb.add_face(np.stack([p0, p1, p2, p3]))
+            mb.add_face(np.stack([p0, p1, p2, p3]), is_grey=is_grey)
 
 
-def bevel_to_inset(ring, inset, za, zb, reverse, mb: MeshBuilder):
+def bevel_to_inset(ring, inset, za, zb, reverse, mb: MeshBuilder, is_grey: bool = False):
     mapped = np.array([closest_on_ring(p, inset) for p in ring])
     n = len(ring)
     for i in range(n):
@@ -349,12 +381,12 @@ def bevel_to_inset(ring, inset, za, zb, reverse, mb: MeshBuilder):
         p2 = np.array([mapped[j, 0], mapped[j, 1], zb])
         p3 = np.array([mapped[i, 0], mapped[i, 1], zb])
         if reverse:
-            mb.add_face(np.stack([p0, p3, p2, p1]))
+            mb.add_face(np.stack([p0, p3, p2, p1]), is_grey=is_grey)
         else:
-            mb.add_face(np.stack([p0, p1, p2, p3]))
+            mb.add_face(np.stack([p0, p1, p2, p3]), is_grey=is_grey)
 
 
-def build_piece(outer_xy: np.ndarray, hole_xy: np.ndarray | None, mb: MeshBuilder):
+def build_piece(outer_xy: np.ndarray, hole_xy: np.ndarray | None, mb: MeshBuilder, is_grey: bool = False):
     outer = ensure_ccw(subdivide_ring(outer_xy, 0.10))
     holes_xy = []
     if hole_xy is not None:
@@ -376,21 +408,21 @@ def build_piece(outer_xy: np.ndarray, hole_xy: np.ndarray | None, mb: MeshBuilde
     ring_b, holes_b = shapely_rings(inset1)
     ring_c, holes_c = shapely_rings(inset2) if not inset2.is_empty else (ring_b, holes_b)
 
-    wall_ring(outer, z_bw, z_fw, reverse=False, mb=mb)
+    wall_ring(outer, z_bw, z_fw, reverse=False, mb=mb, is_grey=is_grey)
     for h in holes_xy:
-        wall_ring(h, z_fw, z_bw, reverse=False, mb=mb)
+        wall_ring(h, z_fw, z_bw, reverse=False, mb=mb, is_grey=is_grey)
 
-    bevel_to_inset(outer, ring_b, z_fw, z_front, reverse=False, mb=mb)
-    bevel_to_inset(outer, ring_b, z_bw, z_back, reverse=True, mb=mb)
-    bevel_to_inset(ring_b, ring_c, z_front, z_facet_f, reverse=False, mb=mb)
-    bevel_to_inset(ring_b, ring_c, z_back, z_facet_b, reverse=True, mb=mb)
+    bevel_to_inset(outer, ring_b, z_fw, z_front, reverse=False, mb=mb, is_grey=is_grey)
+    bevel_to_inset(outer, ring_b, z_bw, z_back, reverse=True, mb=mb, is_grey=is_grey)
+    bevel_to_inset(ring_b, ring_c, z_front, z_facet_f, reverse=False, mb=mb, is_grey=is_grey)
+    bevel_to_inset(ring_b, ring_c, z_back, z_facet_b, reverse=True, mb=mb, is_grey=is_grey)
 
     if holes_xy and holes_b:
-        bevel_to_inset(holes_xy[0], holes_b[0], z_fw, z_front, reverse=True, mb=mb)
-        bevel_to_inset(holes_xy[0], holes_b[0], z_bw, z_back, reverse=False, mb=mb)
+        bevel_to_inset(holes_xy[0], holes_b[0], z_fw, z_front, reverse=True, mb=mb, is_grey=is_grey)
+        bevel_to_inset(holes_xy[0], holes_b[0], z_bw, z_back, reverse=False, mb=mb, is_grey=is_grey)
     if holes_b and holes_c:
-        bevel_to_inset(holes_b[0], holes_c[0], z_front, z_facet_f, reverse=True, mb=mb)
-        bevel_to_inset(holes_b[0], holes_c[0], z_back, z_facet_b, reverse=False, mb=mb)
+        bevel_to_inset(holes_b[0], holes_c[0], z_front, z_facet_f, reverse=True, mb=mb, is_grey=is_grey)
+        bevel_to_inset(holes_b[0], holes_c[0], z_back, z_facet_b, reverse=False, mb=mb, is_grey=is_grey)
 
     # Triangulate inset rings
     holes_list = [h for h in holes_c if len(h) >= 3]
@@ -399,8 +431,8 @@ def build_piece(outer_xy: np.ndarray, hole_xy: np.ndarray | None, mb: MeshBuilde
     verts2 = np.vstack(verts_list) if verts_list else ring_c
     pts_f = np.column_stack([verts2[:, 0], verts2[:, 1], np.full(len(verts2), z_facet_f)])
     pts_b = np.column_stack([verts2[:, 0], verts2[:, 1], np.full(len(verts2), z_facet_b)])
-    mb.add_tris(pts_f, faces_c, z_normal_sign=1.0)
-    mb.add_tris(pts_b, faces_c, z_normal_sign=-1.0)
+    mb.add_tris(pts_f, faces_c, z_normal_sign=1.0, is_grey=is_grey)
+    mb.add_tris(pts_b, faces_c, z_normal_sign=-1.0, is_grey=is_grey)
 
 
 def ring_from_shapely(geom) -> np.ndarray:
@@ -454,7 +486,7 @@ def build_mesh() -> MeshBuilder:
     mb = MeshBuilder()
     hole = img_to_xy(MAIN_HOLE_IMG) if MAIN_HOLE_IMG is not None else None
     build_piece(img_to_xy(MAIN_OUTER_IMG), hole, mb)
-    build_piece(img_to_xy(RIGHT_IMG), None, mb)
+    build_piece(img_to_xy(RIGHT_IMG), None, mb, is_grey=True)
     return mb
 
 
