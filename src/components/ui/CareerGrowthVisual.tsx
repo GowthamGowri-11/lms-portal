@@ -23,8 +23,8 @@ export default function CareerGrowthVisual() {
           <Image
             src="/images/atlyx-monument-backdrop.png"
             alt="ATLYX 3D Career Growth Monument"
-            width={380}
-            height={380}
+            width={440}
+            height={440}
             priority
             className={styles.monumentImage}
           />

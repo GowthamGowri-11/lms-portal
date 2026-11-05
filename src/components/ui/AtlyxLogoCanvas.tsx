@@ -16,11 +16,11 @@ function AtlyxLogoModel() {
         if (mesh.material) {
           const mat = mesh.material as THREE.MeshStandardMaterial;
           mat.vertexColors = true;
-          // Lower metalness so vertex colors aren't swamped by env reflections
+          // Metallic finish with vibrant gradient preservation
           mat.metalness = 0.18;
           mat.roughness = 0.28;
-          // Mid-blue emissive gives every face a base luminosity,
-          // preventing the logo from going black when back-lit
+          // Mid-blue emissive gives every face base luminosity,
+          // ensuring vivid gradient visibility from all rotation angles
           mat.emissive = new THREE.Color(0x1a3a8f);
           mat.emissiveIntensity = 1.1;
           mat.side = THREE.DoubleSide;
@@ -30,22 +30,21 @@ function AtlyxLogoModel() {
     });
   }, [scene]);
 
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     if (groupRef.current) {
-      // Clamp delta to prevent spin jump on tab blur / frame spikes
+      // Delta clamping prevents spin jumps on tab blur / frame lag
       const safeDelta = Math.min(delta, 0.05);
 
-      // Continuous smooth Y-axis rotation
+      // Continuous smooth Y-axis rotation ONLY
       groupRef.current.rotation.y += safeDelta * 0.85;
 
-      // Smooth sine-wave float — 0.10 unit amplitude, premium slow pace
-      groupRef.current.position.y =
-        0.26 + Math.sin(state.clock.elapsedTime * 1.4) * 0.10;
+      // FIXED vertical position: NO floating, NO bouncing, NO oscillation.
+      // Logo maintains a constant, stable height above the pedestal.
     }
   });
 
   return (
-    <group ref={groupRef} position={[0, 0.26, 0]}>
+    <group ref={groupRef} position={[0, 0.48, 0]}>
       <primitive
         object={scene}
         scale={1.22}
@@ -81,25 +80,25 @@ export default function AtlyxLogoCanvas() {
         }}
         dpr={[1, 2]}
       >
-        {/* Reduced ambient — white ambient at high intensity washes out vertex colors */}
+        {/* Soft balanced ambient light */}
         <ambientLight intensity={0.55} color="#d0eeff" />
 
-        {/* Primary key light — reduced from 2.2 to 1.1 so it doesn't bleach cyan */}
+        {/* Primary key light */}
         <directionalLight position={[4, 6, 4]} intensity={1.1} color="#ffffff" />
 
         {/* Soft indigo fill from the left */}
         <directionalLight position={[-4, 3, 3]} intensity={0.75} color="#c7d2fe" />
 
-        {/* Purple rim — accentuates lower-left purple gradient */}
+        {/* Purple rim light — accentuates lower-left purple gradient */}
         <directionalLight position={[-4, -2, -3]} intensity={1.8} color="#9333ea" />
 
-        {/* Cyan rim — accentuates top slash and apex */}
+        {/* Cyan rim light — accentuates top slash and apex */}
         <directionalLight position={[4, 2, -3]} intensity={2.0} color="#00e5ff" />
 
-        {/* Upward cyan glow from pedestal — keep strong for pedestal reflection */}
+        {/* Upward cyan glow from pedestal */}
         <pointLight position={[0, -1.0, 0.2]} intensity={3.5} distance={4} color="#00ffff" />
 
-        {/* Soft top-down light for apex bevel highlight */}
+        {/* Top-down light for apex bevel highlight */}
         <directionalLight position={[0, 5, 0]} intensity={0.45} color="#e0f2fe" />
 
         <AtlyxLogoModel />

@@ -48,8 +48,9 @@
 /* ── CENTER 3D MONUMENT ── */
 .monumentContainer {
   position: relative;
-  width: 380px;
-  height: 380px;
+  width: 440px;
+  height: 440px;
+  margin-top: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -293,9 +294,16 @@
   pointer-events: none;
 }
 
+@media (max-width: 640px) {
+  .monumentContainer {
+    width: 380px;
+    height: 380px;
+  }
+}
+
 @media (max-width: 420px) {
   .monumentContainer {
-    width: 300px;
-    height: 300px;
+    width: 320px;
+    height: 320px;
   }
 }
