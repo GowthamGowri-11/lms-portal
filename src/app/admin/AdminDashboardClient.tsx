@@ -79,15 +79,15 @@ function avatarColor(seed: string) {
 
 export default function AdminDashboardClient(props: Props) {
   const {
-    admin,
-    courses,
-    trainers,
-    students,
-    enrollments,
-    lessons,
-    users,
-    developers,
-    courseProgress,
+    admin = { name: 'Administrator', email: '', image: '' },
+    courses = [],
+    trainers = [],
+    students = [],
+    enrollments = [],
+    lessons = [],
+    users = [],
+    developers = [],
+    courseProgress = [],
   } = props;
 
   const [range, setRange] = useState<RangeKey>('30d');
@@ -324,7 +324,7 @@ export default function AdminDashboardClient(props: Props) {
           <div className={hub.welcomeMain}>
             <div className={hub.kicker}>ATLYX Admin Hub</div>
             <h1 className={hub.title}>
-              {greeting}, {admin.name.split(' ')[0]}
+              {greeting}, {(admin?.name || 'Administrator').split(' ')[0]}
             </h1>
             <p className={hub.subtitle}>
               Platform overview across courses, faculty, enrollments, assessments, and payments. All figures are computed from live records.
@@ -345,12 +345,12 @@ export default function AdminDashboardClient(props: Props) {
             </div>
           </div>
           <div className={hub.profileCard}>
-            <div className={hub.avatar} style={{ background: avatarColor(admin.name) }}>
-              {admin.image ? <img src={admin.image} alt="" /> : (admin.name.charAt(0) || 'A').toUpperCase()}
+            <div className={hub.avatar} style={{ background: avatarColor(admin?.name || 'Admin') }}>
+              {admin?.image ? <img src={admin.image} alt="" /> : ((admin?.name || 'A').charAt(0) || 'A').toUpperCase()}
             </div>
             <div className={hub.profileMeta}>
-              <div className={hub.profileName}>{admin.name}</div>
-              <div className={hub.profileRole}>{admin.email || 'Administrator'}</div>
+              <div className={hub.profileName}>{admin?.name || 'Administrator'}</div>
+              <div className={hub.profileRole}>{admin?.email || 'Administrator'}</div>
               <div className={hub.dateLine}>{today}</div>
             </div>
           </div>

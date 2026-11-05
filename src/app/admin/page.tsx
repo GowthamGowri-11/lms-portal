@@ -6,6 +6,13 @@ import AdminDashboardClient from './AdminDashboardClient';
 
 export const dynamic = 'force-dynamic';
 
+const toIso = (d: any) => {
+  if (!d) return new Date().toISOString();
+  if (d instanceof Date) return d.toISOString();
+  const parsed = new Date(d);
+  return isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+};
+
 export default async function AdminDashboardPage() {
   const session = await getServerSession(authOptions);
 
@@ -59,7 +66,7 @@ export default async function AdminDashboardPage() {
       studentsEnrolled: parsed.studentsEnrolled,
       price: parsed.price,
       discountPrice: parsed.discountPrice,
-      createdAt: parsed.createdAt.toISOString(),
+      createdAt: toIso(parsed.createdAt),
       lessonsCount: parsed.lessonsCount,
     };
   });
@@ -76,14 +83,14 @@ export default async function AdminDashboardPage() {
         id: t.id,
         name: t.name,
         email: t.email,
-        createdAt: t.createdAt.toISOString(),
+        createdAt: toIso(t.createdAt),
       }))}
       students={students.map((s) => ({
         id: s.id,
         name: s.name,
         email: s.email,
         avatar: s.avatar,
-        createdAt: s.createdAt.toISOString(),
+        createdAt: toIso(s.createdAt),
         isOnboarded: s.user?.isOnboarded ?? true,
       }))}
       enrollments={enrollments.map((e) => ({
@@ -92,26 +99,26 @@ export default async function AdminDashboardPage() {
         courseId: e.courseId,
         paymentStatus: e.paymentStatus,
         progress: e.progress,
-        enrolledAt: e.enrolledAt.toISOString(),
+        enrolledAt: toIso(e.enrolledAt),
       }))}
       lessons={lessons.map((l) => ({
         id: l.id,
         title: l.title,
-        createdAt: l.createdAt.toISOString(),
-        coursePublished: l.module.course.isPublished,
+        createdAt: toIso(l.createdAt),
+        coursePublished: l.module?.course?.isPublished ?? false,
       }))}
       users={users.map((u) => ({
         id: u.id,
         name: u.name,
         email: u.email,
         role: u.role,
-        createdAt: u.createdAt.toISOString(),
+        createdAt: toIso(u.createdAt),
         isOnboarded: u.isOnboarded,
       }))}
       developers={developers.map((d) => ({
         id: d.id,
         name: d.name,
-        createdAt: d.createdAt.toISOString(),
+        createdAt: toIso(d.createdAt),
       }))}
       courseProgress={courseProgress}
     />

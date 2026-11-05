@@ -1,9 +1,13 @@
 'use client';
 
 import React from 'react';
+import { usePathname } from 'next/navigation';
 import styles from './AmbientShutterBackground.module.css';
 
 export default function AmbientShutterBackground() {
+  const pathname = usePathname();
+  if (pathname?.startsWith('/admin')) return null;
+
   return (
     <div className={styles.shutterCanvas} aria-hidden="true">
       {/* 1. Shutter Louver & Slit Pattern Overlay */}

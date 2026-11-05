@@ -19,24 +19,31 @@ export default async function AdminPaymentsPage() {
     }),
   ]);
 
-  // Plain objects for Client Component
+  const toIso = (d: any) => {
+    if (!d) return new Date().toISOString();
+    if (d instanceof Date) return d.toISOString();
+    const parsed = new Date(d);
+    return isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+  };
+
+  // Plain objects for Client Component with safe navigations
   const formattedEnrollments = enrollments.map((e) => ({
     id: e.id,
     studentId: e.studentId,
-    studentName: e.student.name,
-    studentEmail: e.student.email,
+    studentName: e.student?.name || 'Unknown Student',
+    studentEmail: e.student?.email || '',
     courseId: e.courseId,
-    courseTitle: e.course.title,
-    coursePrice: e.course.discountPrice || e.course.price || 0,
-    paymentStatus: e.paymentStatus,
-    enrolledAt: e.enrolledAt.toISOString(),
+    courseTitle: e.course?.title || 'Unknown Course',
+    coursePrice: e.course ? (e.course.discountPrice || e.course.price || 0) : 0,
+    paymentStatus: e.paymentStatus || 'pending',
+    enrolledAt: toIso(e.enrolledAt),
   }));
 
   const formattedStudents = students.map((s) => ({
     id: s.id,
     name: s.name,
     email: s.email,
-    avatar: s.avatar,
+    avatar: s.avatar || '',
     username: s.user?.name || s.name,
   }));
 
