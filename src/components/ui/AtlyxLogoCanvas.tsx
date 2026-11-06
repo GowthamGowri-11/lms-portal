@@ -16,13 +16,13 @@ function AtlyxLogoModel() {
         if (mesh.material) {
           const mat = mesh.material as THREE.MeshStandardMaterial;
           mat.vertexColors = true;
-          // Metallic finish with vibrant gradient preservation
-          mat.metalness = 0.18;
-          mat.roughness = 0.28;
-          // Mid-blue emissive gives every face base luminosity,
-          // ensuring vivid gradient visibility from all rotation angles
-          mat.emissive = new THREE.Color(0x1a3a8f);
-          mat.emissiveIntensity = 1.1;
+          // Enhanced metallic finish to preserve vibrant gradient
+          mat.metalness = 0.25;
+          mat.roughness = 0.22;
+          // Reduce emissive to prevent washed-out appearance
+          // Use subtle cyan emissive to enhance brightness without dulling
+          mat.emissive = new THREE.Color(0x06b6d4);
+          mat.emissiveIntensity = 0.15;
           mat.side = THREE.DoubleSide;
           mat.needsUpdate = true;
         }
@@ -76,30 +76,30 @@ export default function AtlyxLogoCanvas() {
           alpha: true,
           powerPreference: 'high-performance',
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 0.82,
+          toneMappingExposure: 1.0,
         }}
         dpr={[1, 2]}
       >
-        {/* Soft balanced ambient light */}
-        <ambientLight intensity={0.55} color="#d0eeff" />
+        {/* Neutral ambient light to preserve gradient colors */}
+        <ambientLight intensity={0.4} color="#ffffff" />
 
-        {/* Primary key light */}
-        <directionalLight position={[4, 6, 4]} intensity={1.1} color="#ffffff" />
+        {/* Primary key light - neutral white for definition */}
+        <directionalLight position={[4, 6, 4]} intensity={0.9} color="#ffffff" />
 
-        {/* Soft indigo fill from the left */}
-        <directionalLight position={[-4, 3, 3]} intensity={0.75} color="#c7d2fe" />
+        {/* Soft blue fill from the left - enhances blue regions */}
+        <directionalLight position={[-4, 3, 3]} intensity={0.5} color="#2563eb" />
 
-        {/* Purple rim light — accentuates lower-left purple gradient */}
-        <directionalLight position={[-4, -2, -3]} intensity={1.8} color="#9333ea" />
+        {/* Purple rim light - accentuates lower-left purple gradient */}
+        <directionalLight position={[-4, -2, -3]} intensity={1.2} color="#9333ea" />
 
-        {/* Cyan rim light — accentuates top slash and apex */}
-        <directionalLight position={[4, 2, -3]} intensity={2.0} color="#00e5ff" />
+        {/* Cyan rim light - accentuates top cyan regions */}
+        <directionalLight position={[4, 2, -3]} intensity={1.0} color="#00f0ff" />
 
-        {/* Upward cyan glow from pedestal */}
-        <pointLight position={[0, -1.0, 0.2]} intensity={3.5} distance={4} color="#00ffff" />
+        {/* Subtle upward glow - reduced to prevent washout */}
+        <pointLight position={[0, -1.0, 0.2]} intensity={1.5} distance={4} color="#00f0ff" />
 
-        {/* Top-down light for apex bevel highlight */}
-        <directionalLight position={[0, 5, 0]} intensity={0.45} color="#e0f2fe" />
+        {/* Top-down light for apex bevel highlight - neutral */}
+        <directionalLight position={[0, 5, 0]} intensity={0.3} color="#ffffff" />
 
         <AtlyxLogoModel />
       </Canvas>

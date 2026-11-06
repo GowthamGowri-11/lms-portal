@@ -4,19 +4,25 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Eye, 
-  EyeOff, 
-  Check, 
-  AlertCircle, 
-  CheckCircle2, 
+import {
+  Eye,
+  EyeOff,
+  Check,
+  AlertCircle,
+  CheckCircle2,
   ArrowLeft,
-  BookOpen, 
+  BookOpen,
   Presentation,
-  Loader2
+  Loader2,
+  Mail,
+  Lock,
+  ArrowRight,
+  HelpCircle,
+  Cloud
 } from 'lucide-react';
 import Link from 'next/link';
 import BrandLogo from '@/components/ui/BrandLogo';
+import styles from './page.module.css';
 
 function LoginForm() {
   const { data: session, status } = useSession();
@@ -98,33 +104,8 @@ function LoginForm() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#080808',
-        color: '#EDEDED',
-        fontFamily: 'var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif)',
-        padding: '40px 20px',
-        boxSizing: 'border-box',
-        position: 'relative',
-        WebkitFontSmoothing: 'antialiased',
-      }}
-    >
-      {/* Centered Narrow Linear-Style Column (Max 364px) */}
-      <div
-        style={{
-          width: 'calc(100% - 40px)',
-          maxWidth: '364px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'stretch',
-        }}
-      >
+    <div className={styles.loginContainer}>
+      <div className={styles.loginCard}>
         <AnimatePresence mode="wait">
           {screen === 'select' && (
             <motion.div
@@ -135,195 +116,219 @@ function LoginForm() {
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
             >
-              {/* ATLYX Logo */}
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Link
-                  href="/"
-                  aria-label="ATLYX Home"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'opacity 0.15s ease',
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.opacity = '0.85')}
-                  onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
-                >
-                  <BrandLogo size={44} />
-                </Link>
+              {/* Card Header */}
+              <div className={styles.cardHeader}>
+                <div className={styles.logoContainer}>
+                  <Link
+                    href="/"
+                    aria-label="ATLYX Home"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'opacity 0.15s ease',
+                    }}
+                    onMouseOver={(e) => (e.currentTarget.style.opacity = '0.85')}
+                    onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
+                  >
+                    <BrandLogo size={48} />
+                  </Link>
+                </div>
+                <div className={styles.brandName}>ATLYX</div>
+                <h1 className={styles.welcomeHeading}>
+                  Welcome <span className={styles.highlight}>Back</span>
+                </h1>
+                <p className={styles.supportingText}>Sign in to continue your learning journey</p>
               </div>
-
-              {/* Exact Spacing: 36–42px below logo */}
-              <div style={{ height: '38px' }} />
-
-              {/* Heading: Log in to ATLYX */}
-              <h1
-                style={{
-                  fontSize: '26px',
-                  fontWeight: 600,
-                  letterSpacing: '-0.025em',
-                  color: '#FFFFFF',
-                  textAlign: 'center',
-                  margin: 0,
-                  lineHeight: 1.25,
-                }}
-              >
-                Log in to ATLYX
-              </h1>
-
-              {/* Exact Spacing: 42–48px below heading */}
-              <div style={{ height: '44px' }} />
 
               {/* Error Alert if any */}
               {error && (
-                <div
-                  style={{
-                    padding: '12px 14px',
-                    borderRadius: '6px',
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    border: '1px solid rgba(239, 68, 68, 0.25)',
-                    color: '#F87171',
-                    fontSize: '13px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    marginBottom: '16px',
-                  }}
-                >
-                  <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                <div className={styles.errorAlert}>
+                  <AlertCircle size={16} style={{ flexShrink: 0 }} />
                   <span>{error}</span>
                 </div>
               )}
 
-              {/* OPTION 1 — GOOGLE AUTHENTICATION (Primary) */}
-              <button
-                type="button"
-                onClick={handleGoogleSignIn}
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  height: '52px',
-                  backgroundColor: '#5B5BD6',
-                  color: '#FFFFFF',
-                  borderRadius: '6px',
-                  border: 'none',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
-                  padding: '0 20px',
-                  boxSizing: 'border-box',
-                  transition: 'background-color 0.15s ease, opacity 0.15s ease',
-                  letterSpacing: '-0.01em',
-                  opacity: loading ? 0.75 : 1,
-                }}
-                onMouseOver={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = '#6868E1';
-                }}
-                onMouseOut={(e) => {
-                  if (!loading) e.currentTarget.style.backgroundColor = '#5B5BD6';
-                }}
-              >
-                {/* Official Google Icon centered with label */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  {loading ? (
-                    <Loader2 size={18} className="animate-spin" />
-                  ) : (
-                    <svg width="18" height="18" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
-                      <path
-                        fill="#EA4335"
-                        d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.7 1 4 3.5 2.2 7.1l3.7 2.8C6.8 6.9 9.2 5 12 5z"
-                      />
-                      <path
-                        fill="#4285F4"
-                        d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h6c-.3 1.4-1.1 2.5-2.2 3.3l3.6 2.8c2.1-1.9 3.2-4.7 3.2-8.1z"
-                      />
-                      <path
-                        fill="#FBBC05"
-                        d="M5.9 14.1c-.2-.7-.3-1.4-.3-2.1s.1-1.4.3-2.1L2.2 7.1C1.4 8.6 1 10.2 1 12s.4 3.4 1.2 4.9l3.7-2.8z"
-                      />
-                      <path
-                        fill="#34A853"
-                        d="M12 23c3.2 0 6-1.1 8-3l-3.6-2.8c-1.1.7-2.5 1.2-4.4 1.2-2.8 0-5.2-1.9-6.1-4.5L2.2 16.7C4 20.3 7.7 23 12 23z"
-                      />
-                    </svg>
-                  )}
-                  <span>Continue with Google</span>
+              {/* Email Login Form */}
+              <form onSubmit={handleCustomSignIn} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {/* Email or Username */}
+                <div className={styles.inputGroup}>
+                  <label htmlFor="email" className={styles.inputLabel}>
+                    Email or Username
+                  </label>
+                  <div className={styles.inputWrapper}>
+                    <input
+                      id="email"
+                      type="email"
+                      required
+                      placeholder="Enter your email or username"
+                      value={usernameOrEmail}
+                      onChange={(e) => setUsernameOrEmail(e.target.value)}
+                      className={styles.inputField}
+                    />
+                    <Mail size={18} className={styles.inputIcon} />
+                  </div>
                 </div>
-              </button>
 
-              {/* Exact Spacing: 14px between buttons */}
-              <div style={{ height: '14px' }} />
+                {/* Password Input */}
+                <div className={styles.inputGroup}>
+                  <label htmlFor="password" className={styles.inputLabel}>
+                    Password
+                  </label>
+                  <div className={styles.inputWrapper}>
+                    <input
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={styles.inputField}
+                    />
+                    <Lock size={18} className={styles.inputIcon} />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      className={styles.passwordToggle}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </div>
 
-              {/* OPTION 2 — EMAIL AUTHENTICATION (Secondary) */}
-              <button
-                type="button"
-                onClick={() => {
-                  setError('');
-                  setScreen('email');
-                }}
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  height: '52px',
-                  backgroundColor: '#202024',
-                  color: '#E5E7EB',
-                  borderRadius: '6px',
-                  border: '1px solid rgba(255, 255, 255, 0.05)',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '0 20px',
-                  boxSizing: 'border-box',
-                  transition: 'background-color 0.15s ease, border-color 0.15s ease',
-                  letterSpacing: '-0.01em',
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = '#29292F';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = '#202024';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)';
-                }}
-              >
-                <span>Continue with Email</span>
-              </button>
+                {/* Cloudflare Turnstile Verification */}
+                <div className={styles.cloudflareWrapper}>
+                  <div className={styles.cloudflareBadge}>
+                    <div className={styles.cloudflareIcon}>
+                      <Check size={12} color="#FFFFFF" strokeWidth={3} />
+                    </div>
+                    <span className={styles.cloudflareText}>Success!</span>
+                  </div>
+                  <div className={styles.cloudflareHelp}>
+                    <Cloud size={14} />
+                    <span>CLOUDFLARE</span>
+                    <HelpCircle size={14} style={{ marginLeft: '4px' }} />
+                  </div>
+                </div>
 
-              {/* Minimal Bottom Switch: Sign Up */}
-              <div style={{ marginTop: '32px', textAlign: 'center' }}>
-                <span style={{ fontSize: '13px', color: '#8A8F98' }}>
-                  Don&apos;t have an account?{' '}
-                </span>
+                {/* Sign In Button */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={styles.signInButton}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      <span>Signing in...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Sign In</span>
+                      <ArrowRight size={18} />
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* Divider */}
+              <div className={styles.divider}>
+                <div className={styles.dividerLine}></div>
+                <span className={styles.dividerText}>or continue with</span>
+                <div className={styles.dividerLine}></div>
+              </div>
+
+              {/* Social Login Buttons */}
+              <div className={styles.socialButtons}>
                 <button
                   type="button"
-                  onClick={() => {
-                    setError('');
-                    setScreen('signup');
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#EDEDED',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    padding: 0,
-                    textDecoration: 'underline',
-                    textUnderlineOffset: '3px',
-                    transition: 'color 0.15s ease',
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.color = '#FFFFFF')}
-                  onMouseOut={(e) => (e.currentTarget.style.color = '#EDEDED')}
+                  onClick={handleGoogleSignIn}
+                  disabled={loading}
+                  className={styles.socialButton}
                 >
-                  Sign up
+                  <svg width="18" height="18" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+                    <path
+                      fill="#EA4335"
+                      d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.7 1 4 3.5 2.2 7.1l3.7 2.8C6.8 6.9 9.2 5 12 5z"
+                    />
+                    <path
+                      fill="#4285F4"
+                      d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h6c-.3 1.4-1.1 2.5-2.2 3.3l3.6 2.8c2.1-1.9 3.2-4.7 3.2-8.1z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.9 14.1c-.2-.7-.3-1.4-.3-2.1s.1-1.4.3-2.1L2.2 7.1C1.4 8.6 1 10.2 1 12s.4 3.4 1.2 4.9l3.7-2.8z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23c3.2 0 6-1.1 8-3l-3.6-2.8c-1.1.7-2.5 1.2-4.4 1.2-2.8 0-5.2-1.9-6.1-4.5L2.2 16.7C4 20.3 7.7 23 12 23z"
+                    />
+                  </svg>
                 </button>
+
+                <button
+                  type="button"
+                  disabled={loading}
+                  className={styles.socialButton}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}>
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={loading}
+                  className={styles.socialButton}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}>
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.21-1.96 1.07-3.11-1.05.05-2.31.71-3.06 1.61-.69.84-1.26 2.01-1.11 3.12 1.17.09 2.37-.69 3.1-1.62z"/>
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={loading}
+                  className={styles.socialButton}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#0077b5" style={{ flexShrink: 0 }}>
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Footer Actions */}
+              <div className={styles.footerActions}>
+                <div className={styles.forgotSignupRow}>
+                  <button
+                    type="button"
+                    onClick={() => setError('Password reset instructions will be sent to your registered email.')}
+                    className={styles.forgotPasswordLink}
+                  >
+                    Forgot Password?
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setError('');
+                      setScreen('signup');
+                    }}
+                    className={styles.noAccountLink}
+                  >
+                    Sign Up
+                  </button>
+                </div>
+                <p className={styles.termsText}>
+                  By continuing, you agree to our{' '}
+                  <Link href="/terms" className={styles.termsLink}>
+                    Terms
+                  </Link>{' '}
+                  &{' '}
+                  <Link href="/privacy" className={styles.termsLink}>
+                    Privacy Policy
+                  </Link>
+                </p>
               </div>
             </motion.div>
           )}
@@ -338,81 +343,33 @@ function LoginForm() {
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
             >
               {/* Back navigation link */}
-              <div style={{ marginBottom: '24px' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setError('');
-                    setScreen('select');
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#8A8F98',
-                    fontSize: '13px',
-                    cursor: 'pointer',
-                    padding: 0,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'color 0.15s ease',
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.color = '#FFFFFF')}
-                  onMouseOut={(e) => (e.currentTarget.style.color = '#8A8F98')}
-                >
-                  <ArrowLeft size={14} />
-                  <span>All sign in options</span>
-                </button>
-              </div>
-
-              {/* Logo */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
-                <BrandLogo size={40} />
-              </div>
-
-              {/* Heading */}
-              <h1
-                style={{
-                  fontSize: '24px',
-                  fontWeight: 600,
-                  letterSpacing: '-0.025em',
-                  color: '#FFFFFF',
-                  textAlign: 'center',
-                  margin: '0 0 8px 0',
+              <button
+                type="button"
+                onClick={() => {
+                  setError('');
+                  setScreen('select');
                 }}
+                className={styles.backButton}
               >
-                Log in with email
-              </h1>
+                <ArrowLeft size={14} />
+                <span>All sign in options</span>
+              </button>
 
-              {/* Supporting text */}
-              <p
-                style={{
-                  fontSize: '13px',
-                  color: '#8A8F98',
-                  textAlign: 'center',
-                  margin: '0 0 28px 0',
-                }}
-              >
-                Enter your credentials to continue.
-              </p>
+              {/* Card Header */}
+              <div className={styles.cardHeader}>
+                <div className={styles.logoContainer}>
+                  <BrandLogo size={40} />
+                </div>
+                <h1 className={styles.welcomeHeading}>
+                  Welcome <span className={styles.highlight}>Back</span>
+                </h1>
+                <p className={styles.supportingText}>Enter your credentials to continue</p>
+              </div>
 
               {/* Error Alert */}
               {error && (
-                <div
-                  style={{
-                    padding: '11px 13px',
-                    borderRadius: '6px',
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    border: '1px solid rgba(239, 68, 68, 0.25)',
-                    color: '#F87171',
-                    fontSize: '13px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    marginBottom: '18px',
-                  }}
-                >
-                  <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                <div className={styles.errorAlert}>
+                  <AlertCircle size={16} style={{ flexShrink: 0 }} />
                   <span>{error}</span>
                 </div>
               )}
@@ -420,243 +377,183 @@ function LoginForm() {
               {/* Email Login Form */}
               <form onSubmit={handleCustomSignIn} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 {/* Email Address */}
-                <div>
-                  <label
-                    htmlFor="email"
-                    style={{
-                      display: 'block',
-                      fontSize: '12px',
-                      fontWeight: 500,
-                      color: '#8A8F98',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    Email Address
+                <div className={styles.inputGroup}>
+                  <label htmlFor="email" className={styles.inputLabel}>
+                    Email or Username
                   </label>
-                  <input
-                    id="email"
-                    type="email"
-                    required
-                    placeholder="name@example.com"
-                    value={usernameOrEmail}
-                    onChange={(e) => setUsernameOrEmail(e.target.value)}
-                    style={{
-                      width: '100%',
-                      height: '46px',
-                      padding: '0 14px',
-                      borderRadius: '6px',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      backgroundColor: '#121215',
-                      color: '#FFFFFF',
-                      fontSize: '14px',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                      transition: 'border-color 0.15s ease',
-                    }}
-                    onFocus={(e) => (e.target.style.borderColor = '#5B5BD6')}
-                    onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.08)')}
-                  />
+                  <div className={styles.inputWrapper}>
+                    <input
+                      id="email"
+                      type="email"
+                      required
+                      placeholder="Enter your email or username"
+                      value={usernameOrEmail}
+                      onChange={(e) => setUsernameOrEmail(e.target.value)}
+                      className={styles.inputField}
+                    />
+                    <Mail size={18} className={styles.inputIcon} />
+                  </div>
                 </div>
 
                 {/* Password Input */}
-                <div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    <label
-                      htmlFor="password"
-                      style={{
-                        fontSize: '12px',
-                        fontWeight: 500,
-                        color: '#8A8F98',
-                      }}
-                    >
-                      Password
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setError('Password reset instructions will be sent to your registered email.')}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#8A8F98',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        padding: 0,
-                        transition: 'color 0.15s ease',
-                      }}
-                      onMouseOver={(e) => (e.currentTarget.style.color = '#FFFFFF')}
-                      onMouseOut={(e) => (e.currentTarget.style.color = '#8A8F98')}
-                    >
-                      Forgot?
-                    </button>
-                  </div>
-                  <div style={{ position: 'relative' }}>
+                <div className={styles.inputGroup}>
+                  <label htmlFor="password" className={styles.inputLabel}>
+                    Password
+                  </label>
+                  <div className={styles.inputWrapper}>
                     <input
                       id="password"
                       type={showPassword ? 'text' : 'password'}
                       required
-                      placeholder="••••••••••••"
+                      placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      style={{
-                        width: '100%',
-                        height: '46px',
-                        padding: '0 40px 0 14px',
-                        borderRadius: '6px',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        backgroundColor: '#121215',
-                        color: '#FFFFFF',
-                        fontSize: '14px',
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                        transition: 'border-color 0.15s ease',
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = '#5B5BD6')}
-                      onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.08)')}
+                      className={styles.inputField}
                     />
+                    <Lock size={18} className={styles.inputIcon} />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      style={{
-                        position: 'absolute',
-                        right: '12px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        background: 'none',
-                        border: 'none',
-                        color: '#8A8F98',
-                        cursor: 'pointer',
-                        padding: '2px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
+                      className={styles.passwordToggle}
                     >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
 
-                {/* Cloudflare Turnstile Verification Badge (Refined Linear Style) */}
-                <div
-                  style={{
-                    borderRadius: '6px',
-                    border: '1px solid rgba(255, 255, 255, 0.06)',
-                    backgroundColor: '#101014',
-                    padding: '9px 12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginTop: '2px',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div
-                      style={{
-                        width: '18px',
-                        height: '18px',
-                        borderRadius: '50%',
-                        backgroundColor: '#10B981',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
+                {/* Cloudflare Turnstile Verification */}
+                <div className={styles.cloudflareWrapper}>
+                  <div className={styles.cloudflareBadge}>
+                    <div className={styles.cloudflareIcon}>
                       <Check size={12} color="#FFFFFF" strokeWidth={3} />
                     </div>
-                    <span style={{ fontSize: '12px', fontWeight: 500, color: '#EDEDED' }}>
-                      Security Verification
-                    </span>
+                    <span className={styles.cloudflareText}>Success!</span>
                   </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <svg width="18" height="12" viewBox="0 0 32 22" fill="none">
-                      <path
-                        d="M24.8 8.8C24.1 3.9 19.8 0 14.7 0C10.5 0 6.9 2.6 5.4 6.4C2.3 7.1 0 9.8 0 13.2C0 17 3.1 20 6.9 20H24.5C28.6 20 32 16.6 32 12.5C32 8.7 28.9 5.6 25.1 5.3C25 6.5 24.9 7.7 24.8 8.8Z"
-                        fill="#F6821F"
-                      />
-                      <path
-                        d="M24.8 8.8C24.6 7.4 24.1 6.1 23.3 5C22.5 3.9 21.4 3 20.1 2.4C20.8 4.4 20.9 6.6 20.4 8.7C20 10.4 18.9 11.9 17.5 13C16.1 14.1 14.4 14.7 12.6 14.7H11.2C10.7 14.7 10.3 15.1 10.3 15.6C10.3 16.1 10.7 16.5 11.2 16.5H24.5C26.4 16.5 28.2 15.7 29.5 14.4C30.8 13.1 31.6 11.3 31.6 9.4C31.6 9.2 31.6 9 31.6 8.8C31.5 8.8 28.2 8.8 24.8 8.8Z"
-                        fill="#FAAE40"
-                      />
-                    </svg>
-                    <span style={{ fontSize: '10px', fontWeight: 600, color: '#8A8F98', letterSpacing: '0.04em' }}>
-                      CLOUDFLARE
-                    </span>
+                  <div className={styles.cloudflareHelp}>
+                    <Cloud size={14} />
+                    <span>CLOUDFLARE</span>
+                    <HelpCircle size={14} style={{ marginLeft: '4px' }} />
                   </div>
                 </div>
 
-                {/* Submit Button: 52px, #5B5BD6 */}
+                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={loading}
-                  style={{
-                    width: '100%',
-                    height: '52px',
-                    backgroundColor: '#5B5BD6',
-                    color: '#FFFFFF',
-                    borderRadius: '6px',
-                    border: 'none',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginTop: '6px',
-                    transition: 'background-color 0.15s ease',
-                    opacity: loading ? 0.75 : 1,
-                  }}
-                  onMouseOver={(e) => {
-                    if (!loading) e.currentTarget.style.backgroundColor = '#6868E1';
-                  }}
-                  onMouseOut={(e) => {
-                    if (!loading) e.currentTarget.style.backgroundColor = '#5B5BD6';
-                  }}
+                  className={styles.signInButton}
                 >
                   {loading ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Loader2 size={16} className="animate-spin" />
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
                       <span>Signing in...</span>
-                    </div>
+                    </>
                   ) : (
-                    <span>Continue</span>
+                    <>
+                      <span>Sign In</span>
+                      <ArrowRight size={18} />
+                    </>
                   )}
                 </button>
               </form>
 
-              {/* Bottom Switch: Sign Up */}
-              <div style={{ marginTop: '28px', textAlign: 'center' }}>
-                <span style={{ fontSize: '13px', color: '#8A8F98' }}>
-                  Don&apos;t have an account?{' '}
-                </span>
+              {/* Divider */}
+              <div className={styles.divider}>
+                <div className={styles.dividerLine}></div>
+                <span className={styles.dividerText}>or continue with</span>
+                <div className={styles.dividerLine}></div>
+              </div>
+
+              {/* Social Login Buttons */}
+              <div className={styles.socialButtons}>
                 <button
                   type="button"
-                  onClick={() => {
-                    setError('');
-                    setScreen('signup');
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#EDEDED',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    padding: 0,
-                    textDecoration: 'underline',
-                    textUnderlineOffset: '3px',
-                  }}
+                  onClick={handleGoogleSignIn}
+                  disabled={loading}
+                  className={styles.socialButton}
                 >
-                  Sign up
+                  <svg width="18" height="18" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+                    <path
+                      fill="#EA4335"
+                      d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.7 1 4 3.5 2.2 7.1l3.7 2.8C6.8 6.9 9.2 5 12 5z"
+                    />
+                    <path
+                      fill="#4285F4"
+                      d="M22.6 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h6c-.3 1.4-1.1 2.5-2.2 3.3l3.6 2.8c2.1-1.9 3.2-4.7 3.2-8.1z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.9 14.1c-.2-.7-.3-1.4-.3-2.1s.1-1.4.3-2.1L2.2 7.1C1.4 8.6 1 10.2 1 12s.4 3.4 1.2 4.9l3.7-2.8z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23c3.2 0 6-1.1 8-3l-3.6-2.8c-1.1.7-2.5 1.2-4.4 1.2-2.8 0-5.2-1.9-6.1-4.5L2.2 16.7C4 20.3 7.7 23 12 23z"
+                    />
+                  </svg>
                 </button>
+
+                <button
+                  type="button"
+                  disabled={loading}
+                  className={styles.socialButton}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}>
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={loading}
+                  className={styles.socialButton}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}>
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.21-1.96 1.07-3.11-1.05.05-2.31.71-3.06 1.61-.69.84-1.26 2.01-1.11 3.12 1.17.09 2.37-.69 3.1-1.62z"/>
+                  </svg>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={loading}
+                  className={styles.socialButton}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#0077b5" style={{ flexShrink: 0 }}>
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Footer Actions */}
+              <div className={styles.footerActions}>
+                <div className={styles.forgotSignupRow}>
+                  <button
+                    type="button"
+                    onClick={() => setError('Password reset instructions will be sent to your registered email.')}
+                    className={styles.forgotPasswordLink}
+                  >
+                    Forgot Password?
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setError('');
+                      setScreen('signup');
+                    }}
+                    className={styles.noAccountLink}
+                  >
+                    Sign Up
+                  </button>
+                </div>
+                <p className={styles.termsText}>
+                  By continuing, you agree to our{' '}
+                  <Link href="/terms" className={styles.termsLink}>
+                    Terms
+                  </Link>{' '}
+                  &{' '}
+                  <Link href="/privacy" className={styles.termsLink}>
+                    Privacy Policy
+                  </Link>
+                </p>
               </div>
             </motion.div>
           )}
@@ -671,81 +568,31 @@ function LoginForm() {
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
             >
               {/* Back navigation */}
-              <div style={{ marginBottom: '24px' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setError('');
-                    setScreen('select');
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#8A8F98',
-                    fontSize: '13px',
-                    cursor: 'pointer',
-                    padding: 0,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'color 0.15s ease',
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.color = '#FFFFFF')}
-                  onMouseOut={(e) => (e.currentTarget.style.color = '#8A8F98')}
-                >
-                  <ArrowLeft size={14} />
-                  <span>Back to log in</span>
-                </button>
-              </div>
-
-              {/* Logo */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-                <BrandLogo size={40} />
-              </div>
-
-              {/* Heading */}
-              <h1
-                style={{
-                  fontSize: '24px',
-                  fontWeight: 600,
-                  letterSpacing: '-0.025em',
-                  color: '#FFFFFF',
-                  textAlign: 'center',
-                  margin: '0 0 6px 0',
+              <button
+                type="button"
+                onClick={() => {
+                  setError('');
+                  setScreen('select');
                 }}
+                className={styles.backButton}
               >
-                Create your account
-              </h1>
+                <ArrowLeft size={14} />
+                <span>Back to log in</span>
+              </button>
 
-              {/* Subheading */}
-              <p
-                style={{
-                  fontSize: '13px',
-                  color: '#8A8F98',
-                  textAlign: 'center',
-                  margin: '0 0 24px 0',
-                }}
-              >
-                Join ATLYX to start learning or teaching.
-              </p>
+              {/* Card Header */}
+              <div className={styles.cardHeader}>
+                <div className={styles.logoContainer}>
+                  <BrandLogo size={40} />
+                </div>
+                <h1 className={styles.welcomeHeading}>Create your account</h1>
+                <p className={styles.supportingText}>Join ATLYX to start learning or teaching</p>
+              </div>
 
               {/* Error Alert */}
               {error && (
-                <div
-                  style={{
-                    padding: '11px 13px',
-                    borderRadius: '6px',
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    border: '1px solid rgba(239, 68, 68, 0.25)',
-                    color: '#F87171',
-                    fontSize: '13px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    marginBottom: '16px',
-                  }}
-                >
-                  <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                <div className={styles.errorAlert}>
+                  <AlertCircle size={16} style={{ flexShrink: 0 }} />
                   <span>{error}</span>
                 </div>
               )}
@@ -753,16 +600,8 @@ function LoginForm() {
               {/* Signup Form */}
               <form onSubmit={handleSignUpAndContinue} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 {/* Full Name */}
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '12px',
-                      fontWeight: 500,
-                      color: '#8A8F98',
-                      marginBottom: '6px',
-                    }}
-                  >
+                <div className={styles.inputGroup}>
+                  <label className={styles.inputLabel}>
                     Full Name (optional)
                   </label>
                   <input
@@ -770,36 +609,15 @@ function LoginForm() {
                     placeholder="Alex Morgan"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    style={{
-                      width: '100%',
-                      height: '46px',
-                      padding: '0 14px',
-                      borderRadius: '6px',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      backgroundColor: '#121215',
-                      color: '#FFFFFF',
-                      fontSize: '14px',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                      transition: 'border-color 0.15s ease',
-                    }}
-                    onFocus={(e) => (e.target.style.borderColor = '#5B5BD6')}
-                    onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.08)')}
+                    className={styles.inputField}
+                    style={{ paddingLeft: '16px' }}
                   />
                 </div>
 
                 {/* Phone & Age row */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 0.8fr', gap: '10px' }}>
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        fontSize: '12px',
-                        fontWeight: 500,
-                        color: '#8A8F98',
-                        marginBottom: '6px',
-                      }}
-                    >
+                  <div className={styles.inputGroup}>
+                    <label className={styles.inputLabel}>
                       Phone Number *
                     </label>
                     <input
@@ -808,34 +626,13 @@ function LoginForm() {
                       placeholder="+1 (555) 000-0000"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      style={{
-                        width: '100%',
-                        height: '46px',
-                        padding: '0 14px',
-                        borderRadius: '6px',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        backgroundColor: '#121215',
-                        color: '#FFFFFF',
-                        fontSize: '14px',
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                        transition: 'border-color 0.15s ease',
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = '#5B5BD6')}
-                      onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.08)')}
+                      className={styles.inputField}
+                      style={{ paddingLeft: '16px' }}
                     />
                   </div>
 
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        fontSize: '12px',
-                        fontWeight: 500,
-                        color: '#8A8F98',
-                        marginBottom: '6px',
-                      }}
-                    >
+                  <div className={styles.inputGroup}>
+                    <label className={styles.inputLabel}>
                       Age *
                     </label>
                     <input
@@ -846,74 +643,34 @@ function LoginForm() {
                       placeholder="22"
                       value={age}
                       onChange={(e) => setAge(e.target.value)}
-                      style={{
-                        width: '100%',
-                        height: '46px',
-                        padding: '0 14px',
-                        borderRadius: '6px',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        backgroundColor: '#121215',
-                        color: '#FFFFFF',
-                        fontSize: '14px',
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                        transition: 'border-color 0.15s ease',
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = '#5B5BD6')}
-                      onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.08)')}
+                      className={styles.inputField}
+                      style={{ paddingLeft: '16px' }}
                     />
                   </div>
                 </div>
 
                 {/* Education background */}
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '12px',
-                      fontWeight: 500,
-                      color: '#8A8F98',
-                      marginBottom: '6px',
-                    }}
-                  >
+                <div className={styles.inputGroup}>
+                  <label className={styles.inputLabel}>
                     Education / Background
                   </label>
                   <select
                     value={education}
                     onChange={(e) => setEducation(e.target.value)}
-                    style={{
-                      width: '100%',
-                      height: '46px',
-                      padding: '0 14px',
-                      borderRadius: '6px',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      backgroundColor: '#121215',
-                      color: '#FFFFFF',
-                      fontSize: '14px',
-                      outline: 'none',
-                      cursor: 'pointer',
-                      boxSizing: 'border-box',
-                    }}
+                    className={styles.inputField}
+                    style={{ paddingLeft: '16px', cursor: 'pointer' }}
                   >
                     <option value="School Student">School Student (K-12)</option>
                     <option value="Undergraduate">Undergraduate (College / Univ)</option>
-                    <option value="Postgraduate">Postgraduate (Master&apos;s / PhD)</option>
+                    <option value="Postgraduate">Postgraduate (Master's / PhD)</option>
                     <option value="Working Professional">Working Professional</option>
                     <option value="Professional Trainer">Professional Trainer / Educator</option>
                   </select>
                 </div>
 
                 {/* Role selection */}
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '12px',
-                      fontWeight: 500,
-                      color: '#8A8F98',
-                      marginBottom: '8px',
-                    }}
-                  >
+                <div className={styles.inputGroup}>
+                  <label className={styles.inputLabel} style={{ marginBottom: '8px' }}>
                     I am joining as:
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
@@ -922,21 +679,21 @@ function LoginForm() {
                       onClick={() => setIntendedRole('STUDENT')}
                       style={{
                         padding: '12px 10px',
-                        borderRadius: '6px',
-                        border: intendedRole === 'STUDENT' ? '1px solid #5B5BD6' : '1px solid rgba(255, 255, 255, 0.08)',
-                        backgroundColor: intendedRole === 'STUDENT' ? 'rgba(91, 91, 214, 0.12)' : '#121215',
+                        borderRadius: '12px',
+                        border: intendedRole === 'STUDENT' ? '1px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.1)',
+                        backgroundColor: intendedRole === 'STUDENT' ? 'rgba(59, 130, 246, 0.12)' : 'rgba(30, 41, 59, 0.6)',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
                         textAlign: 'left',
-                        transition: 'all 0.15s ease',
+                        transition: 'all 0.2s ease',
                       }}
                     >
-                      <BookOpen size={16} color={intendedRole === 'STUDENT' ? '#5B5BD6' : '#8A8F98'} />
+                      <BookOpen size={16} color={intendedRole === 'STUDENT' ? '#3b82f6' : '#64748b'} />
                       <div>
-                        <div style={{ fontSize: '13px', fontWeight: 500, color: '#FFFFFF' }}>Student</div>
-                        <div style={{ fontSize: '11px', color: '#8A8F98' }}>Learn courses</div>
+                        <div style={{ fontSize: '13px', fontWeight: 500, color: '#ffffff' }}>Student</div>
+                        <div style={{ fontSize: '11px', color: '#64748b' }}>Learn courses</div>
                       </div>
                     </button>
 
@@ -945,90 +702,58 @@ function LoginForm() {
                       onClick={() => setIntendedRole('TRAINER')}
                       style={{
                         padding: '12px 10px',
-                        borderRadius: '6px',
-                        border: intendedRole === 'TRAINER' ? '1px solid #5B5BD6' : '1px solid rgba(255, 255, 255, 0.08)',
-                        backgroundColor: intendedRole === 'TRAINER' ? 'rgba(91, 91, 214, 0.12)' : '#121215',
+                        borderRadius: '12px',
+                        border: intendedRole === 'TRAINER' ? '1px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.1)',
+                        backgroundColor: intendedRole === 'TRAINER' ? 'rgba(59, 130, 246, 0.12)' : 'rgba(30, 41, 59, 0.6)',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
                         textAlign: 'left',
-                        transition: 'all 0.15s ease',
+                        transition: 'all 0.2s ease',
                       }}
                     >
-                      <Presentation size={16} color={intendedRole === 'TRAINER' ? '#5B5BD6' : '#8A8F98'} />
+                      <Presentation size={16} color={intendedRole === 'TRAINER' ? '#3b82f6' : '#64748b'} />
                       <div>
-                        <div style={{ fontSize: '13px', fontWeight: 500, color: '#FFFFFF' }}>Trainer</div>
-                        <div style={{ fontSize: '11px', color: '#8A8F98' }}>Teach courses</div>
+                        <div style={{ fontSize: '13px', fontWeight: 500, color: '#ffffff' }}>Trainer</div>
+                        <div style={{ fontSize: '11px', color: '#64748b' }}>Teach courses</div>
                       </div>
                     </button>
                   </div>
                 </div>
 
-                {/* Primary Button: 52px, #5B5BD6 */}
+                {/* Primary Button */}
                 <button
                   type="submit"
                   disabled={loading}
-                  style={{
-                    width: '100%',
-                    height: '52px',
-                    backgroundColor: '#5B5BD6',
-                    color: '#FFFFFF',
-                    borderRadius: '6px',
-                    border: 'none',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginTop: '6px',
-                    transition: 'background-color 0.15s ease',
-                    opacity: loading ? 0.75 : 1,
-                  }}
-                  onMouseOver={(e) => {
-                    if (!loading) e.currentTarget.style.backgroundColor = '#6868E1';
-                  }}
-                  onMouseOut={(e) => {
-                    if (!loading) e.currentTarget.style.backgroundColor = '#5B5BD6';
-                  }}
+                  className={styles.signInButton}
                 >
                   {loading ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Loader2 size={16} className="animate-spin" />
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
                       <span>Setting up...</span>
-                    </div>
+                    </>
                   ) : (
                     <span>Continue with Google</span>
                   )}
                 </button>
               </form>
 
-              {/* Bottom Switch: Sign In */}
-              <div style={{ marginTop: '28px', textAlign: 'center' }}>
-                <span style={{ fontSize: '13px', color: '#8A8F98' }}>
+              {/* Footer Actions */}
+              <div className={styles.footerActions}>
+                <p className={styles.noAccount}>
                   Already have an account?{' '}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setError('');
-                    setScreen('select');
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#EDEDED',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    padding: 0,
-                    textDecoration: 'underline',
-                    textUnderlineOffset: '3px',
-                  }}
-                >
-                  Log in
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setError('');
+                      setScreen('select');
+                    }}
+                    className={styles.noAccountLink}
+                  >
+                    Log in
+                  </button>
+                </p>
               </div>
             </motion.div>
           )}
@@ -1040,7 +765,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', backgroundColor: '#080808' }} />}>
+    <Suspense fallback={<div className={styles.loginContainer} />}>
       <LoginForm />
     </Suspense>
   );
