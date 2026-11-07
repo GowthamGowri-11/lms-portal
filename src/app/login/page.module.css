@@ -1,3 +1,8 @@
+/* ===================================================================
+   ATLYX LOGIN PAGE — ULTRA-PREMIUM ENTERPRISE DARK GLASS CARD
+   =================================================================== */
+
+/* Keep surrounding page container strictly untouched */
 .loginContainer {
   min-height: 100vh;
   width: 100%;
@@ -19,154 +24,184 @@
   right: 0;
   bottom: 0;
   background: radial-gradient(circle at 30% 30%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
-              radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+    radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
   pointer-events: none;
 }
 
+/* ===================================================================
+   1. CARD SURFACE — DEEP NAVY / CHARCOAL GLASSMORPHISM
+   =================================================================== */
 .loginCard {
   width: 100%;
   max-width: 440px;
-  background: rgba(10, 10, 25, 0.85);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border-radius: 24px;
-  padding: 48px 40px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
-              0 0 0 1px rgba(6, 182, 212, 0.2),
-              0 0 40px rgba(6, 182, 212, 0.1),
-              0 0 80px rgba(139, 92, 246, 0.05);
+  background: rgba(11, 16, 30, 0.85);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-radius: 20px;
+  padding: 38px 34px;
   position: relative;
   z-index: 1;
+  border: 1px solid rgba(56, 189, 248, 0.16);
+  box-shadow:
+    0 24px 60px -12px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+    0 8px 32px -4px rgba(14, 165, 233, 0.08);
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 65%),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+  box-sizing: border-box;
 }
 
+/* Subtle top edge micro-accent line */
 .loginCard::before {
   content: '';
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(135deg,
-    rgba(6, 182, 212, 0.6) 0%,
-    rgba(59, 130, 246, 0.4) 25%,
-    rgba(139, 92, 246, 0.6) 50%,
-    rgba(59, 130, 246, 0.4) 75%,
-    rgba(6, 182, 212, 0.6) 100%);
-  border-radius: 24px;
-  z-index: -1;
-  opacity: 0.7;
-}
-
-.loginCard::after {
-  content: '';
-  position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg,
-    rgba(6, 182, 212, 0.1) 0%,
-    transparent 30%,
-    transparent 70%,
-    rgba(139, 92, 246, 0.1) 100%);
-  border-radius: 24px;
-  z-index: -1;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.6), rgba(129, 140, 248, 0.5), transparent);
   pointer-events: none;
 }
 
+/* ===================================================================
+   2. CARD HEADER
+   =================================================================== */
 .cardHeader {
   text-align: center;
-  margin-bottom: 36px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .logoContainer {
   display: flex;
   justify-content: center;
-  margin-bottom: 24px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.logoLink:hover {
+  transform: scale(1.05);
+  opacity: 0.95;
 }
 
 .brandName {
-  font-size: 36px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #ffffff;
-  margin-bottom: 8px;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #38bdf8;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  line-height: 1;
 }
 
 .welcomeHeading {
-  font-size: 28px;
-  font-weight: 600;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.625rem;
+  font-weight: 700;
   color: #ffffff;
-  margin: 0 0 10px 0;
-  letter-spacing: -0.01em;
-}
-
-.welcomeHeading .highlight {
-  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }
 
 .supportingText {
-  font-size: 14px;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.875rem;
   color: #94a3b8;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.45;
+  font-weight: 400;
 }
 
+/* ===================================================================
+   3. INPUT FIELDS & LABELS
+   =================================================================== */
 .inputGroup {
-  margin-bottom: 18px;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
 }
 
 .inputLabel {
   display: block;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   color: #cbd5e1;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   letter-spacing: 0.01em;
+}
+
+.labelRow .inputLabel {
+  margin-bottom: 0;
 }
 
 .inputWrapper {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .inputField {
   width: 100%;
-  height: 50px;
-  padding: 0 16px 0 44px;
-  background: rgba(15, 20, 35, 0.7);
-  border: 1px solid rgba(6, 182, 212, 0.2);
-  border-radius: 12px;
+  height: 46px;
+  padding: 0 14px 0 42px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 11px;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 0.875rem;
+  font-family: var(--font-body, 'Inter', sans-serif);
   outline: none;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
+}
+
+.inputFieldWithToggle {
+  padding-right: 42px;
 }
 
 .inputField::placeholder {
   color: #64748b;
+  font-weight: 400;
+}
+
+.inputField:focus {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: #38bdf8;
+  box-shadow:
+    0 0 0 3px rgba(56, 189, 248, 0.16),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.inputField.inputError {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
 }
 
 .inputField:-webkit-autofill,
 .inputField:-webkit-autofill:hover,
 .inputField:-webkit-autofill:focus {
   -webkit-text-fill-color: #ffffff;
-  -webkit-box-shadow: 0 0 0 1000px rgba(15, 20, 35, 0.7) inset;
+  -webkit-box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.85) inset;
   transition: background-color 5000s ease-in-out 0s;
-}
-
-.inputField:focus {
-  border-color: #06b6d4;
-  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
-  background: rgba(15, 20, 35, 0.9);
-}
-
-.inputField.error {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 
 .inputIcon {
@@ -179,325 +214,347 @@
   transition: color 0.2s ease;
 }
 
-.inputField:focus + .inputIcon {
-  color: #06b6d4;
+.inputWrapper:focus-within .inputIcon {
+  color: #38bdf8;
 }
 
 .passwordToggle {
   position: absolute;
-  right: 14px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  background: transparent;
   border: none;
   color: #64748b;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
 
 .passwordToggle:hover {
-  color: #cbd5e1;
-}
-
-.forgotPassword {
-  text-align: right;
-  margin-top: 8px;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .forgotPasswordLink {
-  font-size: 13px;
-  color: #06b6d4;
-  text-decoration: none;
-  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #38bdf8;
   cursor: pointer;
+  transition: color 0.15s ease;
+  font-family: inherit;
 }
 
 .forgotPasswordLink:hover {
-  color: #3b82f6;
+  color: #60a5fa;
   text-decoration: underline;
 }
 
+/* ===================================================================
+   4. CLOUDFLARE TURNSTILE VERIFICATION
+   =================================================================== */
 .cloudflareWrapper {
-  margin: 22px 0;
-  padding: 14px 18px;
-  background: rgba(15, 20, 35, 0.6);
-  border: 1px solid rgba(6, 182, 212, 0.15);
-  border-radius: 12px;
+  margin: 4px 0 16px;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 11px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .cloudflareBadge {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .cloudflareIcon {
-  width: 20px;
-  height: 20px;
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  width: 18px;
+  height: 18px;
+  background: #16a34a;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .cloudflareText {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: #e2e8f0;
+  color: #f1f5f9;
+  letter-spacing: -0.01em;
 }
 
 .cloudflareHelp {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
+  gap: 5px;
+  font-size: 0.6875rem;
+  font-weight: 600;
   color: #64748b;
+  letter-spacing: 0.06em;
 }
 
+/* ===================================================================
+   5. SIGN IN BUTTON (ELECTRIC BLUE GRADIENT)
+   =================================================================== */
 .signInButton {
   width: 100%;
-  height: 52px;
-  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%);
+  height: 48px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 55%, #1d4ed8 100%);
   border: none;
-  border-radius: 12px;
+  border-radius: 11px;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 0.9375rem;
   font-weight: 600;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
-}
-
-.signInButton::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+  box-shadow:
+    0 4px 16px rgba(37, 99, 235, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .signInButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 30px rgba(6, 182, 212, 0.4);
-}
-
-.signInButton:hover:not(:disabled)::before {
-  left: 100%;
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow:
+    0 6px 22px rgba(37, 99, 235, 0.45),
+    0 2px 4px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .signInButton:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow:
+    0 2px 8px rgba(37, 99, 235, 0.3),
+    inset 0 1px 0 rgba(0, 0, 0, 0.15);
 }
 
 .signInButton:disabled {
-  opacity: 0.6;
+  opacity: 0.65;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
+/* ===================================================================
+   6. DIVIDER
+   =================================================================== */
 .divider {
   display: flex;
   align-items: center;
-  margin: 28px 0;
-  gap: 16px;
+  margin: 20px 0 16px;
+  gap: 12px;
 }
 
 .dividerLine {
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .dividerText {
-  font-size: 13px;
+  font-size: 0.75rem;
   color: #64748b;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
+/* ===================================================================
+   7. SOCIAL LOGIN PROVIDERS
+   =================================================================== */
 .socialButtons {
   display: flex;
-  gap: 12px;
-  margin-bottom: 28px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .socialButton {
   flex: 1;
-  height: 48px;
-  background: rgba(15, 20, 35, 0.6);
-  border: 1px solid rgba(6, 182, 212, 0.2);
+  height: 44px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  color: #e2e8f0;
-  font-size: 14px;
-  font-weight: 500;
+  color: #cbd5e1;
   cursor: pointer;
-  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-.socialButton:hover {
-  background: rgba(15, 20, 35, 0.8);
-  border-color: rgba(6, 182, 212, 0.4);
+.socialButton:hover:not(:disabled) {
+  background: rgba(30, 41, 59, 0.7);
+  border-color: rgba(56, 189, 248, 0.3);
+  color: #ffffff;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
+.socialButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.socialButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===================================================================
+   8. FOOTER ACTIONS & SUPPORTING LINKS
+   =================================================================== */
 .footerActions {
-  margin-top: 24px;
-  text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
+  text-align: center;
 }
 
-.forgotSignupRow {
+.signupPromptRow {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: #94a3b8;
 }
 
-.forgotPasswordLink {
-  font-size: 13px;
-  color: #06b6d4;
-  text-decoration: none;
-  transition: color 0.2s ease;
-  cursor: pointer;
-}
-
-.forgotPasswordLink:hover {
-  color: #3b82f6;
-  text-decoration: underline;
+.signupPromptText {
+  color: #94a3b8;
 }
 
 .noAccountLink {
-  color: #06b6d4;
-  text-decoration: none;
-  font-weight: 500;
+  background: none;
+  border: none;
+  padding: 0;
+  color: #38bdf8;
+  font-weight: 600;
+  font-size: 0.8125rem;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.15s ease;
+  font-family: inherit;
 }
 
 .noAccountLink:hover {
-  color: #3b82f6;
+  color: #60a5fa;
   text-decoration: underline;
 }
 
 .termsText {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #64748b;
+  margin: 0;
   line-height: 1.5;
 }
 
 .termsLink {
-  color: #06b6d4;
+  color: #94a3b8;
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.15s ease;
 }
 
 .termsLink:hover {
-  color: #3b82f6;
+  color: #38bdf8;
   text-decoration: underline;
 }
 
-@media (max-width: 480px) {
-  .loginCard {
-    padding: 32px 24px;
-    border-radius: 20px;
-  }
-
-  .brandName {
-    font-size: 28px;
-  }
-
-  .welcomeHeading {
-    font-size: 22px;
-  }
-
-  .inputField {
-    height: 48px;
-  }
-
-  .signInButton {
-    height: 48px;
-  }
-
-  .socialButtons {
-    flex-wrap: wrap;
-  }
-
-  .socialButton {
-    flex: 1 1 calc(50% - 6px);
-  }
-}
-
+/* ===================================================================
+   9. ERROR ALERT & BACK BUTTON
+   =================================================================== */
 .errorAlert {
-  padding: 12px 16px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 10px 14px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.25);
   border-radius: 10px;
   color: #f87171;
-  font-size: 13px;
+  font-size: 0.8125rem;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 16px;
+  text-align: left;
 }
 
 .backButton {
   background: none;
   border: none;
   color: #94a3b8;
-  font-size: 14px;
+  font-size: 0.8125rem;
   cursor: pointer;
   padding: 0;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: color 0.2s ease;
-  margin-bottom: 24px;
+  transition: color 0.15s ease;
+  margin-bottom: 18px;
+  font-family: inherit;
 }
 
 .backButton:hover {
   color: #ffffff;
 }
 
+.noAccount {
+  font-size: 0.8125rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ===================================================================
+   10. RESPONSIVE DESIGN (TABLET & MOBILE)
+   =================================================================== */
 @media (max-width: 480px) {
   .loginCard {
-    padding: 32px 24px;
-    border-radius: 16px;
-  }
-
-  .brandName {
-    font-size: 24px;
+    padding: 30px 20px;
+    border-radius: 18px;
+    max-width: 100%;
   }
 
   .welcomeHeading {
-    font-size: 20px;
+    font-size: 1.45rem;
+  }
+
+  .supportingText {
+    font-size: 0.8125rem;
   }
 
   .inputField {
-    height: 48px;
+    height: 44px;
+    font-size: 0.8125rem;
   }
 
   .signInButton {
-    height: 48px;
+    height: 46px;
+    font-size: 0.875rem;
+  }
+
+  .socialButtons {
+    gap: 8px;
+  }
+
+  .socialButton {
+    height: 42px;
   }
 }
